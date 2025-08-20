@@ -1667,6 +1667,7 @@
                         return Promise.resolve(null);
                     }
                     const img = new Image();
+                    img.crossOrigin = 'Anonymous'; // ⭐ IMPORTANT: Add this line for CORS
                     img.src = getCardImageUrl(item.cardData);
                     return new Promise((resolve) => {
                         img.onload = () => resolve(img);
