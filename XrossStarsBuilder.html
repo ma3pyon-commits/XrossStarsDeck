@@ -804,7 +804,7 @@
 ,Never Fall,BP01-062/100 SR,メモリアカード,青,1,SR,,,,,,,ACE,,【プレイ時】カードを3枚引く。,第1弾『Luminous Daybreak』,ran9u
 ,苦難の昇格,BP01-063/100 C,メモリアカード,青,1,C,,,,,,,,,"【プレイ時】カードを2枚引き、手札を2枚捨てる。\n【アタック強化】次のアタックのダメージ+30。",第1弾『Luminous Daybreak』,mowa
 ,ゾーン状態,BP01-064/100 C,メモリアカード,青,2,C,,,,,,,,,【アタック強化】次のアタックのダメージ+80。,第1弾『Luminous Daybreak』,MUGENUP
-,汚部屋の住人,BP01-065/100 C,メモoriaカード,青,1,C,リーダー：一ノ瀬うるは,,,,,,,,【アタック強化】次のアタックのダメージ+60。,第1弾『Luminous Daybreak』,葉かま
+,汚部屋の住人,BP01-065/100 C,メモリアカード,青,1,C,リーダー：一ノ瀬うるは,,,,,,,,【アタック強化】次のアタックのダメージ+60。,第1弾『Luminous Daybreak』,葉かま
 ,博聞強記,BP01-066/100 UC,メモリアカード,青,1,UC,リーダー：Kamito,,,,,,,,"【プレイ時】カードを1枚引く。\n【アタック強化】次のアタックのダメージ+30。",第1弾『Luminous Daybreak』,ゆーり
 ,いつも安全運転,BP01-067/100 R,メモリアカード,青,1,R,リーダー：小雀とと,,,,,,,,【プレイ時】カードを2枚引く。,第1弾『Luminous Daybreak』,ハナモト
 ,運命のルーレット,BP01-068/100 C,メモリアカード,青,1,C,リーダー：渋谷ハル,,,,,,,,【プレイ時】メモリアカードかアタックカードのどちらかを宣言し、自分のデッキの上から1枚を公開する。そのカードが宣言したカードタイプならカードを4枚引く。それ以外なら公開したカードをトラッシュに置く。,第1弾『Luminous Daybreak』,はにわ
@@ -1596,16 +1596,64 @@
                 const validations = validateDeck();
                 if (!validations.isLeaderValid || !validations.isMainValid || !validations.isTacticsValid) {
                     alert('デッキ構築ルールに問題があるため、デッキ画像は生成できません。上記のバリデーションメッセージを確認してください。');
-                    return; // Exit if validation fails
+                    loadingIndicator.classList.add('hidden'); // Ensure loading indicator is hidden on validation failure
+                    return;
                 }
 
                 const CARD_WIDTH = 150;
                 const CARD_HEIGHT = 210;
                 const PADDING = 10;
                 const TEXT_HEIGHT = 20; // Space for card name below image
+                const QUANTITY_FONT_SIZE = 24; // Larger font for quantity
 
-                const CANVAS_WIDTH = (CARD_WIDTH + PADDING) * 10 + PADDING;
-                const CANVAS_HEIGHT = (CARD_HEIGHT + TEXT_HEIGHT + PADDING) * 6 + PADDING; // 6 rows of cards
+                const cardsToDrawDetailed = []; // { cardData: Object, displayQuantity: number, type: string }
+
+                // Add Leader cards (quantity 1 for display)
+                leaderDeck.forEach(card => cardsToDrawDetailed.push({ cardData: card.cardData, displayQuantity: 1, type: 'leader' }));
+                while (cardsToDrawDetailed.filter(c => c.type === 'leader').length < 4) { // Ensure 4 leader slots
+                    cardsToDrawDetailed.push({ cardData: null, displayQuantity: 0, type: 'empty' });
+                }
+
+                // Add a separator for layout visual in the generated image, not an actual card
+                // Only add if there are enough subsequent slots for tactics cards + main deck cards
+                if (tacticsDeck.length > 0 || mainDeck.length > 0) {
+                    cardsToDrawDetailed.push({ cardData: null, displayQuantity: 0, type: 'separator' });
+                }
+
+                // Add Tactics cards (quantity 1 for display)
+                tacticsDeck.forEach(card => cardsToDrawDetailed.push({ cardData: card.cardData, displayQuantity: 1, type: 'tactics' }));
+                while (cardsToDrawDetailed.filter(c => c.type === 'tactics').length < 5 && cardsToDrawDetailed.length < 10) { // Ensure 5 tactics slots, limited to first row for 10 cols
+                    cardsToDrawDetailed.push({ cardData: null, displayQuantity: 0, type: 'empty' });
+                }
+
+                // Sort Main Deck cards for consistent display (e.g., by card type, then color, then cost, then name)
+                const sortedMainDeck = [...mainDeck].sort((a, b) => {
+                    const typeOrder = { 'アタックカード': 1, 'メモリアカード': 2 };
+                    const typeA = typeOrder[a.cardData['カード種類']] || 99;
+                    const typeB = typeOrder[b.cardData['カード種類']] || 99;
+                    if (typeA !== typeB) return typeA - typeB;
+
+                    const colorOrder = { '赤': 1, '青': 2, '黄': 3, '緑': 4, '': 5 }; // '無' removed, as main deck cards have colors
+                    const colorA = colorOrder[a.cardData['色']] || 99;
+                    const colorB = colorOrder[b.cardData['色']] || 99;
+                    if (colorA !== colorB) return colorA - colorB;
+
+                    const costA = parseInt(a.cardData['コスト']) || 0;
+                    const costB = parseInt(b.cardData['コスト']) || 0;
+                    if (costA !== costB) return costA - costB;
+
+                    return a.name.localeCompare(b.name);
+                });
+
+                // Add Main Deck cards with their quantities
+                sortedMainDeck.forEach(card => cardsToDrawDetailed.push({ cardData: card.cardData, displayQuantity: card.quantity, type: 'main' }));
+
+                // Calculate actual canvas dimensions based on number of cards to draw
+                const numColumns = 10; // Fixed number of columns for the generated image
+                const numRows = Math.ceil(cardsToDrawDetailed.length / numColumns);
+
+                const CANVAS_WIDTH = numColumns * (CARD_WIDTH + PADDING) + PADDING;
+                const CANVAS_HEIGHT = numRows * (CARD_HEIGHT + TEXT_HEIGHT + PADDING) + PADDING;
 
                 deckCanvas.width = CANVAS_WIDTH;
                 deckCanvas.height = CANVAS_HEIGHT;
@@ -1614,126 +1662,77 @@
                 ctx.fillStyle = '#f0f2f5'; // Background color
                 ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-                // 描画するカードのリストを準備
-                const cardsToDraw = [];
-
-                // 1行目: リーダー4枚、空欄1つ、タクティクス5枚
-                leaderDeck.forEach(card => cardsToDraw.push({ ...card.cardData, type: 'leader' }));
-                cardsToDraw.push(null); // 空欄
-                tacticsDeck.forEach(card => cardsToDraw.push({ ...card.cardData, type: 'tactics' }));
-
-                // メインデッキのカードを種類とACEで分類
-                const aceCards = [];
-                const attackCards = [];
-                const memoriaCards = [];
-
-                mainDeck.forEach(deckCard => {
-                    for (let i = 0; i < deckCard.quantity; i++) {
-                        if (deckCard.isAce) {
-                            aceCards.push({ ...deckCard.cardData, type: 'main' });
-                        } else if (deckCard.cardData['カード種類'] === 'アタックカード') {
-                            attackCards.push({ ...deckCard.cardData, type: 'main' });
-                        } else if (deckCard.cardData['カード種類'] === 'メモリアカード') {
-                            memoriaCards.push({ ...deckCard.cardData, type: 'main' });
-                        }
+                const imagePromises = cardsToDrawDetailed.map(item => {
+                    if (!item.cardData || item.type === 'separator') { // Handle empty slots or separators
+                        return Promise.resolve(null);
                     }
+                    const img = new Image();
+                    img.src = getCardImageUrl(item.cardData);
+                    return new Promise((resolve) => {
+                        img.onload = () => resolve(img);
+                        img.onerror = () => {
+                            console.error("Failed to load image for card:", item.cardData['カード名']);
+                            const placeholder = new Image();
+                            placeholder.src = `https://placehold.co/${CARD_WIDTH}x${CARD_HEIGHT}/cccccc/333333?text=Load+Error\\n${item.cardData['カード名']}`;
+                            placeholder.onload = () => resolve(placeholder);
+                            placeholder.onerror = () => resolve(null);
+                        };
+                    });
                 });
 
-                // メインデッキカードのソート（色 -> コスト -> カードナンバー）
-                const sortMainCards = (a, b) => {
-                    const colorOrder = { '赤': 1, '青': 2, '黄': 3, '緑': 4, '': 5 }; // '無' removed
-                    const colorA = colorOrder[a['色']] || 99; // Unknown colors last
-                    const colorB = colorOrder[b['色']] || 99;
-                    if (colorA !== colorB) return colorA - colorB;
+                const loadedImages = await Promise.all(imagePromises);
 
-                    const costA = parseInt(a['コスト']) || 0;
-                    const costB = parseInt(b['コスト']) || 0;
-                    if (costA !== costB) return costA - costB;
-
-                    return (a['カードナンバー'] || '').localeCompare(b['カードナンバー'] || '');
-                };
-
-                aceCards.sort(sortMainCards);
-                attackCards.sort(sortMainCards);
-                memoriaCards.sort(sortMainCards);
-
-                // 2行目以降のメインデッキを埋める
-                // 2行目: ACE 8枚、残りはアタック
-                for (let i = 0; i < 8; i++) {
-                    if (aceCards.length > 0) {
-                        cardsToDraw.push(aceCards.shift());
-                    } else if (attackCards.length > 0) {
-                        cardsToDraw.push(attackCards.shift());
-                    } else {
-                        cardsToDraw.push(null); // 空欄
-                    }
-                }
-                // 2行目の残り2枠をアタックで埋める（もしあれば）
-                for (let i = 0; i < 2; i++) {
-                    if (attackCards.length > 0) {
-                        cardsToDraw.push(attackCards.shift());
-                    } else {
-                        cardsToDraw.push(null); // 空欄
-                    }
-                }
-
-
-                // 残りのアタックカードとメモリアカードを埋める
-                const remainingMainCards = attackCards.concat(memoriaCards);
-                remainingMainCards.sort(sortMainCards); // 再度ソート
-
-                while (cardsToDraw.length < 60) {
-                    if (remainingMainCards.length > 0) {
-                        cardsToDraw.push(remainingMainCards.shift());
-                    } else {
-                        cardsToDraw.push(null); // 残りのマスを空欄で埋める
-                    }
-                }
-
-                const images = [];
-                for (const card of cardsToDraw) {
-                    if (card) {
-                        const img = new Image();
-                        img.src = getCardImageUrl(card);
-                        images.push(new Promise((resolve) => {
-                            img.onload = () => resolve(img);
-                            img.onerror = () => {
-                                console.error("Failed to load image for card:", card['カード名']);
-                                // Fallback to placeholder on error
-                                const placeholder = new Image();
-                                placeholder.src = `https://placehold.co/${CARD_WIDTH}x${CARD_HEIGHT}/cccccc/333333?text=Error\\n${card['カード名']}`;
-                                placeholder.onload = () => resolve(placeholder);
-                                placeholder.onerror = () => resolve(null); // Give up if placeholder fails too
-                            };
-                        }));
-                    } else {
-                        images.push(Promise.resolve(null)); // 空欄の場合
-                    }
-                }
-
-                const loadedImages = await Promise.all(images);
-
-                // 画像と名前を描画
                 loadedImages.forEach((img, index) => {
-                    const col = index % 10;
-                    const row = Math.floor(index / 10);
+                    const item = cardsToDrawDetailed[index];
+                    const col = index % numColumns;
+                    const row = Math.floor(index / numColumns);
                     const x = PADDING + col * (CARD_WIDTH + PADDING);
                     const y = PADDING + row * (CARD_HEIGHT + TEXT_HEIGHT + PADDING);
 
-                    if (img) {
-                        ctx.drawImage(img, x, y, CARD_WIDTH, CARD_HEIGHT);
+                    if (item.type === 'separator') {
+                        // Draw a simple line or empty space for visual separation
+                        ctx.strokeStyle = '#d1d5db';
+                        ctx.lineWidth = 1;
+                        ctx.strokeRect(x, y, CARD_WIDTH, CARD_HEIGHT);
+                        ctx.fillStyle = '#e5e7eb';
+                        ctx.fillRect(x, y, CARD_WIDTH, CARD_HEIGHT);
                         
-                        // カード名を描画
-                        ctx.fillStyle = '#333';
-                        ctx.font = '600 12px Inter'; // Adjust font size as needed
+                        ctx.fillStyle = '#888';
+                        ctx.font = '400 14px Inter';
                         ctx.textAlign = 'center';
-                        const cardName = cardsToDraw[index] ? cardsToDraw[index]['カード名'] : '';
-                        const textY = y + CARD_HEIGHT + TEXT_HEIGHT / 2 + 5; // Position below the card, centered in text area
-                        
-                        // テキストを中央に配置
-                        ctx.fillText(cardName, x + CARD_WIDTH / 2, textY, CARD_WIDTH - 4); // maxWidth for truncation
+                        ctx.fillText('区切り', x + CARD_WIDTH / 2, y + CARD_HEIGHT / 2);
+                    } else if (img) {
+                        ctx.drawImage(img, x, y, CARD_WIDTH, CARD_HEIGHT);
+
+                        // Draw card name below the image
+                        ctx.fillStyle = '#333';
+                        ctx.font = '600 12px Inter';
+                        ctx.textAlign = 'center';
+                        const cardName = item.cardData['カード名'];
+                        const textY = y + CARD_HEIGHT + TEXT_HEIGHT / 2 + 5;
+                        ctx.fillText(cardName, x + CARD_WIDTH / 2, textY, CARD_WIDTH - 4);
+
+                        // Draw quantity for main deck cards (bottom right)
+                        if (item.type === 'main' && item.displayQuantity > 1) { // Only draw for main deck cards with quantity > 1
+                            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; // Dark background for quantity number
+                            ctx.beginPath();
+                            // Draw a circle for the quantity background, slightly larger for visibility
+                            const radius = QUANTITY_FONT_SIZE / 2 + 8; // Increased radius
+                            const circleX = x + CARD_WIDTH - radius + 5; // Adjusted position
+                            const circleY = y + CARD_HEIGHT - radius + 5; // Adjusted position
+                            ctx.arc(circleX, circleY, radius, 0, Math.PI * 2, true);
+                            ctx.fill();
+
+                            ctx.fillStyle = 'white'; // White color for the number
+                            ctx.font = `bold ${QUANTITY_FONT_SIZE}px Inter`;
+                            ctx.textAlign = 'center'; // Center text within the circle
+                            ctx.textBaseline = 'middle'; // Center text vertically within the circle
+
+                            // Position the text within the circle
+                            ctx.fillText(item.displayQuantity.toString(), circleX, circleY + 2); // +2 for fine-tuning vertical alignment
+                        }
                     } else {
-                        // 空欄または画像ロード失敗の場合、薄い灰色の枠線を描画
+                        // Draw a blank/empty card slot
                         ctx.strokeStyle = '#d1d5db';
                         ctx.lineWidth = 1;
                         ctx.strokeRect(x, y, CARD_WIDTH, CARD_HEIGHT);
@@ -1753,10 +1752,9 @@
 
             } catch (error) {
                 console.error("デッキ画像の生成中にエラーが発生しました:", error);
-                // Consider showing a more user-friendly error message in the UI
-                // For now, logging to console and hiding the spinner
+                alert(`デッキ画像の生成中にエラーが発生しました。詳細: ${error.message}`);
             } finally {
-                loadingIndicator.classList.add('hidden'); // Ensure loading indicator is always hidden
+                loadingIndicator.classList.add('hidden');
             }
         }
 
