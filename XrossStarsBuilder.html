@@ -364,11 +364,20 @@
             text-overflow: ellipsis;
         }
 
+        /* Canvas scaling for responsiveness within modal */
+        #deckCanvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
     </style>
 </head>
 <body class="p-4">
     <div class="container">
-        <h1 class="text-4xl font-extrabold text-center mb-8 text-blue-800">XrossStars デッキ構築アプリ</h1>
+        <h1 class="text-4xl font-extrabold text-center mb-8 text-blue-800">
+            XrossStars<br>デッキ構築
+        </h1>
 
         <!-- Loading Indicator -->
         <div id="loadingIndicator" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
@@ -385,7 +394,7 @@
         <div class="flex flex-col gap-3 mb-6">
             <div class="flex justify-center gap-3">
                 <button id="showDeckBtn" class="btn btn-primary px-5 py-2.5">デッキ</button>
-                <button id="generateDeckImageBtn" class="btn btn-primary px-5 py-2.5">デッキ画像出力(開発中)</button>
+                <button id="generateDeckImageBtn" class="btn btn-primary px-5 py-2.5">デッキ画像</button>
             </div>
             <div class="flex justify-center gap-3">
                 <button id="showLeaderCatalogBtn" class="btn btn-primary px-5 py-2.5">リーダー</button>
@@ -401,7 +410,7 @@
             </div>
             
             <select id="colorFilterSelect" class="p-2 border border-gray-300 rounded-md">
-                <option value="全て">色で絞り込み</option>
+                <option value="全て">色</option>
                 <option value="赤">赤</option>
                 <option value="青">青</option>
                 <option value="黄">黄</option>
@@ -409,13 +418,13 @@
             </select>
 
             <select id="cardTypeFilterSelect" class="p-2 border border-gray-300 rounded-md">
-                <option value="全て">種類で絞り込み</option>
+                <option value="全て">種類</option>
                 <option value="アタックカード">アタックカード</option>
                 <option value="メモリアカード">メモリアカード</option>
             </select>
 
             <select id="costFilterSelect" class="p-2 border border-gray-300 rounded-md">
-                <option value="全て">コストで絞り込み</option>
+                <option value="全て">コスト</option>
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -463,20 +472,23 @@
         <!-- Export/Import Section -->
         <div class="mb-8 p-6 bg-blue-50 rounded-lg shadow-inner">
             <h2 class="section-title">デッキの入出力</h2>
-            <div class="input-group">
-                <label for="deckNameInput" class="font-semibold text-gray-700">デッキ名:</label>
-                <input type="text" id="deckNameInput" placeholder="デッキ名を入力" class="input-field">
-            </div>
-            <div class="flex flex-col gap-4">
-                <div>
-                    <button id="exportDeckBtn" class="btn btn-primary w-full">デッキをエクスポート</button>
-                    <button id="copyExportedDataBtn" class="btn btn-primary w-full mt-2 hidden">コピー</button>
+            <button id="toggleExportImportBtn" class="btn btn-secondary w-full mb-4">入出力セクションを表示/非表示</button>
+            <div id="exportImportContent" class="hidden">
+                <div class="input-group">
+                    <label for="deckNameInput" class="font-semibold text-gray-700">デッキ名:</label>
+                    <input type="text" id="deckNameInput" placeholder="デッキ名を入力" class="input-field">
                 </div>
-                <textarea id="deckDataTextarea" class="input-field h-40 text-sm" placeholder="ここにデッキデータが表示されます（エクスポート/インポート用）。"></textarea>
-                <div>
-                    <button id="importDeckBtn" class="btn btn-primary w-full">デッキをインポート</button>
+                <div class="flex flex-col gap-4">
+                    <div>
+                        <button id="exportDeckBtn" class="btn btn-primary w-full">デッキをエクスポート</button>
+                        <button id="copyExportedDataBtn" class="btn btn-primary w-full mt-2 hidden">コピー</button>
+                    </div>
+                    <textarea id="deckDataTextarea" class="input-field h-40 text-sm" placeholder="ここにデッキデータが表示されます（エクスポート/インポート用）。"></textarea>
+                    <div>
+                        <button id="importDeckBtn" class="btn btn-primary w-full">デッキをインポート</button>
+                    </div>
+                    <div id="importExportMessage" class="validation-message hidden"></div>
                 </div>
-                <div id="importExportMessage" class="validation-message hidden"></div>
             </div>
         </div>
 
@@ -596,6 +608,11 @@
         const copyExportedDataBtn = document.getElementById('copyExportedDataBtn');
         const importDeckBtn = document.getElementById('importDeckBtn');
         const importExportMessage = document.getElementById('importExportMessage');
+
+        // New elements for export/import toggle
+        const toggleExportImportBtn = document.getElementById('toggleExportImportBtn');
+        const exportImportContent = document.getElementById('exportImportContent');
+
 
         // Modals
         const deckViewModal = document.getElementById('deckViewModal');
@@ -1431,6 +1448,11 @@
             // Reset sort options to a default set
             sortCriterionSelect.innerHTML = `<option value="カード名">カード名でソート</option>`;
 
+            // Update filter option display names
+            colorFilterSelect.querySelector('option[value="全て"]').textContent = '色';
+            cardTypeFilterSelect.querySelector('option[value="全て"]').textContent = '種類';
+            costFilterSelect.querySelector('option[value="全て"]').textContent = 'コスト';
+
 
             if (currentTab === 'leader') {
                 colorFilterSelect.style.display = 'inline-block'; // Show color filter for leaders
@@ -1453,7 +1475,7 @@
                 `;
                 // Main deck specific card type options
                 cardTypeFilterSelect.innerHTML = `
-                    <option value="全て">種類で絞り込み</option>
+                    <option value="全て">種類</option>
                     <option value="アタックカード">アタックカード</option>
                     <option value="メモリアカード">メモリアカード</option>
                 `;
@@ -1605,35 +1627,25 @@
                 const PADDING = 10;
                 const TEXT_HEIGHT = 20; // Space for card name below image
                 const QUANTITY_FONT_SIZE = 24; // Larger font for quantity
+                const NUM_COLUMNS = 7; // Fixed number of columns
 
-                const cardsToDrawDetailed = []; // { cardData: Object, displayQuantity: number, type: string }
+                const rows = [];
 
-                // Add Leader cards (quantity 1 for display)
-                leaderDeck.forEach(card => cardsToDrawDetailed.push({ cardData: card.cardData, displayQuantity: 1, type: 'leader' }));
-                while (cardsToDrawDetailed.filter(c => c.type === 'leader').length < 4) { // Ensure 4 leader slots
-                    cardsToDrawDetailed.push({ cardData: null, displayQuantity: 0, type: 'empty' });
+                // 1行目: リーダーカード (4枚 + 空欄3枚)
+                const leaderRow = leaderDeck.map(card => ({ cardData: card.cardData, displayQuantity: 1, type: 'leader' }));
+                while (leaderRow.length < NUM_COLUMNS) {
+                    leaderRow.push({ cardData: null, type: 'empty' });
                 }
+                rows.push(leaderRow);
 
-                // Add a separator for layout visual in the generated image, not an actual card
-                // Only add if there are enough subsequent slots for tactics cards + main deck cards
-                if (tacticsDeck.length > 0 || mainDeck.length > 0) {
-                    cardsToDrawDetailed.push({ cardData: null, displayQuantity: 0, type: 'separator' });
-                }
-
-                // Add Tactics cards (quantity 1 for display)
-                tacticsDeck.forEach(card => cardsToDrawDetailed.push({ cardData: card.cardData, displayQuantity: 1, type: 'tactics' }));
-                while (cardsToDrawDetailed.filter(c => c.type === 'tactics').length < 5 && cardsToDrawDetailed.length < 10) { // Ensure 5 tactics slots, limited to first row for 10 cols
-                    cardsToDrawDetailed.push({ cardData: null, displayQuantity: 0, type: 'empty' });
-                }
-
-                // Sort Main Deck cards for consistent display (e.g., by card type, then color, then cost, then name)
-                const sortedMainDeck = [...mainDeck].sort((a, b) => {
+                // メインデッキのソート (カード種類、色、コスト、名前の順)
+                const sortedMainDeckToDraw = [...mainDeck].sort((a, b) => {
                     const typeOrder = { 'アタックカード': 1, 'メモリアカード': 2 };
                     const typeA = typeOrder[a.cardData['カード種類']] || 99;
                     const typeB = typeOrder[b.cardData['カード種類']] || 99;
                     if (typeA !== typeB) return typeA - typeB;
 
-                    const colorOrder = { '赤': 1, '青': 2, '黄': 3, '緑': 4, '': 5 }; // '無' removed, as main deck cards have colors
+                    const colorOrder = { '赤': 1, '青': 2, '黄': 3, '緑': 4, '': 5 };
                     const colorA = colorOrder[a.cardData['色']] || 99;
                     const colorB = colorOrder[b.cardData['色']] || 99;
                     if (colorA !== colorB) return colorA - colorB;
@@ -1645,25 +1657,43 @@
                     return a.name.localeCompare(b.name);
                 });
 
-                // Add Main Deck cards with their quantities
-                sortedMainDeck.forEach(card => cardsToDrawDetailed.push({ cardData: card.cardData, displayQuantity: card.quantity, type: 'main' }));
+                // メインデッキの行 (7枚ずつ)
+                for (let i = 0; i < sortedMainDeckToDraw.length; i += NUM_COLUMNS) {
+                    const row = sortedMainDeckToDraw.slice(i, i + NUM_COLUMNS).map(card => ({
+                        cardData: card.cardData,
+                        displayQuantity: card.quantity,
+                        type: 'main'
+                    }));
+                    while (row.length < NUM_COLUMNS) {
+                        row.push({ cardData: null, type: 'empty' });
+                    }
+                    rows.push(row);
+                }
 
-                // Calculate actual canvas dimensions based on number of cards to draw
-                const numColumns = 10; // Fixed number of columns for the generated image
-                const numRows = Math.ceil(cardsToDrawDetailed.length / numColumns);
+                // 最終行: タクティクスカード (5枚 + 空欄2枚)
+                const tacticsRow = tacticsDeck.map(card => ({ cardData: card.cardData, displayQuantity: 1, type: 'tactics' }));
+                while (tacticsRow.length < NUM_COLUMNS) {
+                    tacticsRow.push({ cardData: null, type: 'empty' });
+                }
+                rows.push(tacticsRow);
 
-                const CANVAS_WIDTH = numColumns * (CARD_WIDTH + PADDING) + PADDING;
-                const CANVAS_HEIGHT = numRows * (CARD_HEIGHT + TEXT_HEIGHT + PADDING) + PADDING;
+
+                // キャンバスサイズの計算
+                const CANVAS_WIDTH = NUM_COLUMNS * (CARD_WIDTH + PADDING) + PADDING;
+                const CANVAS_HEIGHT = rows.length * (CARD_HEIGHT + TEXT_HEIGHT + PADDING) + PADDING;
 
                 deckCanvas.width = CANVAS_WIDTH;
                 deckCanvas.height = CANVAS_HEIGHT;
                 const ctx = deckCanvas.getContext('2d');
 
-                ctx.fillStyle = '#f0f2f5'; // Background color
+                ctx.fillStyle = '#f0f2f5'; // アプリ全体の背景色と同じにする
                 ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-                const imagePromises = cardsToDrawDetailed.map(item => {
-                    if (!item.cardData || item.type === 'separator') { // Handle empty slots or separators
+                const allItemsToLoad = [];
+                rows.forEach(row => row.forEach(item => allItemsToLoad.push(item)));
+
+                const imagePromises = allItemsToLoad.map(item => {
+                    if (!item.cardData) { // 空欄の場合は画像を読み込まない
                         return Promise.resolve(null);
                     }
                     const img = new Image();
@@ -1682,73 +1712,60 @@
                 });
 
                 const loadedImages = await Promise.all(imagePromises);
+                let imageIndex = 0;
 
-                loadedImages.forEach((img, index) => {
-                    const item = cardsToDrawDetailed[index];
-                    const col = index % numColumns;
-                    const row = Math.floor(index / numColumns);
-                    const x = PADDING + col * (CARD_WIDTH + PADDING);
-                    const y = PADDING + row * (CARD_HEIGHT + TEXT_HEIGHT + PADDING);
+                rows.forEach((row, rowIndex) => {
+                    row.forEach((item, colIndex) => {
+                        const img = loadedImages[imageIndex++];
+                        const x = PADDING + colIndex * (CARD_WIDTH + PADDING);
+                        const y = PADDING + rowIndex * (CARD_HEIGHT + TEXT_HEIGHT + PADDING);
 
-                    if (item.type === 'separator') {
-                        // Draw a simple line or empty space for visual separation
-                        ctx.strokeStyle = '#d1d5db';
-                        ctx.lineWidth = 1;
-                        ctx.strokeRect(x, y, CARD_WIDTH, CARD_HEIGHT);
-                        ctx.fillStyle = '#e5e7eb';
-                        ctx.fillRect(x, y, CARD_WIDTH, CARD_HEIGHT);
-                        
-                        ctx.fillStyle = '#888';
-                        ctx.font = '400 14px Inter';
-                        ctx.textAlign = 'center';
-                        ctx.fillText('区切り', x + CARD_WIDTH / 2, y + CARD_HEIGHT / 2);
-                    } else if (img) {
-                        ctx.drawImage(img, x, y, CARD_WIDTH, CARD_HEIGHT);
+                        if (img) {
+                            ctx.drawImage(img, x, y, CARD_WIDTH, CARD_HEIGHT);
 
-                        // Draw card name below the image
-                        ctx.fillStyle = '#333';
-                        ctx.font = '600 12px Inter';
-                        ctx.textAlign = 'center';
-                        const cardName = item.cardData['カード名'];
-                        const textY = y + CARD_HEIGHT + TEXT_HEIGHT / 2 + 5;
-                        ctx.fillText(cardName, x + CARD_WIDTH / 2, textY, CARD_WIDTH - 4);
+                            // カード名を描画
+                            ctx.fillStyle = '#333';
+                            ctx.font = '600 12px Inter';
+                            ctx.textAlign = 'center';
+                            const cardName = item.cardData['カード名'];
+                            const textY = y + CARD_HEIGHT + TEXT_HEIGHT / 2 + 5;
+                            ctx.fillText(cardName, x + CARD_WIDTH / 2, textY, CARD_WIDTH - 4);
 
-                        // Draw quantity for main deck cards (bottom right)
-                        if (item.type === 'main' && item.displayQuantity > 1) { // Only draw for main deck cards with quantity > 1
-                            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; // Dark background for quantity number
-                            ctx.beginPath();
-                            // Draw a circle for the quantity background, slightly larger for visibility
-                            const radius = QUANTITY_FONT_SIZE / 2 + 8; // Increased radius
-                            const circleX = x + CARD_WIDTH - radius + 5; // Adjusted position
-                            const circleY = y + CARD_HEIGHT - radius + 5; // Adjusted position
-                            ctx.arc(circleX, circleY, radius, 0, Math.PI * 2, true);
-                            ctx.fill();
+                            // メインデッキカードで枚数が1より大きい場合に枚数を描画
+                            if (item.type === 'main' && item.displayQuantity > 1) {
+                                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; // 数量の背景色
+                                ctx.beginPath();
+                                const radius = QUANTITY_FONT_SIZE / 2 + 8;
+                                const circleX = x + CARD_WIDTH - radius + 5;
+                                const circleY = y + CARD_HEIGHT - radius + 5;
+                                ctx.arc(circleX, circleY, radius, 0, Math.PI * 2, true);
+                                ctx.fill();
 
-                            ctx.fillStyle = 'white'; // White color for the number
-                            ctx.font = `bold ${QUANTITY_FONT_SIZE}px Inter`;
-                            ctx.textAlign = 'center'; // Center text within the circle
-                            ctx.textBaseline = 'middle'; // Center text vertically within the circle
-
-                            // Position the text within the circle
-                            ctx.fillText(item.displayQuantity.toString(), circleX, circleY + 2); // +2 for fine-tuning vertical alignment
+                                ctx.fillStyle = 'white'; // 数量の文字色
+                                ctx.font = `bold ${QUANTITY_FONT_SIZE}px Inter`;
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'middle';
+                                ctx.fillText(item.displayQuantity.toString(), circleX, circleY + 2);
+                            }
+                        } else {
+                            // 空欄の場合は何も描画しない (背景色が表示される)
                         }
-                    } else {
-                        // Draw a blank/empty card slot
-                        ctx.strokeStyle = '#d1d5db';
-                        ctx.lineWidth = 1;
-                        ctx.strokeRect(x, y, CARD_WIDTH, CARD_HEIGHT);
-                        ctx.fillStyle = '#e5e7eb';
-                        ctx.fillRect(x, y, CARD_WIDTH, CARD_HEIGHT);
-                        
-                        ctx.fillStyle = '#888';
-                        ctx.font = '400 14px Inter';
-                        ctx.textAlign = 'center';
-                        ctx.fillText('空欄', x + CARD_WIDTH / 2, y + CARD_HEIGHT / 2);
-                    }
+                    });
                 });
 
                 const dataURL = deckCanvas.toDataURL('image/png');
+                
+                // タイムスタンプ付きのファイル名を生成
+                const now = new Date();
+                const timestamp = now.getFullYear().toString() +
+                                  (now.getMonth() + 1).toString().padStart(2, '0') +
+                                  now.getDate().toString().padStart(2, '0') +
+                                  now.getHours().toString().padStart(2, '0') +
+                                  now.getMinutes().toString().padStart(2, '0') +
+                                  now.getSeconds().toString().padStart(2, '0');
+                downloadDeckImageBtn.download = `XrossStars_Deck_${timestamp}.png`;
                 downloadDeckImageBtn.href = dataURL;
+                
                 deckImageModal.classList.remove('hidden');
 
             } catch (error) {
@@ -2018,7 +2035,8 @@
             }
         });
 
-        // サンプルデッキを生成する関数
+        // サンプルデッキを生成する関数 (今回は使用しないためコメントアウト)
+        /*
         function generateSampleDeck() {
             const sampleDeckData = {
                 "deckName": "サンプルデッキ (青単)",
@@ -2110,13 +2128,18 @@
                 importExportMessage.classList.add('hidden'); // Clear previous message
             }
         }
+        */
+
+        // デッキ入出力セクションの表示/非表示切り替え
+        toggleExportImportBtn.addEventListener('click', () => {
+            exportImportContent.classList.toggle('hidden');
+        });
 
 
         // 初期ロード時にカードデータを読み込み、オートコンプリートを設定
         window.onload = async () => {
             await loadCardData();
-            // サンプルデッキを自動生成して初期表示
-            generateSampleDeck();
+            // generateSampleDeck(); // デフォルトデッキは不要のためコメントアウト
             renderCatalog(); // Initial render of the leader catalog view
             updateFilterAndSortUI(); // Initial filter/sort UI update
         };
