@@ -797,33 +797,14 @@
          * @returns {string} 画像URLまたはプレースホルダーURL
          */
         function getCardImageUrl(cardInfo) {
-            if (!cardInfo || !cardInfo['カードナンバー'] || !cardInfo['カード種類']) {
-                console.warn("Missing card info for image URL generation:", cardInfo);
+            if (!cardInfo || !cardInfo['カードナンバー']) {
+                console.warn("Missing card info or card number for image URL generation:", cardInfo);
                 return 'https://placehold.co/150x210/cccccc/333333?text=No+Image'; // Fallback for incomplete data
             }
 
             const cardNumPrefix = cardInfo['カードナンバー'].split('/')[0];
-            let cardTypeFolder;
-
-            switch (cardInfo['カード種類']) {
-                case 'リーダーカード':
-                    cardTypeFolder = 'LEADER';
-                    break;
-                case 'アタックカード':
-                    cardTypeFolder = 'ATTACK';
-                    break;
-                case 'メモリアカード':
-                    cardTypeFolder = 'MEMORIA';
-                    break;
-                case 'タクティクスカード':
-                    cardTypeFolder = 'TACTICS';
-                    break;
-                default:
-                    console.warn("Unknown card type for image URL:", cardInfo['カード種類']);
-                    return `https://placehold.co/150x210/cccccc/333333?text=Unknown+Type\\n${cardNumPrefix}`; // Fallback for unknown types
-            }
-
-            return `https://xrossstars-info.com/deckbuilder/card/${cardTypeFolder}/${cardNumPrefix}.jpg`;
+            // 新しいURL形式に合わせて修正
+            return `https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/${cardNumPrefix}.png`;
         }
 
 
@@ -1789,8 +1770,8 @@
                         ctx.fillText(cardName, (PADDING + col * (CARD_WIDTH + PADDING)) + CARD_WIDTH / 2, textY, CARD_WIDTH - 4);
 
 
-                        // メインデッキカードで枚数が1以上の場合に枚数を描画 (変更点)
-                        if (item.type === 'main' && item.displayQuantity >= 1) { // 変更箇所
+                        // メインデッキカードで枚数が1以上の場合に枚数を描画
+                        if (item.type === 'main' && item.displayQuantity >= 1) {
                             ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; // 数量の背景色
                             ctx.beginPath();
                             const radius = QUANTITY_FONT_SIZE / 2 + 8;
