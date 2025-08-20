@@ -1338,13 +1338,11 @@
             }
 
             // Step 2: Apply search query filter
-            filteredCards = allCardsOfType.filter(card => {
-                const lowerCaseQuery = currentSearchQuery.toLowerCase();
-                return card['カード名'].toLowerCase().includes(lowerCaseQuery) ||
-                       (card['カードテキスト'] && card['カードテキスト'].toLowerCase().includes(lowerCaseQuery)) ||
-                       (card['ビルドルール'] && card['ビルドルール'].toLowerCase().includes(lowerCaseQuery));
-            });
-
+            filteredCards = allCardsOfType.filter(card =>
+                card['カード名'].toLowerCase().includes(currentSearchQuery.toLowerCase()) ||
+                (card['カードテキスト'] && card['カードテキスト'].toLowerCase().includes(currentSearchQuery.toLowerCase())) ||
+                (card['ビルドルール'] && card['ビルドルール'].toLowerCase().includes(currentSearchQuery.toLowerCase()))
+            );
 
             // Step 3: Apply additional filters
             filteredCards = filteredCards.filter(card => {
@@ -1724,41 +1722,27 @@
                     const item = cardsToDraw[index];
                     const col = index % NUM_COLUMNS;
                     const row = Math.floor(index / NUM_COLUMNS);
-
-                    // Determine current card dimensions for drawing
-                    let currentCardDrawW = CARD_WIDTH;
-                    let currentCardDrawH = CARD_HEIGHT;
-                    if (item.type === 'tactics') {
-                        currentCardDrawW = CARD_HEIGHT; // Swap width and height for tactics cards
-                        currentCardDrawH = CARD_WIDTH;
-                    }
-
-                    // Calculate position based on the fixed grid spacing (portrait card size)
-                    // The image will be drawn WITHIN this space.
                     const x = PADDING + col * (CARD_WIDTH + PADDING);
                     const y = PADDING + row * (CARD_HEIGHT + TEXT_HEIGHT + PADDING);
 
                     if (img) {
-                        ctx.drawImage(img, x, y, currentCardDrawW, currentCardDrawH);
+                        ctx.drawImage(img, x, y, CARD_WIDTH, CARD_HEIGHT);
 
                         // カード名を描画
                         ctx.fillStyle = '#333';
                         ctx.font = '600 12px Inter';
                         ctx.textAlign = 'center';
                         const cardName = item.cardData['カード名'];
-                        // Adjust textY based on the actual drawn height of the card
-                        const textY = y + currentCardDrawH + TEXT_HEIGHT / 2 + 5;
-                        // Adjust textX and maxWidth based on the actual drawn width of the card
-                        ctx.fillText(cardName, x + currentCardDrawW / 2, textY, currentCardDrawW - 4);
+                        const textY = y + CARD_HEIGHT + TEXT_HEIGHT / 2 + 5;
+                        ctx.fillText(cardName, x + CARD_WIDTH / 2, textY, CARD_WIDTH - 4);
 
                         // メインデッキカードで枚数が1より大きい場合に枚数を描画
                         if (item.type === 'main' && item.displayQuantity > 1) {
                             ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; // 数量の背景色
                             ctx.beginPath();
                             const radius = QUANTITY_FONT_SIZE / 2 + 8;
-                            // Position quantity circle relative to the actual drawn card dimensions
-                            const circleX = x + currentCardDrawW - radius + 5;
-                            const circleY = y + currentCardDrawH - radius + 5;
+                            const circleX = x + CARD_WIDTH - radius + 5;
+                            const circleY = y + CARD_HEIGHT - radius + 5;
                             ctx.arc(circleX, circleY, radius, 0, Math.PI * 2, true);
                             ctx.fill();
 
@@ -1972,7 +1956,7 @@
                 if (!importError) {
                     let totalImportedMainCards = 0;
                     const importedMainCardCounts = {};
-                    for (const [cardNumPrefix, quantity) of Object.entries(importedData.MAIN)) {
+                    for (const [cardNumPrefix, quantity] of Object.entries(importedData.MAIN)) {
                         const cardInfo = allCardDataByNumberPrefix[cardNumPrefix];
                         if (!cardInfo || (cardInfo['カード種類'] === 'リーダーカード' || cardInfo['カード種類'] === 'タクティクスカード')) {
                             alert(`カード番号 "${cardNumPrefix}" は有効なメインデッキカードではありません。`);
