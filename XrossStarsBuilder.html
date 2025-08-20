@@ -14,44 +14,45 @@
         }
         .container {
             max-width: 1200px;
-            margin: 1rem auto;
-            padding: 1rem;
+            margin: 1.5rem auto; /* マージンを増やしてより広々とした印象に */
+            padding: 1.5rem; /* パディングを増やしてゆとりを持たせる */
             background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 16px; /* 角丸を少し大きく */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* シャドウをより強く、柔らかく */
         }
         .section-title {
-            font-size: 1.75rem;
+            font-size: 2rem; /* タイトルを大きく */
             font-weight: 700;
             color: #2c3e50;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.75rem; /* マージンを調整 */
             border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 0.75rem;
+            padding-bottom: 0.85rem;
         }
         .input-group {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: 1.25rem; /* ギャップを広げる */
+            margin-bottom: 1.25rem;
             align-items: center;
         }
         .input-field {
             flex-grow: 1;
-            padding: 0.75rem 1rem;
+            padding: 0.85rem 1.15rem; /* パディングを調整 */
             border: 1px solid #d1d5db;
-            border-radius: 8px;
+            border-radius: 10px; /* 角丸を調整 */
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
         .input-field:focus {
             border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.35); /* フォーカス時のシャドウを強調 */
         }
         .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
+            padding: 0.85rem 1.65rem; /* パディングを調整 */
+            border-radius: 10px; /* 角丸を調整 */
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ボタンにデフォルトシャドウ */
         }
         .btn-primary {
             background-color: #3b82f6;
@@ -59,7 +60,8 @@
         }
         .btn-primary:hover {
             background-color: #2563eb;
-            transform: translateY(-1px);
+            transform: translateY(-2px); /* ホバーで少し浮き上がる */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* ホバーでシャドウを強調 */
         }
         .btn-danger {
             background-color: #ef4444;
@@ -67,7 +69,8 @@
         }
         .btn-danger:hover {
             background-color: #dc2626;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
         }
         .btn-secondary {
             background-color: #6b7280;
@@ -75,22 +78,24 @@
         }
         .btn-secondary:hover {
             background-color: #4b5563;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
         }
         .card-list {
             background-color: #f9fafb;
-            border-radius: 8px;
-            padding: 1rem;
-            min-height: 100px;
+            border-radius: 12px;
+            padding: 1.25rem;
+            min-height: 120px;
             border: 1px dashed #d1d5db;
         }
         .card-item {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            padding: 0.5rem 0;
+            padding: 0.65rem 0;
             border-bottom: 1px solid #e5e7eb;
             flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
         .card-item:last-child {
             border-bottom: none;
@@ -101,9 +106,9 @@
         }
         .card-detail-line {
             display: block;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             color: #4b5563;
-            margin-top: 0.25rem;
+            margin-top: 0.35rem;
         }
         .card-detail-line:first-of-type {
             margin-top: 0;
@@ -112,63 +117,68 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            gap: 0.5rem;
-            margin-left: 1rem;
+            gap: 0.75rem;
+            margin-left: 1.25rem;
             flex-shrink: 0;
         }
         .quantity-btn {
-            padding: 0.25rem 0.6rem;
-            border-radius: 6px;
+            padding: 0.3rem 0.7rem;
+            border-radius: 8px; /* 角丸を調整 */
             font-weight: 700;
             cursor: pointer;
             background-color: #60a5fa;
             color: white;
-            transition: background-color 0.2s;
-            width: 30px;
+            transition: background-color 0.2s, transform 0.1s;
+            width: 35px; /* 幅を調整 */
             text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         .quantity-btn:hover {
             background-color: #3b82f6;
+            transform: translateY(-1px);
         }
         .quantity-display {
             font-weight: 600;
-            padding: 0.25rem 0.5rem;
-            min-width: 30px;
+            padding: 0.3rem 0.6rem;
+            min-width: 35px;
             text-align: center;
         }
         .validation-message {
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            margin-top: 1rem;
+            padding: 1rem 1.25rem; /* パディングを調整 */
+            border-radius: 10px; /* 角丸を調整 */
+            margin-top: 1.25rem;
             font-weight: 600;
         }
         .validation-success {
             background-color: #d1fae5;
             color: #065f46;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.15); /* 成功メッセージにシャドウ */
         }
         .validation-warning {
             background-color: #fef3c7;
             color: #92400e;
+            box-shadow: 0 2px 8px rgba(251, 191, 36, 0.15); /* 警告メッセージにシャドウ */
         }
         .validation-error {
             background-color: #fee2e2;
             color: #991b1b;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15); /* エラーメッセージにシャドウ */
         }
         /* Autocomplete styles */
         .autocomplete-suggestions {
             border: 1px solid #d1d5db;
             background: #fff;
             overflow: auto;
-            max-height: 150px;
-            border-radius: 8px;
+            max-height: 180px; /* 高さを少し高く */
+            border-radius: 10px; /* 角丸を調整 */
             z-index: 10;
             position: absolute;
             width: calc(100% - 2rem);
-            margin-top: 4px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 6px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15); /* シャドウを強調 */
         }
         .autocomplete-suggestion {
-            padding: 0.75rem 1rem;
+            padding: 0.85rem 1.15rem; /* パディングを調整 */
             cursor: pointer;
             border-bottom: 1px solid #e5e7eb;
         }
@@ -189,13 +199,13 @@
         .card-catalog-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
+            margin-top: 1.75rem;
+            font-size: 0.95rem; /* フォントサイズを少し大きく */
             table-layout: fixed;
         }
         .card-catalog-table th, .card-catalog-table td {
             border: 1px solid #e5e7eb;
-            padding: 0.75rem;
+            padding: 0.85rem; /* パディングを調整 */
             text-align: left;
             vertical-align: top;
         }
@@ -214,54 +224,53 @@
             background-color: #e0f7fa;
         }
         .table-scroll-container {
-            max-height: 500px;
+            max-height: 550px; /* 高さを調整 */
             overflow-y: auto;
-            border-radius: 8px;
+            border-radius: 12px; /* 角丸を調整 */
             border: 1px solid #d1d5db;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* テーブルコンテナにもシャドウ */
         }
         /* Card Image Grid Styles (Updated for responsiveness) */
         .card-image-grid {
-            /* These Tailwind classes will be applied directly in JS to override this */
             display: grid;
-            gap: 1rem;
-            padding: 1rem;
+            gap: 1.25rem; /* ギャップを広げる */
+            padding: 1.25rem;
             background-color: #f9fafb;
-            border-radius: 8px;
+            border-radius: 12px;
             border: 1px dashed #d1d5db;
-            max-height: 70vh;
+            max-height: 75vh; /* 高さを調整 */
             overflow-y: auto;
         }
         .card-image-item {
             background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border-radius: 10px; /* 角丸を調整 */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); /* シャドウを強調 */
             overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-bottom: 0.5rem;
+            padding-bottom: 0.6rem;
             cursor: pointer;
-            transition: transform 0.1s ease-in-out;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s;
         }
         .card-image-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px); /* ホバーでより大きく浮き上がる */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); /* ホバーでシャドウを強調 */
         }
         .card-image-item img {
             width: 100%;
             height: auto;
             border-bottom: 1px solid #e5e7eb;
             object-fit: contain;
-            /* Placeholder specific styling */
             background-color: #e0e0e0;
-            min-height: 150px;
+            min-height: 160px; /* 最小高さを調整 */
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: #666;
             text-align: center;
-            padding: 0.5rem;
+            padding: 0.6rem;
         }
 
         .card-image-controls {
@@ -269,13 +278,13 @@
             justify-content: space-around;
             align-items: center;
             width: 100%;
-            padding: 0.5rem 0.25rem;
+            padding: 0.6rem 0.35rem;
         }
         .card-image-controls button {
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1.3rem; /* アイコンサイズを大きく */
             color: #60a5fa;
             transition: color 0.2s;
         }
@@ -285,7 +294,7 @@
         .card-image-quantity {
             font-weight: 600;
             color: #333;
-            font-size: 0.9rem;
+            font-size: 1rem; /* フォントサイズを大きく */
         }
 
         /* Modal Styles */
@@ -295,7 +304,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.75); /* 背景をより暗く */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -303,9 +312,9 @@
         }
         .modal-content {
             background-color: #fff;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 2rem; /* パディングを増やす */
+            border-radius: 16px; /* 角丸を大きく */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3); /* モーダルシャドウを強調 */
             max-width: 90%;
             max-height: 90%;
             overflow-y: auto;
@@ -313,13 +322,14 @@
         }
         .modal-close-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 15px; /* 位置を調整 */
+            right: 15px; /* 位置を調整 */
             background: none;
             border: none;
-            font-size: 1.8rem;
+            font-size: 2rem; /* サイズを大きく */
             cursor: pointer;
             color: #888;
+            transition: color 0.2s;
         }
         .modal-close-btn:hover {
             color: #333;
@@ -391,25 +401,25 @@
         </div>
 
         <!-- Top Navigation and Deck Button -->
-        <div class="flex flex-col gap-3 mb-6">
-            <div class="flex justify-center gap-3">
-                <button id="showDeckBtn" class="btn btn-primary px-5 py-2.5">デッキ</button>
-                <button id="generateDeckImageBtn" class="btn btn-primary px-5 py-2.5">デッキ画像</button>
+        <div class="flex flex-col gap-4 mb-8"> <!-- ギャップとマージンを調整 -->
+            <div class="flex justify-center gap-4">
+                <button id="showDeckBtn" class="btn btn-primary px-6 py-3">デッキ</button> <!-- パディングを調整 -->
+                <button id="generateDeckImageBtn" class="btn btn-primary px-6 py-3">デッキ画像</button>
             </div>
-            <div class="flex justify-center gap-3">
-                <button id="showLeaderCatalogBtn" class="btn btn-primary px-5 py-2.5">リーダー</button>
-                <button id="showMainCatalogBtn" class="btn btn-primary px-5 py-2.5">メイン</button>
-                <button id="showTacticsCatalogBtn" class="btn btn-primary px-5 py-2.5">タクティクス</button>
+            <div class="flex justify-center gap-4">
+                <button id="showLeaderCatalogBtn" class="btn btn-primary px-6 py-3">リーダー</button>
+                <button id="showMainCatalogBtn" class="btn btn-primary px-6 py-3">メイン</button>
+                <button id="showTacticsCatalogBtn" class="btn btn-primary px-6 py-3">タクティクス</button>
             </div>
         </div>
 
         <!-- Search, Sort, Display Toggle -->
-        <div class="flex flex-wrap items-center gap-4 mb-6 p-4 bg-blue-50 rounded-lg shadow-inner">
+        <div class="flex flex-wrap items-center gap-4 mb-8 p-5 bg-blue-50 rounded-lg shadow-inner"> <!-- パディングとマージンを調整 -->
             <div class="input-container flex-grow max-w-sm">
                 <input type="text" id="searchCatalogInput" placeholder="カードを検索..." class="input-field w-full">
             </div>
             
-            <select id="colorFilterSelect" class="p-2 border border-gray-300 rounded-md">
+            <select id="colorFilterSelect" class="p-3 border border-gray-300 rounded-md"> <!-- パディングを調整 -->
                 <option value="全て">色</option>
                 <option value="赤">赤</option>
                 <option value="青">青</option>
@@ -417,13 +427,13 @@
                 <option value="緑">緑</option>
             </select>
 
-            <select id="cardTypeFilterSelect" class="p-2 border border-gray-300 rounded-md">
+            <select id="cardTypeFilterSelect" class="p-3 border border-gray-300 rounded-md">
                 <option value="全て">種類</option>
                 <option value="アタックカード">アタックカード</option>
                 <option value="メモリアカード">メモリアカード</option>
             </select>
 
-            <select id="costFilterSelect" class="p-2 border border-gray-300 rounded-md">
+            <select id="costFilterSelect" class="p-3 border border-gray-300 rounded-md">
                 <option value="全て">コスト</option>
                 <option value="0">0</option>
                 <option value="1">1</option>
@@ -433,21 +443,21 @@
             </select>
 
             <!-- New Build Rule/ACE Filter Dropdown -->
-            <select id="buildRuleFilterSelect" class="p-2 border border-gray-300 rounded-md">
+            <select id="buildRuleFilterSelect" class="p-3 border border-gray-300 rounded-md">
                 <option value="すべて">ビルドルールすべて</option>
                 <option value="ありのみ">ビルドルールありのみ</option>
                 <option value="なしのみ">ビルドルールなしのみ</option>
                 <option value="エースのみ">エースのみ</option>
             </select>
 
-            <select id="sortCriterion" class="p-2 border border-gray-300 rounded-md">
+            <select id="sortCriterion" class="p-3 border border-gray-300 rounded-md">
                 <option value="カード名">カード名でソート</option>
                 <option value="コスト">コストでソート</option>
                 <option value="レアリティ">レアリティでソート</option>
                 <option value="色">色でソート</option>
             </select>
-            <button id="sortDirectionBtn" class="btn btn-primary px-4 py-2">昇順</button>
-            <button id="toggleDisplayBtn" class="btn btn-secondary px-4 py-2">表示切替: 画像一覧</button>
+            <button id="sortDirectionBtn" class="btn btn-primary px-5 py-2.5">昇順</button>
+            <button id="toggleDisplayBtn" class="btn btn-secondary px-5 py-2.5">表示切替: 画像一覧</button>
         </div>
         
         <!-- Card Catalog Display Area (Dynamic Content) -->
@@ -456,15 +466,15 @@
         </div>
 
         <!-- Validation and Summary Section -->
-        <div class="mt-8 p-6 bg-gray-50 rounded-lg shadow-inner">
+        <div class="mt-10 p-7 bg-gray-50 rounded-lg shadow-inner"> <!-- マージンとパディングを調整 -->
             <h2 class="section-title">現在のデッキ状況</h2>
-            <div id="leaderValidation" class="validation-message validation-warning mb-2">
+            <div id="leaderValidation" class="validation-message validation-warning mb-3"> <!-- マージンを調整 -->
                 リーダーカードは現在 <span id="currentLeaderCount">0</span>/4 枚です。
             </div>
-            <div id="mainDeckSummary" class="p-4 bg-blue-50 rounded-lg text-blue-800 font-semibold mb-2">
+            <div id="mainDeckSummary" class="p-5 bg-blue-50 rounded-lg text-blue-800 font-semibold mb-3">
                 メインデッキ: <span id="totalMainCards">0</span>/50 枚 | エースカード: <span id="totalAceCards">0</span>/8 枚
             </div>
-            <div id="mainDeckValidation" class="validation-message validation-warning mb-2">
+            <div id="mainDeckValidation" class="validation-message validation-warning mb-3">
                 メインデッキの枚数とルールの確認。
             </div>
             <div id="tacticsValidation" class="validation-message validation-warning">
@@ -473,9 +483,9 @@
         </div>
 
         <!-- Export/Import Section -->
-        <div class="mb-8 p-6 bg-blue-50 rounded-lg shadow-inner">
+        <div class="mt-8 p-7 bg-blue-50 rounded-lg shadow-inner"> <!-- マージンとパディングを調整 -->
             <h2 class="section-title">デッキの入出力</h2>
-            <button id="toggleExportImportBtn" class="btn btn-secondary w-full mb-4">入出力セクションを表示/非表示</button>
+            <button id="toggleExportImportBtn" class="btn btn-secondary w-full mb-5">入出力セクションを表示/非表示</button> <!-- マージンを調整 -->
             <div id="exportImportContent" class="hidden">
                 <div class="input-group">
                     <label for="deckNameInput" class="font-semibold text-gray-700">デッキ名:</label>
@@ -484,9 +494,9 @@
                 <div class="flex flex-col gap-4">
                     <div>
                         <button id="exportDeckBtn" class="btn btn-primary w-full">デッキをエクスポート</button>
-                        <button id="copyExportedDataBtn" class="btn btn-primary w-full mt-2 hidden">コピー</button>
+                        <button id="copyExportedDataBtn" class="btn btn-primary w-full mt-3 hidden">コピー</button> <!-- マージンを調整 -->
                     </div>
-                    <textarea id="deckDataTextarea" class="input-field h-40 text-sm" placeholder="ここにデッキデータが表示されます（エクスポート/インポート用）。"></textarea>
+                    <textarea id="deckDataTextarea" class="input-field h-48 text-sm" placeholder="ここにデッキデータが表示されます（エクスポート/インポート用）。"></textarea> <!-- 高さを調整 -->
                     <div>
                         <button id="importDeckBtn" class="btn btn-primary w-full">デッキをインポート</button>
                     </div>
@@ -502,21 +512,21 @@
         <div class="modal-content w-11/12 md:w-3/4 lg:w-2/3">
             <button class="modal-close-btn" id="closeDeckViewModal">&times;</button>
             <h3 class="text-2xl font-bold mb-4">現在のデッキ: <span id="modalDeckName"></span></h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-7"> <!-- ギャップとマージンを調整 -->
                 <div>
-                    <h4 class="font-semibold text-lg mb-2">リーダーカード (<span id="modalLeaderCount">0</span>/4)</h4>
-                    <div id="modalLeaderCards" class="flex flex-wrap gap-2"></div>
+                    <h4 class="font-semibold text-xl mb-3">リーダーカード (<span id="modalLeaderCount">0</span>/4)</h4> <!-- フォントサイズを調整 -->
+                    <div id="modalLeaderCards" class="flex flex-wrap gap-3"></div> <!-- ギャップを調整 -->
                 </div>
                 <div>
-                    <h4 class="font-semibold text-lg mb-2">メインデッキ (<span id="modalMainCount">0</span>/50)</h4>
-                    <div id="modalMainCards" class="flex flex-wrap gap-2"></div>
+                    <h4 class="font-semibold text-xl mb-3">メインデッキ (<span id="modalMainCount">0</span>/50)</h4>
+                    <div id="modalMainCards" class="flex flex-wrap gap-3"></div>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-lg mb-2">タクティクスデッキ (<span id="modalTacticsCount">0</span>/5)</h4>
-                    <div id="modalTacticsCards" class="flex flex-wrap gap-2"></div>
+                    <h4 class="font-semibold text-xl mb-3">タクティクスデッキ (<span id="modalTacticsCount">0</span>/5)</h4>
+                    <div id="modalTacticsCards" class="flex flex-wrap gap-3"></div>
                 </div>
             </div>
-            <div class="text-sm text-gray-600">
+            <div class="text-base text-gray-600"> <!-- フォントサイズを調整 -->
                 <p>エースカード: <span id="modalAceCount">0</span>/8</p>
             </div>
         </div>
@@ -526,8 +536,8 @@
     <div id="cardDetailModal" class="modal-overlay hidden">
         <div class="modal-content w-11/12 md:w-1/2 lg:w-1/3">
             <button class="modal-close-btn" id="closeCardDetailModal">&times;</button>
-            <img id="modalCardImage" src="" alt="Card Image" class="w-full h-auto rounded-lg mb-4">
-            <h3 id="modalCardName" class="text-xl font-bold mb-2"></h3>
+            <img id="modalCardImage" src="" alt="Card Image" class="w-full h-auto rounded-lg mb-4 shadow-lg"> <!-- 画像にもシャドウ -->
+            <h3 id="modalCardName" class="text-2xl font-bold mb-2"></h3> <!-- フォントサイズを調整 -->
             <p id="modalCardNumber" class="text-sm text-gray-600 mb-1"></p>
             <p id="modalCardType" class="text-sm text-gray-600 mb-1"></p>
             <p id="modalCardColor" class="text-sm text-gray-600 mb-1"></p>
@@ -536,18 +546,18 @@
             <p id="modalCardRules" class="text-sm text-gray-600 mb-1"></p>
             <p id="modalCardTag" class="text-sm text-gray-600 mb-1"></p>
             <p id="modalCardStats" class="text-sm text-gray-600 mb-1"></p>
-            <p id="modalCardText" class="text-base text-gray-800 whitespace-pre-wrap mt-2"></p>
+            <p id="modalCardText" class="text-lg text-gray-800 whitespace-pre-wrap mt-3"></p> <!-- フォントサイズとマージンを調整 -->
         </div>
     </div>
 
     <!-- Deck Image Modal -->
     <div id="deckImageModal" class="modal-overlay hidden">
-        <div class="modal-content max-w-full max-h-full p-4">
+        <div class="modal-content max-w-full max-h-full p-5"> <!-- パディングを調整 -->
             <button class="modal-close-btn" id="closeDeckImageModal">&times;</button>
-            <h3 class="text-2xl font-bold mb-4 text-center">生成されたデッキ画像</h3>
+            <h3 class="text-2xl font-bold mb-5 text-center">生成されたデッキ画像</h3> <!-- マージンを調整 -->
             <div class="flex flex-col items-center">
-                <canvas id="deckCanvas" class="border border-gray-300 rounded-md shadow-lg"></canvas>
-                <a id="downloadDeckImage" download="XrossStars_Deck_Image.png" class="btn btn-primary mt-4 py-2 px-6">画像をダウンロード</a>
+                <canvas id="deckCanvas" class="border border-gray-300 rounded-md shadow-xl"></canvas> <!-- キャンバスにもシャドウ -->
+                <a id="downloadDeckImage" download="XrossStars_Deck_Image.png" class="btn btn-primary mt-5 py-3 px-7">画像をダウンロード</a> <!-- マージンとパディングを調整 -->
             </div>
         </div>
     </div>
@@ -1301,11 +1311,156 @@
                     (b['カード名'] || '').localeCompare(a['カード名'] || '');
             });
 
+            // スクロール位置を保存する要素を特定
+            let scrollableElement = null;
+            if (catalogDisplayArea.firstElementChild) {
+                if (displayMode === 'image' && catalogDisplayArea.firstElementChild.classList.contains('card-image-grid')) {
+                    scrollableElement = catalogDisplayArea.firstElementChild;
+                } else if (displayMode === 'table' && catalogDisplayArea.firstElementChild.classList.contains('table-scroll-container')) {
+                    scrollableElement = catalogDisplayArea.firstElementChild;
+                }
+            }
+            const savedScrollTop = scrollableElement ? scrollableElement.scrollTop : 0;
+
+
+            catalogDisplayArea.innerHTML = ''; // Clear previous content
+
             // Step 5: Render based on display mode
             if (displayMode === 'image') {
-                renderImageCatalog(sortedCards, currentTab);
-            } else {
-                renderTableCatalog(sortedCards, currentTab);
+                const grid = document.createElement('div');
+                grid.className = 'card-image-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6';
+
+                if (sortedCards.length === 0) {
+                    grid.innerHTML = '<p class="text-center text-gray-500 italic col-span-full">該当するカードがありません。</p>';
+                } else {
+                    sortedCards.forEach(card => {
+                        const imageUrl = getCardImageUrl(card);
+                        let quantityInDeck = 0;
+                        let maxQuantity = 1;
+
+                        if (currentTab === 'leader') {
+                            quantityInDeck = leaderDeck.some(dc => dc.name === card['カード名']) ? 1 : 0;
+                            maxQuantity = 1;
+                        } else if (currentTab === 'main') {
+                            const deckCard = mainDeck.find(dc => dc.name === card['カード名']);
+                            quantityInDeck = deckCard ? deckCard.quantity : 0;
+                            maxQuantity = 4;
+                        } else if (currentTab === 'tactics') {
+                            quantityInDeck = tacticsDeck.some(dc => dc.name === card['カード名']) ? 1 : 0;
+                            maxQuantity = 1;
+                        }
+
+                        const cardItem = document.createElement('div');
+                        cardItem.className = 'card-image-item';
+                        cardItem.setAttribute('data-card-name', card['カード名']);
+                        cardItem.setAttribute('data-card-type', currentTab);
+
+                        cardItem.innerHTML = `
+                            <img src="${imageUrl}" alt="${card['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/150x210/cccccc/333333?text=Load+Error';">
+                            <div class="card-image-controls">
+                                <button class="view-detail-btn" data-card-name="${card['カード名']}">🔎</button>
+                                <span class="card-image-quantity">${quantityInDeck} / ${maxQuantity}</span>
+                                <button class="remove-card-btn" data-card-name="${card['カード名']}" data-card-type="${currentTab}">✕</button>
+                            </div>
+                        `;
+
+                        cardItem.querySelector('img').addEventListener('click', () => {
+                            addCardToDeck(card['カード名'], 1, currentTab);
+                        });
+
+                        cardItem.querySelector('.remove-card-btn').addEventListener('click', (event) => {
+                            event.stopPropagation();
+                            removeCardFromDeck(card['カード名'], currentTab);
+                        });
+
+                        cardItem.querySelector('.view-detail-btn').addEventListener('click', (event) => {
+                            event.stopPropagation();
+                            showCardDetailModal(card['カード名']);
+                        });
+                        grid.appendChild(cardItem);
+                    });
+                }
+                catalogDisplayArea.appendChild(grid);
+                scrollableElement = grid; // Update scrollable element reference to the new grid
+            } else { // table mode
+                const tableScrollContainer = document.createElement('div');
+                tableScrollContainer.className = 'table-scroll-container';
+                const table = document.createElement('table');
+                table.className = 'card-catalog-table';
+                const thead = document.createElement('thead');
+                const tbody = document.createElement('tbody');
+                table.appendChild(thead);
+                table.appendChild(tbody);
+
+                let headers = [];
+                let columnRenderers = [];
+                let colspan = 0;
+
+                if (currentTab === 'leader') {
+                    headers = ['カード名', 'タグ', '色', 'HP', 'ATK', 'カードテキスト', ''];
+                    columnRenderers = [
+                        card => card['カード名'] + (card['ACE'] ? `<span class="text-red-600 font-bold">(エース)</span>` : ''),
+                        card => card['タグ'] || '',
+                        card => card['色'] || '',
+                        card => card['覚醒前HP'] || '',
+                        card => card['覚醒前ATK'] || '',
+                        card => card['カードテキスト'] || ''
+                    ];
+                    colspan = headers.length;
+                } else if (currentTab === 'main') {
+                    headers = ['カード名', '種類', '色', 'コスト', 'ビルドルール', 'カードテキスト', ''];
+                    columnRenderers = [
+                        card => card['カード名'] + (card['ACE'] ? `<span class="text-red-600 font-bold">(エース)</span>` : ''),
+                        card => card['カード種類'],
+                        card => card['色'] || '',
+                        card => card['コスト'] || '',
+                        card => card['ビルドルール'] || '',
+                        card => card['カードテキスト'] || ''
+                    ];
+                    colspan = headers.length;
+                } else if (currentTab === 'tactics') {
+                    headers = ['カード名', '種類', 'コスト', 'カードテキスト', ''];
+                    columnRenderers = [
+                        card => card['カード名'],
+                        card => card['カード種類'],
+                        card => card['コスト'] || '',
+                        card => card['カードテキスト'] || ''
+                    ];
+                    colspan = headers.length;
+                }
+
+                thead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+
+                if (sortedCards.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="${colspan}" class="text-center text-gray-500 italic">該当するカードがありません。</td></tr>`;
+                } else {
+                    sortedCards.forEach(card => {
+                        const tr = document.createElement('tr');
+                        let tdContent = columnRenderers.map(renderer => `<td>${renderer(card)}</td>`).join('');
+                        
+                        tr.innerHTML = `
+                            ${tdContent}
+                            <td>
+                                <div class="catalog-add-controls">
+                                    <input type="number" value="1" min="1" max="4" class="card-quantity-input">
+                                    <button class="add-card-from-catalog btn btn-primary text-sm" data-card-name="${card['カード名']}" data-card-type="${currentTab}">追加</button>
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+                tableScrollContainer.appendChild(table);
+                catalogDisplayArea.appendChild(tableScrollContainer);
+                scrollableElement = tableScrollContainer; // Update scrollable element reference to the new table container
+            }
+
+            // Restore scroll position after the new DOM is attached
+            if (scrollableElement) {
+                // DOMが更新されるのを待ってからスクロール位置を復元
+                requestAnimationFrame(() => {
+                    scrollableElement.scrollTop = savedScrollTop;
+                });
             }
         }
 
@@ -1634,8 +1789,8 @@
                         ctx.fillText(cardName, (PADDING + col * (CARD_WIDTH + PADDING)) + CARD_WIDTH / 2, textY, CARD_WIDTH - 4);
 
 
-                        // メインデッキカードで枚数が1より大きい場合に枚数を描画
-                        if (item.type === 'main' && item.displayQuantity > 1) {
+                        // メインデッキカードで枚数が1以上の場合に枚数を描画 (変更点)
+                        if (item.type === 'main' && item.displayQuantity >= 1) { // 変更箇所
                             ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; // 数量の背景色
                             ctx.beginPath();
                             const radius = QUANTITY_FONT_SIZE / 2 + 8;
