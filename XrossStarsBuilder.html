@@ -219,10 +219,10 @@
             border-radius: 8px;
             border: 1px solid #d1d5db;
         }
-        /* Card Image Grid Styles */
+        /* Card Image Grid Styles (Updated for responsiveness) */
         .card-image-grid {
+            /* These Tailwind classes will be applied directly in JS to override this */
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 1rem;
             padding: 1rem;
             background-color: #f9fafb;
@@ -804,7 +804,7 @@
 ,Never Fall,BP01-062/100 SR,メモリアカード,青,1,SR,,,,,,,ACE,,【プレイ時】カードを3枚引く。,第1弾『Luminous Daybreak』,ran9u
 ,苦難の昇格,BP01-063/100 C,メモリアカード,青,1,C,,,,,,,,,"【プレイ時】カードを2枚引き、手札を2枚捨てる。\n【アタック強化】次のアタックのダメージ+30。",第1弾『Luminous Daybreak』,mowa
 ,ゾーン状態,BP01-064/100 C,メモリアカード,青,2,C,,,,,,,,,【アタック強化】次のアタックのダメージ+80。,第1弾『Luminous Daybreak』,MUGENUP
-,汚部屋の住人,BP01-065/100 C,メモリアカード,青,1,C,リーダー：一ノ瀬うるは,,,,,,,,【アタック強化】次のアタックのダメージ+60。,第1弾『Luminous Daybreak』,葉かま
+,汚部屋の住人,BP01-065/100 C,メモoriaカード,青,1,C,リーダー：一ノ瀬うるは,,,,,,,,【アタック強化】次のアタックのダメージ+60。,第1弾『Luminous Daybreak』,葉かま
 ,博聞強記,BP01-066/100 UC,メモリアカード,青,1,UC,リーダー：Kamito,,,,,,,,"【プレイ時】カードを1枚引く。\n【アタック強化】次のアタックのダメージ+30。",第1弾『Luminous Daybreak』,ゆーり
 ,いつも安全運転,BP01-067/100 R,メモリアカード,青,1,R,リーダー：小雀とと,,,,,,,,【プレイ時】カードを2枚引く。,第1弾『Luminous Daybreak』,ハナモト
 ,運命のルーレット,BP01-068/100 C,メモリアカード,青,1,C,リーダー：渋谷ハル,,,,,,,,【プレイ時】メモリアカードかアタックカードのどちらかを宣言し、自分のデッキの上から1枚を公開する。そのカードが宣言したカードタイプならカードを4枚引く。それ以外なら公開したカードをトラッシュに置く。,第1弾『Luminous Daybreak』,はにわ
@@ -880,6 +880,30 @@
             // Initial render
             renderCatalog();
             updateFilterAndSortUI(); // Initial filter/sort UI update
+        }
+
+        function parseCsvLine(line) {
+            const result = [];
+            let inQuote = false;
+            let currentField = '';
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    if (inQuote && i + 1 < line.length && line[i+1] === '"') {
+                        currentField += '"';
+                        i++;
+                    } else {
+                        inQuote = !inQuote;
+                    }
+                } else if (char === ',' && !inQuote) {
+                    result.push(currentField);
+                    currentField = '';
+                } else {
+                    currentField += char;
+                }
+            }
+            result.push(currentField);
+            return result;
         }
 
         /**
@@ -1137,7 +1161,8 @@
         function renderImageCatalog(cardsToDisplay, currentDisplayTab) {
             catalogDisplayArea.innerHTML = ''; // Clear previous content
             const grid = document.createElement('div');
-            grid.className = 'card-image-grid';
+            // Apply Tailwind responsive grid classes directly
+            grid.className = 'card-image-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6';
 
             if (cardsToDisplay.length === 0) {
                 grid.innerHTML = '<p class="text-center text-gray-500 italic col-span-full">該当するカードがありません。</p>';
@@ -1303,8 +1328,8 @@
 
             // Step 3: Apply additional filters
             filteredCards = filteredCards.filter(card => {
-                // Color filter (always applies)
-                if (selectedFilterColor !== '全て' && card['色'] !== selectedFilterColor) {
+                // Color filter (always applies unless hidden by UI logic)
+                if (colorFilterSelect.style.display !== 'none' && selectedFilterColor !== '全て' && card['色'] !== selectedFilterColor) {
                     return false;
                 }
 
@@ -1338,40 +1363,49 @@
 
             // Step 4: Apply sorting
             const sortedCards = [...filteredCards].sort((a, b) => {
-                let valA, valB;
                 const criterion = currentSort.criterion;
+                const direction = currentSort.direction;
 
-                // Define sort order for colors
-                const colorOrder = { '赤': 1, '青': 2, '黄': 3, '緑': 4, '': 5 }; // '無' removed
-                const colorA = colorOrder[a['色']] || 99; // Unknown colors last
-                const colorB = colorOrder[b['色']] || 99;
-                
-                if (criterion === '色' && colorA !== colorB) {
-                    return currentSort.direction === 'asc' ? colorA - colorB : colorB - colorA;
+                const colorOrder = { '赤': 1, '青': 2, '黄': 3, '緑': 4, '無': 5, '': 99 }; // '無' added for Tactics cards, '' for unknown colors
+
+                let compareResult = 0;
+
+                // Primary sort for Leader/Main by '色'
+                if (criterion === '色' && currentTab !== 'tactics') { // Tactics cards don't use '色' for sorting
+                    const colorA = colorOrder[a['色']] || 99;
+                    const colorB = colorOrder[b['色']] || 99;
+                    compareResult = colorA - colorB;
+                    if (compareResult !== 0) return direction === 'asc' ? compareResult : -compareResult;
                 }
 
-                // Sort by Cost (numeric)
-                if (criterion === 'コスト') {
+                // Secondary sort for Leader by 'タグ'
+                if (criterion === 'タグ' && currentTab === 'leader') {
+                    const tagA = a['タグ'] || '';
+                    const tagB = b['タグ'] || '';
+                    compareResult = tagA.localeCompare(tagB);
+                    if (compareResult !== 0) return direction === 'asc' ? compareResult : -compareResult;
+                }
+
+                // Primary sort for Main/Tactics by 'コスト' (if applicable)
+                if (criterion === 'コスト' && (currentTab === 'main' || currentTab === 'tactics')) {
                     const costA = parseInt(a[criterion]) || 0;
                     const costB = parseInt(b[criterion]) || 0;
-                    if (costA !== costB) {
-                        return currentSort.direction === 'asc' ? costA - costB : costB - costA;
-                    }
+                    compareResult = costA - costB;
+                    if (compareResult !== 0) return direction === 'asc' ? compareResult : -compareResult;
                 }
-                
-                // Sort by Rarity (custom order)
-                if (criterion === 'レアリティ') {
-                    const rarityOrder = { 'LR': 1, 'SR': 2, 'R': 3, 'UC': 4, 'C': 5, 'TR': 6 };
+
+                // Primary sort for Main/Leader by 'レアリティ'
+                if (criterion === 'レアリティ' && currentTab !== 'tactics') { // Tactics cards don't use 'レアリティ' for sorting
+                    const rarityOrder = { 'LR': 1, 'SR': 2, 'R': 3, 'UC': 4, 'C': 5, 'TR': 6 }; // TR for Tactics
                     const rarityA = rarityOrder[a[criterion]] || 99;
                     const rarityB = rarityOrder[b[criterion]] || 99;
-                    if (rarityA !== rarityB) {
-                        return currentSort.direction === 'asc' ? rarityA - rarityB : rarityB - rarityA;
-                    }
+                    compareResult = rarityA - rarityB;
+                    if (compareResult !== 0) return direction === 'asc' ? compareResult : -compareResult;
                 }
 
 
                 // Fallback / Primary sort by Card Name (alphabetic)
-                return currentSort.direction === 'asc' ?
+                return direction === 'asc' ?
                     (a['カード名'] || '').localeCompare(b['カード名'] || '') :
                     (b['カード名'] || '').localeCompare(a['カード名'] || '');
             });
@@ -1388,61 +1422,60 @@
          * フィルターとソートUIの表示/非表示、オプションの更新を行う
          */
         function updateFilterAndSortUI() {
-            // 全てのフィルターとチェックボックスをデフォルトで表示
-            colorFilterSelect.style.display = 'inline-block';
-            cardTypeFilterSelect.style.display = 'inline-block';
-            costFilterSelect.style.display = 'inline-block';
-            buildRuleCheckboxLabel.style.display = 'flex';
+            // Reset all filters/checkboxes to hidden initially
+            colorFilterSelect.style.display = 'none';
+            cardTypeFilterSelect.style.display = 'none';
+            costFilterSelect.style.display = 'none';
+            buildRuleCheckboxLabel.style.display = 'none';
 
-            // ソート基準のオプションを初期化 (全て表示)
-            sortCriterionSelect.innerHTML = `
-                <option value="カード名">カード名でソート</option>
-                <option value="コスト">コストでソート</option>
-                <option value="レアリティ">レアリティでソート</option>
-                <option value="色">色でソート</option>
-            `;
-            // 現在のソート基準が有効であることを確認し、無効なら「カード名」にリセット
-            if (!['カード名', 'コスト', 'レアリティ', '色'].includes(currentSort.criterion)) {
-                currentSort.criterion = 'カード名';
-            }
-            sortCriterionSelect.value = currentSort.criterion;
+            // Reset sort options to a default set
+            sortCriterionSelect.innerHTML = `<option value="カード名">カード名でソート</option>`;
 
 
-            if (currentTab === 'leader' || currentTab === 'tactics') {
-                // リーダー/タクティクスでは不要なフィルターを非表示
-                cardTypeFilterSelect.style.display = 'none';
-                colorFilterSelect.style.display = 'none'; // タクティクスカードから色フィルターを削除
-                costFilterSelect.style.display = 'none';
-                buildRuleCheckboxLabel.style.display = 'none';
-
-                // リーダー/タクティクスでは不要なソートオプションを削除
-                const optionsToRemove = ['コスト', 'レアリティ', '色']; // 色を削除
-                Array.from(sortCriterionSelect.options).forEach(option => {
-                    if (optionsToRemove.includes(option.value)) {
-                        option.remove();
-                    }
-                });
-                // ソート基準が削除された場合は「カード名」にリセット
-                if (!Array.from(sortCriterionSelect.options).some(opt => opt.value === currentSort.criterion)) {
-                    currentSort.criterion = 'カード名';
-                    sortCriterionSelect.value = currentSort.criterion;
-                }
+            if (currentTab === 'leader') {
+                colorFilterSelect.style.display = 'inline-block'; // Show color filter for leaders
+                // Add sorting options specific to Leader cards
+                sortCriterionSelect.innerHTML += `
+                    <option value="タグ">タグでソート</option>
+                    <option value="色">色でソート</option>
+                    <option value="レアリティ">レアリティでソート</option>
+                `;
             } else if (currentTab === 'main') {
-                // メインデッキの場合のカード種類フィルターオプションを設定
+                colorFilterSelect.style.display = 'inline-block';
+                cardTypeFilterSelect.style.display = 'inline-block';
+                costFilterSelect.style.display = 'inline-block';
+                buildRuleCheckboxLabel.style.display = 'flex';
+                // Add sorting options specific to Main cards
+                sortCriterionSelect.innerHTML += `
+                    <option value="コスト">コストでソート</option>
+                    <option value="レアリティ">レアリティでソート</option>
+                    <option value="色">色でソート</option>
+                `;
+                // Main deck specific card type options
                 cardTypeFilterSelect.innerHTML = `
                     <option value="全て">種類で絞り込み</option>
                     <option value="アタックカード">アタックカード</option>
                     <option value="メモリアカード">メモリアカード</option>
                 `;
-                // 以前選択されていた値があれば維持する (なければ「全て」)
-                const currentCardTypeOptions = Array.from(cardTypeFilterSelect.options).map(opt => opt.value);
-                if (!currentCardTypeOptions.includes(selectedFilterCardType)) {
-                    selectedFilterCardType = '全て'; // 無効な値の場合はリセット
-                }
-                cardTypeFilterSelect.value = selectedFilterCardType;
+            } else if (currentTab === 'tactics') {
+                // Tactics cards only have Cost and Card Name as meaningful sort/filter options
+                costFilterSelect.style.display = 'inline-block';
+                // Add sorting options specific to Tactics cards
+                sortCriterionSelect.innerHTML += `
+                    <option value="コスト">コストでソート</option>
+                `;
             }
-            // 各フィルターの現在の選択値をUIに反映
+
+            // Ensure current sort criterion is still valid for the selected tab. If not, reset to 'カード名'.
+            const validSortOptions = Array.from(sortCriterionSelect.options).map(opt => opt.value);
+            if (!validSortOptions.includes(currentSort.criterion)) {
+                currentSort.criterion = 'カード名';
+            }
+            sortCriterionSelect.value = currentSort.criterion;
+
+            // Reflect current filter values in UI
             colorFilterSelect.value = selectedFilterColor;
+            cardTypeFilterSelect.value = selectedFilterCardType;
             costFilterSelect.value = selectedFilterCost;
             buildRuleCheckbox.checked = onlyBuildRule;
         }
