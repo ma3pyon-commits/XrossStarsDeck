@@ -3,106 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XrossStars デッキ構築</title>
+    <title>XrossStars Deck Builder</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- QRコード生成ライブラリは削除されました -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5;
+            background-color: #f0f2f5; /* Light background */
             color: #333;
         }
         .container {
             max-width: 1200px;
-            margin: 1.5rem auto; /* マージンを増やしてより広々とした印象に */
-            padding: 1.5rem; /* パディングを増やしてゆとりを持たせる */
+            margin: 1.5rem auto;
+            padding: 1.5rem;
             background-color: #ffffff;
-            border-radius: 16px; /* 角丸を少し大きく */
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* シャドウをより強く、柔らかく */
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25); /* Stronger shadow */
         }
         .section-title {
-            font-size: 2rem; /* タイトルを大きく */
+            font-size: 2rem;
             font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 1.75rem; /* マージンを調整 */
+            color: #2c3e50; /* Darker title text */
+            margin-bottom: 1.75rem;
             border-bottom: 2px solid #e0e0e0;
             padding-bottom: 0.85rem;
         }
         .input-group {
             display: flex;
-            gap: 1.25rem; /* ギャップを広げる */
+            gap: 1.25rem;
             margin-bottom: 1.25rem;
             align-items: center;
-            flex-wrap: wrap; /* 追加: 画面が小さい場合に要素を折り返す */
+            flex-wrap: wrap;
         }
         .input-field {
             flex-grow: 1;
-            padding: 0.85rem 1.15rem; /* パディングを調整 */
+            padding: 0.85rem 1.15rem;
             border: 1px solid #d1d5db;
-            border-radius: 10px; /* 角丸を調整 */
+            border-radius: 10px;
             outline: none;
             transition: border-color 0.3s, box-shadow 0.3s;
-            min-width: 0; /* 追加: flexアイテムとして適切に縮むように設定 */
+            min-width: 0;
         }
         .input-field:focus {
             border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.35); /* フォーカス時のシャドウを強調 */
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.45);
         }
         .btn {
-            padding: 0.85rem 1.65rem; /* パディングを調整 */
-            border-radius: 10px; /* 角丸を調整 */
+            padding: 0.85rem 1.65rem;
+            border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ボタンにデフォルトシャドウ */
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18); /* Slightly stronger default button shadow */
         }
         .btn-primary {
-            background-color: #3b82f6;
+            background-color: #2563eb; /* Deeper blue */
             color: white;
         }
         .btn-primary:hover {
-            background-color: #2563eb;
-            transform: translateY(-2px); /* ホバーで少し浮き上がる */
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* ホバーでシャドウを強調 */
+            background-color: #1e40af; /* Even deeper blue on hover */
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* More pronounced hover shadow */
         }
         .btn-danger {
-            background-color: #ef4444;
+            background-color: #dc2626; /* Deeper red */
             color: white;
         }
         .btn-danger:hover {
-            background-color: #dc2626;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            background-color: #b91c1c; /* Even deeper red on hover */
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
         .btn-secondary {
-            background-color: #6b7280;
+            background-color: #4b5563; /* Darker gray */
             color: white;
         }
         .btn-secondary:hover {
-            background-color: #4b5563;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            background-color: #374151; /* Even darker gray on hover */
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
         /* New style for catalog tab buttons */
         .btn-catalog-tab {
-            background-color: #bfdbfe; /* Lighter blue */
-            color: #1e40af; /* Darker blue text */
+            background-color: #2563eb; /* Use primary blue for tabs */
+            color: white;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
         }
         .btn-catalog-tab:hover {
-            background-color: #93c5fd; /* Even lighter blue on hover */
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            background-color: #1e40af; /* Darker blue on hover */
+            transform: translateY(-1px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+        /* Add an active state for tabs if needed */
+        .btn-catalog-tab.active {
+            border-bottom: 3px solid #bfdbfe; /* Light blue underline for active tab */
+            font-weight: 700;
         }
 
-        .card-list {
+
+
+
+        .card-list { /* This style block seems unused for current implementation, but kept for safety */
             background-color: #f9fafb;
             border-radius: 12px;
             padding: 1.25rem;
             min-height: 120px;
             border: 1px dashed #d1d5db;
         }
-        .card-item {
+        .card-item { /* This style block seems unused for current implementation, but kept for safety */
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
@@ -111,23 +120,23 @@
             flex-wrap: wrap;
             gap: 0.75rem;
         }
-        .card-item:last-child {
+        .card-item:last-child { /* This style block seems unused for current implementation, but kept for safety */
             border-bottom: none;
         }
-        .card-info {
+        .card-info { /* This style block seems unused for current implementation, but kept for safety */
             flex-grow: 1;
             min-width: 0;
         }
-        .card-detail-line {
+        .card-detail-line { /* This style block seems unused for current implementation, but kept for safety */
             display: block;
             font-size: 0.9rem;
             color: #4b5563;
             margin-top: 0.35rem;
         }
-        .card-detail-line:first-of-type {
+        .card-detail-line:first-of-type { /* This style block seems unused for current implementation, but kept for safety */
             margin-top: 0;
         }
-        .card-controls {
+        .card-controls { /* This style block seems unused for current implementation, but kept for safety */
             display: flex;
             flex-direction: row;
             align-items: center;
@@ -135,64 +144,64 @@
             margin-left: 1.25rem;
             flex-shrink: 0;
         }
-        .quantity-btn {
+        .quantity-btn { /* This style block seems unused for current implementation, but kept for safety */
             padding: 0.3rem 0.7rem;
-            border-radius: 8px; /* 角丸を調整 */
+            border-radius: 8px;
             font-weight: 700;
             cursor: pointer;
             background-color: #60a5fa;
             color: white;
             transition: background-color 0.2s, transform 0.1s;
-            width: 35px; /* 幅を調整 */
+            width: 35px;
             text-align: center;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        .quantity-btn:hover {
+        .quantity-btn:hover { /* This style block seems unused for current implementation, but kept for safety */
             background-color: #3b82f6;
             transform: translateY(-1px);
         }
-        .quantity-display {
+        .quantity-display { /* This style block seems unused for current implementation, but kept for safety */
             font-weight: 600;
             padding: 0.3rem 0.6rem;
             min-width: 35px;
             text-align: center;
         }
         .validation-message {
-            padding: 1rem 1.25rem; /* パディングを調整 */
-            border-radius: 10px; /* 角丸を調整 */
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
             margin-top: 1.25rem;
             font-weight: 600;
         }
         .validation-success {
             background-color: #d1fae5;
             color: #065f46;
-            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.15); /* 成功メッセージにシャドウ */
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2); /* Stronger shadow */
         }
         .validation-warning {
             background-color: #fef3c7;
             color: #92400e;
-            box-shadow: 0 2px 8px rgba(251, 191, 36, 0.15); /* 警告メッセージにシャドウ */
+            box-shadow: 0 2px 8px rgba(251, 191, 36, 0.2); /* Stronger shadow */
         }
         .validation-error {
             background-color: #fee2e2;
             color: #991b1b;
-            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15); /* エラーメッセージにシャドウ */
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2); /* Stronger shadow */
         }
         /* Autocomplete styles */
         .autocomplete-suggestions {
             border: 1px solid #d1d5db;
             background: #fff;
             overflow: auto;
-            max-height: 180px; /* 高さを少し高く */
-            border-radius: 10px; /* 角丸を調整 */
+            max-height: 180px;
+            border-radius: 10px;
             z-index: 10;
             position: absolute;
             width: calc(100% - 2rem);
             margin-top: 6px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.15); /* シャドウを強調 */
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2); /* Stronger shadow */
         }
         .autocomplete-suggestion {
-            padding: 0.85rem 1.15rem; /* パディングを調整 */
+            padding: 0.85rem 1.15rem;
             cursor: pointer;
             border-bottom: 1px solid #e5e7eb;
         }
@@ -214,12 +223,12 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 1.75rem;
-            font-size: 0.95rem; /* フォントサイズを少し大きく */
+            font-size: 0.95rem;
             table-layout: fixed;
         }
         .card-catalog-table th, .card-catalog-table td {
             border: 1px solid #e5e7eb;
-            padding: 0.85rem; /* パディングを調整 */
+            padding: 0.85rem;
             text-align: left;
             vertical-align: top;
         }
@@ -238,27 +247,27 @@
             background-color: #e0f7fa;
         }
         .table-scroll-container {
-            max-height: 550px; /* 高さを調整 */
+            max-height: 550px;
             overflow-y: auto;
-            border-radius: 12px; /* 角丸を調整 */
+            border-radius: 12px;
             border: 1px solid #d1d5db;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* テーブルコンテナにもシャドウ */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12); /* Slightly stronger container shadow */
         }
         /* Card Image Grid Styles (Updated for responsiveness) */
         .card-image-grid {
             display: grid;
-            gap: 1.25rem; /* ギャップを広げる */
+            gap: 1.25rem;
             padding: 1.25rem;
             background-color: #f9fafb;
             border-radius: 12px;
             border: 1px dashed #d1d5db;
-            max-height: 75vh; /* 高さを調整 */
+            max-height: 75vh;
             overflow-y: auto;
         }
         .card-image-item {
             background-color: #fff;
-            border-radius: 10px; /* 角丸を調整 */
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); /* シャドウを強調 */
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Slightly stronger card item shadow */
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -268,8 +277,8 @@
             transition: transform 0.2s ease-in-out, box-shadow 0.2s;
         }
         .card-image-item:hover {
-            transform: translateY(-5px); /* ホバーでより大きく浮き上がる */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); /* ホバーでシャドウを強調 */
+            transform: translateY(-7px); /* More pronounced hover lift */
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); /* More pronounced hover shadow */
         }
         .card-image-item img {
             width: 100%;
@@ -277,7 +286,7 @@
             border-bottom: 1px solid #e5e7eb;
             object-fit: contain;
             background-color: #e0e0e0;
-            min-height: 160px; /* 最小高さを調整 */
+            min-height: 160px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -286,6 +295,7 @@
             text-align: center;
             padding: 0.6rem;
         }
+
 
         .card-image-controls {
             display: flex;
@@ -298,18 +308,23 @@
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 1.3rem; /* アイコンサイズを大きく */
-            color: #60a5fa;
+            font-size: 1.3rem;
+            color: #2563eb; /* Use primary blue for icons */
             transition: color 0.2s;
         }
         .card-image-controls button:hover {
-            color: #2563eb;
+            color: #1e40af; /* Darker blue on hover */
+        }
+        .card-image-controls .remove-card-btn.inactive {
+            color: #9ca3af; /* Light gray for inactive remove button */
+            cursor: default;
         }
         .card-image-quantity {
             font-weight: 600;
             color: #333;
-            font-size: 1rem; /* フォントサイズを大きく */
+            font-size: 1rem;
         }
+
 
         /* Modal Styles */
         .modal-overlay {
@@ -318,7 +333,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.75); /* 背景をより暗く */
+            background-color: rgba(0, 0, 0, 0.9); /* Darker overlay */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -326,9 +341,9 @@
         }
         .modal-content {
             background-color: #fff;
-            padding: 2rem; /* パディングを増やす */
-            border-radius: 16px; /* 角丸を大きく */
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3); /* モーダルシャドウを強調 */
+            padding: 2.5rem; /* Increased padding */
+            border-radius: 24px; /* Larger border-radius */
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5); /* Stronger modal shadow */
             max-width: 90%;
             max-height: 90%;
             overflow-y: auto;
@@ -336,48 +351,49 @@
         }
         .modal-close-btn {
             position: absolute;
-            top: 15px; /* 位置を調整 */
-            right: 15px; /* 位置を調整 */
+            top: 20px;
+            right: 20px;
             background: none;
             border: none;
-            font-size: 2rem; /* サイズを大きく */
+            font-size: 2.5rem; /* Larger close button */
             cursor: pointer;
-            color: #888;
+            color: #4b5563; /* Darker gray for close button */
             transition: color 0.2s;
         }
         .modal-close-btn:hover {
-            color: #333;
+            color: #1f2937; /* Even darker on hover */
         }
 
-        /* Specific Column Widths for Leader Card Catalog */
-        #leaderCardCatalogTableBody th:nth-child(1), #leaderCardCatalogTableBody td:nth-child(1) { width: 18%; } /* カード名 */
-        #leaderCardCatalogTableBody th:nth-child(2), #leaderCardCatalogTableBody td:nth-child(2) { width: 8%; }  /* タグ */
-        #leaderCardCatalogTableBody th:nth-child(3), #leaderCardCatalogTableBody td:nth-child(3) { width: 7%; }  /* 色 */
-        #leaderCardCatalogTableBody th:nth-child(4), #leaderCardCatalogTableBody td:nth-child(4) { width: 7%; }  /* HP */
-        #leaderCardCatalogTableBody th:nth-child(5), #leaderCardCatalogTableBody td:nth-child(5) { width: 7%; }  /* ATK */
-        #leaderCardCatalogTableBody th:nth-child(6), #leaderCardCatalogTableBody td:nth-child(6) { width: 33%; } /* カードテキスト */
-        #leaderCardCatalogTableBody th:nth-child(7), #leaderCardCatalogTableBody td:nth-child(7) { width: 20%; } /* Add Controls */
 
-        /* Specific Column Widths for Main Card Catalog */
-        #mainCardCatalogTableBody th:nth-child(1), #mainCardCatalogTableBody td:nth-child(1) { width: 15%; } /* カード名 */
-        #mainCardCatalogTableBody th:nth-child(2), #mainCardCatalogTableBody td:nth-child(2) { width: 9%; }  /* 種類 */
-        #mainCardCatalogTableBody th:nth-child(3), #mainCardCatalogTableBody td:nth-child(3) { width: 7%; }  /* 色 */
-        #mainCardCatalogTableBody th:nth-child(4), #mainCardCatalogTableBody td:nth-child(4) { width: 7%; }  /* コスト */
-        #mainCardCatalogTableBody th:nth-child(5), #mainCardCatalogTableBody td:nth-child(5) { width: 13%; } /* ビルドルール */
-        #mainCardCatalogTableBody th:nth-child(6), #mainCardCatalogTableBody td:nth-child(6) { width: 29%; } /* カードテキスト */
-        #mainCardCatalogTableBody th:nth-child(7), #mainCardCatalogTableBody td:nth-child(7) { width: 20%; } /* Add Controls */
+        /* Specific Column Widths for Catalog Tables (if table view is used) */
+        #leaderCardCatalogTableBody th:nth-child(1), #leaderCardCatalogTableBody td:nth-child(1) { width: 18%; }
+        #leaderCardCatalogTableBody th:nth-child(2), #leaderCardCatalogTableBody td:nth-child(2) { width: 8%; }
+        #leaderCardCatalogTableBody th:nth-child(3), #leaderCardCatalogTableBody td:nth-child(3) { width: 7%; }
+        #leaderCardCatalogTableBody th:nth-child(4), #leaderCardCatalogTableBody td:nth-child(4) { width: 7%; }
+        #leaderCardCatalogTableBody th:nth-child(5), #leaderCardCatalogTableBody td:nth-child(5) { width: 7%; }
+        #leaderCardCatalogTableBody th:nth-child(6), #leaderCardCatalogTableBody td:nth-child(6) { width: 33%; }
+        #leaderCardCatalogTableBody th:nth-child(7), #leaderCardCatalogTableBody td:nth-child(7) { width: 20%; }
 
 
-        /* Specific Column Widths for Tactics Card Catalog */
-        #tacticsCardCatalogTableBody th:nth-child(1), #tacticsCardCatalogTableBody td:nth-child(1) { width: 25%; } /* カード名 */
-        #tacticsCardCatalogTableBody th:nth-child(2), #tacticsCardCatalogTableBody td:nth-child(2) { width: 15%; } /* 種類 */
-        #tacticsCardCatalogTableBody th:nth-child(3), #tacticsCardCatalogTableBody td:nth-child(3) { width: 10%; } /* コスト */
-        #tacticsCardCatalogTableBody th:nth-child(4), #tacticsCardCatalogTableBody td:nth-child(4) { width: 30%; } /* カードテキスト */
-        #tacticsCardCatalogTableBody th:nth-child(5), #tacticsCardCatalogTableBody td:nth-child(5) { width: 20%; } /* Add Controls */
+        #mainCardCatalogTableBody th:nth-child(1), #mainCardCatalogTableBody td:nth-child(1) { width: 15%; }
+        #mainCardCatalogTableBody th:nth-child(2), #mainCardCatalogTableBody td:nth-child(2) { width: 9%; }
+        #mainCardCatalogTableBody th:nth-child(3), #mainCardCatalogTableBody td:nth-child(3) { width: 7%; }
+        #mainCardCatalogTableBody th:nth-child(4), #mainCardCatalogTableBody td:nth-child(4) { width: 7%; }
+        #mainCardCatalogTableBody th:nth-child(5), #mainCardCatalogTableBody td:nth-child(5) { width: 13%; }
+        #mainCardCatalogTableBody th:nth-child(6), #mainCardCatalogTableBody td:nth-child(6) { width: 29%; }
+        #mainCardCatalogTableBody th:nth-child(7), #mainCardCatalogTableBody td:nth-child(7) { width: 20%; }
+
+
+        #tacticsCardCatalogTableBody th:nth-child(1), #tacticsCardCatalogTableBody td:nth-child(1) { width: 25%; }
+        #tacticsCardCatalogTableBody th:nth-child(2), #tacticsCardCatalogTableBody td:nth-child(2) { width: 15%; }
+        #tacticsCardCatalogTableBody th:nth-child(3), #tacticsCardCatalogTableBody td:nth-child(3) { width: 10%; }
+        #tacticsCardCatalogTableBody th:nth-child(4), #tacticsCardCatalogTableBody td:nth-child(4) { width: 30%; }
+        #tacticsCardCatalogTableBody th:nth-child(5), #tacticsCardCatalogTableBody td:nth-child(5) { width: 20%; }
+
 
         /* Styles for generated deck image text */
         .deck-image-card-name {
-            font-size: 10px; /* Smaller font for card names on the image */
+            font-size: 10px;
             text-align: center;
             margin-top: 2px;
             color: #333;
@@ -388,6 +404,7 @@
             text-overflow: ellipsis;
         }
 
+
         /* Canvas scaling for responsiveness within modal */
         #deckCanvas {
             display: block;
@@ -395,22 +412,102 @@
             height: auto;
         }
 
+
         /* Specific styles for load confirmation modal */
         #loadConfirmationCanvas {
-            max-width: 100%; /* Make canvas responsive within its container */
+            max-width: 100%;
             height: auto;
             border: 1px solid #ddd;
             border-radius: 8px;
             margin-bottom: 1rem;
         }
+        
+        /* Related Cards in Detail Modal */
+        #relatedCardsGrid {
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+        }
+        
+        #relatedCardsGrid .card-image-item {
+            width: 120px;
+            height: auto;
+        }
+
+
+        #relatedCardsGrid .card-image-item img {
+            height: 160px;
+            min-height: 120px;
+        }
+        
+        #relatedCardsGrid .card-image-controls {
+            padding: 0.35rem 0.25rem;
+        }
+
+
+        #relatedCardsGrid .card-image-controls button {
+            font-size: 1.1rem;
+        }
+        #relatedCardsGrid .card-image-quantity {
+            font-size: 0.9rem;
+        }
+
+
+        /* NEW: Section background colors for consistent theme */
+        .section-panel-blue {
+            background-color: #e2e8f0; /* Light cool gray */
+            border-radius: 12px;
+            padding: 1.75rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+
+        .section-panel-dark {
+            background-color: #1f2937; /* Dark charcoal */
+            border-radius: 12px;
+            padding: 1.75rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            color: white; /* White text for dark background */
+        }
+        .section-panel-dark .section-title {
+            color: white; /* Title color for dark background */
+            border-bottom-color: #4b5563; /* Lighter border for contrast */
+        }
+        .section-panel-dark .font-semibold, .section-panel-dark .text-gray-700 {
+            color: #e5e7eb; /* Lighter text for labels */
+        }
+        .section-panel-dark .input-field {
+            background-color: #374151; /* Darker input background */
+            border-color: #4b5563;
+            color: white;
+        }
+        .section-panel-dark .input-field::placeholder {
+            color: #9ca3af; /* Lighter placeholder */
+        }
+
+
+        /* Override validation messages for dark panels */
+        .section-panel-dark .validation-success {
+            background-color: rgba(6, 95, 70, 0.8); /* Darker green overlay */
+            color: #d1fae5;
+        }
+        .section-panel-dark .validation-warning {
+            background-color: rgba(146, 64, 14, 0.8); /* Darker orange overlay */
+            color: #fef3c7;
+        }
+        .section-panel-dark .validation-error {
+            background-color: rgba(153, 27, 27, 0.8); /* Darker red overlay */
+            color: #fee2e2;
+        }
+
 
     </style>
 </head>
 <body class="p-4">
     <div class="container">
         <h1 class="text-4xl font-extrabold text-center mb-8 text-blue-800">
-            XrossStars<br>デッキ構築
+            XrossStars<br>Deck Builder
         </h1>
+
 
         <!-- Loading Indicator -->
         <div id="loadingIndicator" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
@@ -423,6 +520,7 @@
             </div>
         </div>
 
+
         <!-- Top Navigation and Deck Button (Flex wrap added) -->
         <div class="flex flex-col gap-4 mb-8">
             <div class="flex justify-center gap-4 flex-wrap">
@@ -431,16 +529,18 @@
             </div>
             <!-- Centering for tabs: use text-center on parent and inline-flex on the scrollable container -->
             <div class="text-center"> 
-                <div class="inline-flex gap-4 flex-nowrap overflow-x-auto pb-2 px-2"> <!-- Added px-2 for padding on sides when scrolling, and pb-2 -->
-                    <button id="showLeaderCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">リーダー</button>
+                <div class="inline-flex gap-4 flex-nowrap overflow-x-auto pb-2 px-2">
+                    <!-- Added 'active' class example for the default tab -->
+                    <button id="showLeaderCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0 active">リーダー</button>
                     <button id="showMainCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">メイン</button>
                     <button id="showTacticsCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">タクティクス</button>
                 </div>
             </div>
         </div>
 
+
         <!-- Search, Sort, Display Toggle -->
-        <div class="flex flex-wrap items-center gap-4 mb-8 p-5 bg-blue-50 rounded-lg shadow-inner">
+        <div class="flex flex-wrap items-center gap-4 mb-8 section-panel-blue">
             <div class="input-container flex-grow max-w-sm">
                 <input type="text" id="searchCatalogInput" placeholder="カードを検索..." class="input-field w-full">
             </div>
@@ -453,11 +553,13 @@
                 <option value="緑">緑</option>
             </select>
 
+
             <select id="cardTypeFilterSelect" class="p-3 border border-gray-300 rounded-md">
                 <option value="全て">種類</option>
                 <option value="アタックカード">アタックカード</option>
                 <option value="メモリアカード">メモリアカード</option>
             </select>
+
 
             <select id="costFilterSelect" class="p-3 border border-gray-300 rounded-md">
                 <option value="全て">コスト</option>
@@ -468,6 +570,7 @@
                 <option value="4+">4+</option>
             </select>
 
+
             <!-- New Build Rule/ACE Filter Dropdown -->
             <select id="buildRuleFilterSelect" class="p-3 border border-gray-300 rounded-md">
                 <option value="すべて">ビルドルールすべて</option>
@@ -475,6 +578,7 @@
                 <option value="なしのみ">ビルドルールなしのみ</option>
                 <option value="エースのみ">エースのみ</option>
             </select>
+
 
             <select id="sortCriterion" class="p-3 border border-gray-300 rounded-md">
                 <!-- Default sort order set to 色 -->
@@ -492,13 +596,14 @@
             <!-- Content will be rendered here dynamically (image grid or table) -->
         </div>
 
+
         <!-- Validation and Summary Section -->
-        <div class="mt-10 p-7 bg-gray-50 rounded-lg shadow-inner">
+        <div class="mt-10 section-panel-blue">
             <h2 class="section-title">現在のデッキ状況</h2>
             <div id="leaderValidation" class="validation-message validation-warning mb-3">
                 リーダーカードは現在 <span id="currentLeaderCount">0</span>/4 枚です。
             </div>
-            <div id="mainDeckSummary" class="p-5 bg-blue-50 rounded-lg text-blue-800 font-semibold mb-3">
+            <div id="mainDeckSummary" class="p-5 bg-blue-100 rounded-lg text-blue-800 font-semibold mb-3">
                 メインデッキ: <span id="totalMainCards">0</span>/50 枚 | エースカード: <span id="totalAceCards">0</span>/8 枚
             </div>
             <div id="mainDeckValidation" class="validation-message validation-warning mb-3">
@@ -509,11 +614,12 @@
             </div>
         </div>
 
+
         <!-- New Section for Local Storage Deck Management -->
-        <div class="mt-8 p-7 bg-purple-50 rounded-lg shadow-inner">
-            <h2 class="section-title text-purple-800">ローカル保存 & 読み込み</h2>
+        <div class="mt-8 section-panel-dark">
+            <h2 class="section-title">ローカル保存 & 読み込み</h2>
             <div class="input-group">
-                <label for="deckNameInputLocal" class="font-semibold text-gray-700">デッキ名:</label>
+                <label for="deckNameInputLocal" class="font-semibold text-gray-200">デッキ名:</label>
                 <input type="text" id="deckNameInputLocal" placeholder="保存するデッキ名" class="input-field">
                 <button id="saveLocalDeckBtn" class="btn btn-primary flex-shrink-0">保存</button>
             </div>
@@ -521,38 +627,44 @@
             <div id="localStorageMessage" class="validation-message hidden mt-4"></div>
         </div>
 
+
         <!-- Original Export/Import Section -->
-        <div class="mt-8 p-7 bg-blue-50 rounded-lg shadow-inner">
+        <div class="mt-8 section-panel-dark">
             <h2 class="section-title">テキスト/ファイル形式で入出力</h2>
             <button id="toggleExportImportBtn" class="btn btn-secondary w-full mb-5">入出力セクションを表示/非表示</button>
             <div id="exportImportContent" class="hidden">
                 <div class="input-group">
-                    <label for="deckNameInput" class="font-semibold text-gray-700">デッキ名:</label>
+                    <label for="deckNameInput" class="font-semibold text-gray-200">デッキ名:</label>
                     <input type="text" id="deckNameInput" placeholder="デッキ名を入力" class="input-field">
                 </div>
 
+
                 <!-- Export Section -->
-                <div class="mb-6 p-4 bg-gray-100 rounded-lg shadow-inner">
-                    <h3 class="text-xl font-semibold mb-3 text-gray-700 border-b pb-2">テキスト/ファイル形式でエクスポート</h3>
+                <div class="mb-6 p-4 bg-gray-800 rounded-lg shadow-inner">
+                    <h3 class="text-xl font-semibold mb-3 text-gray-200 border-b pb-2 border-gray-600">テキスト/ファイル形式でエクスポート</h3>
                     <button id="exportDeckBtn" class="btn btn-primary w-full">デッキをテキストでエクスポート</button>
                     <button id="copyExportedDataBtn" class="btn btn-primary w-full mt-3 hidden">コピー</button>
                     <button id="downloadJsonBtn" class="btn btn-primary w-full mt-3">デッキをJSONファイルでダウンロード</button>
                 </div>
 
+
                 <!-- Original Import Section -->
-                <div class="p-4 bg-gray-100 rounded-lg shadow-inner">
-                    <h3 class="text-xl font-semibold mb-3 text-gray-700 border-b pb-2">テキスト/ファイル形式でインポート</h3>
+                <div class="p-4 bg-gray-800 rounded-lg shadow-inner">
+                    <h3 class="text-xl font-semibold mb-3 text-gray-200 border-b pb-2 border-gray-600">テキスト/ファイル形式でインポート</h3>
                     <textarea id="deckDataTextarea" class="input-field h-48 text-sm mb-3" placeholder="ここにデッキデータを貼り付けてインポート、またはエクスポートされたデータが表示されます。"></textarea>
                     <label for="importFileInput" class="btn btn-primary w-full text-center cursor-pointer block">ファイルからインポート</label>
                     <input type="file" id="importFileInput" accept=".json" class="hidden">
                     <button id="importDeckBtn" class="btn btn-primary w-full mt-3">テキストからインポート</button>
                 </div>
 
+
                 <div id="importExportMessage" class="validation-message hidden mt-4"></div>
             </div>
         </div>
 
+
     </div>
+
 
     <!-- Deck View Modal -->
     <div id="deckViewModal" class="modal-overlay hidden">
@@ -579,23 +691,27 @@
         </div>
     </div>
 
+
     <!-- Card Detail Modal -->
     <div id="cardDetailModal" class="modal-overlay hidden">
         <div class="modal-content w-11/12 md:w-1/2 lg:w-1/3">
             <button class="modal-close-btn" id="closeCardDetailModal">&times;</button>
             <img id="modalCardImage" src="" alt="Card Image" class="w-full h-auto rounded-lg mb-4 shadow-lg">
-            <h3 id="modalCardName" class="text-2xl font-bold mb-2"></h3>
-            <p id="modalCardNumber" class="text-sm text-gray-600 mb-1"></p>
-            <p id="modalCardType" class="text-sm text-gray-600 mb-1"></p>
-            <p id="modalCardColor" class="text-sm text-gray-600 mb-1"></p>
-            <p id="modalCardCost" class="text-sm text-gray-600 mb-1"></p>
-            <p id="modalCardRarity" class="text-sm text-gray-600 mb-1"></p>
-            <p id="modalCardRules" class="text-sm text-gray-600 mb-1"></p>
-            <p id="modalCardTag" class="text-sm text-gray-600 mb-1"></p>
-            <p id="modalCardStats" class="text-sm text-gray-600 mb-1"></p>
-            <p id="modalCardText" class="text-lg text-gray-800 whitespace-pre-wrap mt-3"></p>
+            <h3 id="modalCardName" class="text-2xl font-bold mb-2 text-center"></h3>
+            <!-- Removed text card info as per user request -->
+            
+            <!-- New section for related cards -->
+            <div id="relatedCardsContainer" class="mt-6 p-4 bg-gray-50 rounded-lg shadow-inner">
+                <h4 class="font-semibold text-xl mb-3 border-b pb-2">関連カード</h4>
+                <div id="relatedCardsGrid" class="grid grid-cols-3 sm:grid-cols-4 gap-4 max-h-60 overflow-y-auto pr-2">
+                    <!-- Related cards will be dynamically loaded here -->
+                </div>
+            </div>
+
+
         </div>
     </div>
+
 
     <!-- Deck Image Modal -->
     <div id="deckImageModal" class="modal-overlay hidden">
@@ -609,6 +725,7 @@
         </div>
     </div>
 
+
     <!-- Deck List Modal -->
     <div id="deckListModal" class="modal-overlay hidden">
         <div class="modal-content w-11/12 md:w-2/3 lg:w-1/2">
@@ -620,9 +737,10 @@
         </div>
     </div>
 
+
     <!-- Deck Load Confirmation Modal (New) -->
     <div id="loadConfirmationModal" class="modal-overlay hidden">
-        <div class="modal-content w-11/12 md:w-1/2 lg:w-1/3">
+        <div class="modal-content w-11/11 md:w-1/2 lg:w-1/3">
             <button class="modal-close-btn" id="closeLoadConfirmationModal">&times;</button>
             <h3 class="text-2xl font-bold mb-4 text-center">デッキを読み込みますか？</h3>
             <p class="text-lg font-semibold text-center mb-4">デッキ名: <span id="confirmLoadDeckName"></span></p>
@@ -637,6 +755,8 @@
     </div>
 
 
+
+
     <script>
         // デッキの状態を管理する配列
         let leaderDeck = [];
@@ -644,9 +764,11 @@
         let tacticsDeck = [];
         let deckName = ""; // デッキ名
 
+
         // 全てのカードデータを格納するオブジェクト
         let allCardData = {}; // Key: カード名, Value: カードオブジェクト
         let allCardDataByNumberPrefix = {}; // Key: カードナンバーの"/"以前, Value: カードオブジェクト
+
 
         // UI表示に関する状態
         let currentTab = 'leader'; // 'leader', 'main', 'tactics' - デフォルトをリーダーに変更
@@ -655,6 +777,7 @@
         // DEFAULT: Sort by Color, then Cost, then Card ID
         let currentSort = { criterion: '色', direction: 'asc' }; 
 
+
         // フィルターの状態
         let selectedFilterColor = '全て';
         let selectedFilterCardType = '全て';
@@ -662,14 +785,18 @@
         let selectedBuildRuleFilter = 'すべて'; // New state for the dropdown
 
 
+
+
         // HTML要素への参照
         const loadingIndicator = document.getElementById('loadingIndicator');
+
 
         const showLeaderCatalogBtn = document.getElementById('showLeaderCatalogBtn');
         const showMainCatalogBtn = document.getElementById('showMainCatalogBtn');
         const showTacticsCatalogBtn = document.getElementById('showTacticsCatalogBtn');
         const showDeckBtn = document.getElementById('showDeckBtn');
         const generateDeckImageBtn = document.getElementById('generateDeckImageBtn'); // New button
+
 
         const searchCatalogInput = document.getElementById('searchCatalogInput');
         const colorFilterSelect = document.getElementById('colorFilterSelect');
@@ -681,6 +808,7 @@
         const toggleDisplayBtn = document.getElementById('toggleDisplayBtn');
         const catalogDisplayArea = document.getElementById('catalogDisplayArea');
 
+
         const leaderValidation = document.getElementById('leaderValidation');
         const currentLeaderCountSpan = document.getElementById('currentLeaderCount');
         const mainDeckSummary = document.getElementById('mainDeckSummary');
@@ -689,6 +817,7 @@
         const mainDeckValidation = document.getElementById('mainDeckValidation');
         const tacticsValidation = document.getElementById('tacticsValidation');
         const currentTacticsCountSpan = document.getElementById('currentTacticsCount');
+
 
         const deckNameInput = document.getElementById('deckNameInput');
         const deckDataTextarea = document.getElementById('deckDataTextarea');
@@ -699,15 +828,18 @@
         const importDeckBtn = document.getElementById('importDeckBtn');
         const importExportMessage = document.getElementById('importExportMessage');
 
+
         // New elements for export/import toggle
         const toggleExportImportBtn = document.getElementById('toggleExportImportBtn');
         const exportImportContent = document.getElementById('exportImportContent');
+
 
         // Local Storage specific elements
         const deckNameInputLocal = document.getElementById('deckNameInputLocal');
         const saveLocalDeckBtn = document.getElementById('saveLocalDeckBtn');
         const loadLocalDecksBtn = document.getElementById('loadLocalDecksBtn');
         const localStorageMessage = document.getElementById('localStorageMessage');
+
 
         // Modals
         const deckViewModal = document.getElementById('deckViewModal');
@@ -721,28 +853,34 @@
         const modalMainCards = document.getElementById('modalMainCards');
         const modalTacticsCards = document.getElementById('modalTacticsCards');
 
+
         const cardDetailModal = document.getElementById('cardDetailModal');
         const closeCardDetailModalBtn = document.getElementById('closeCardDetailModal');
         const modalCardImage = document.getElementById('modalCardImage');
         const modalCardName = document.getElementById('modalCardName');
-        const modalCardNumber = document.getElementById('modalCardNumber');
-        const modalCardType = document.getElementById('modalCardType');
-        const modalCardColor = document.getElementById('modalCardColor');
-        const modalCardCost = document.getElementById('modalCardCost');
-        const modalCardRarity = document.getElementById('modalCardRarity');
-        const modalCardRules = document.getElementById('modalCardRules');
-        const modalCardTag = document.getElementById('modalCardTag');
-        const modalCardStats = document.getElementById('modalCardStats');
-        const modalCardText = document.getElementById('modalCardText');
+        // Removed references to old text info elements as per user request
+        // const modalCardNumber = document.getElementById('modalCardNumber');
+        // const modalCardType = document.getElementById('modalCardType');
+        // const modalCardColor = document.getElementById('modalCardColor');
+        // const modalCardCost = document.getElementById('modalCardCost');
+        // const modalCardRarity = document.getElementById('modalCardRarity');
+        // const modalCardRules = document.getElementById('modalCardRules');
+        // const modalCardTag = document.getElementById('modalCardTag');
+        // const modalCardStats = document.getElementById('modalCardStats');
+        // const modalCardText = document.getElementById('modalCardText');
+        const relatedCardsGrid = document.getElementById('relatedCardsGrid'); // New: Reference to related cards grid
+
 
         const deckImageModal = document.getElementById('deckImageModal'); // New modal for deck image
         const closeDeckImageModalBtn = document.getElementById('closeDeckImageModal');
         const deckCanvas = document.getElementById('deckCanvas');
         const downloadDeckImageBtn = document.getElementById('downloadDeckImage');
 
+
         const deckListModal = document.getElementById('deckListModal'); // New: Deck List Modal
         const closeDeckListModalBtn = document.getElementById('closeDeckListModal');
         const deckListContainer = document.getElementById('deckListContainer');
+
 
         // New elements for load confirmation modal
         const loadConfirmationModal = document.getElementById('loadConfirmationModal');
@@ -752,7 +890,10 @@
         const confirmLoadBtn = document.getElementById('confirmLoadBtn');
         const cancelLoadBtn = document.getElementById('cancelLoadBtn');
 
+
         let deckToLoad = null; // Store deck data temporarily for confirmation
+
+
 
 
         /**
@@ -765,9 +906,11 @@
             let currentAccumulatedLine = '';
             let inQuote = false;
 
+
             for (let i = 0; i < rawLines.length; i++) {
                 const line = rawLines[i];
                 let tempInQuote = inQuote;
+
 
                 for (let j = 0; j < line.length; j++) {
                     if (line[j] === '"') {
@@ -779,11 +922,13 @@
                     }
                 }
 
+
                 if (currentAccumulatedLine === '') {
                     currentAccumulatedLine = line;
                 } else {
                     currentAccumulatedLine += '\n' + line;
                 }
+
 
                 if (!tempInQuote) {
                     lines.push(currentAccumulatedLine);
@@ -794,6 +939,7 @@
                 }
             }
 
+
             if (currentAccumulatedLine !== '') {
                 lines.push(currentAccumulatedLine);
             }
@@ -803,6 +949,7 @@
                 return;
             }
             const headers = lines[0].split(',').map(header => header.trim());
+
 
             allCardData = {};
             allCardDataByNumberPrefix = {};
@@ -815,15 +962,19 @@
                     return;
                 }
 
+
                 headers.forEach((header, i) => {
                     obj[header] = values[i] ? values[i].trim() : '';
                 });
+
 
                 // Correct typo: "メモoriaカード" to "メモリアカード"
                 if (obj['カード種類'] === 'メモoriaカード') {
                     obj['カード種類'] = 'メモリアカード';
                     console.warn(`Corrected typo: 'メモoriaカード' to 'メモリアカード' for card: ${obj['カード名']}`);
                 }
+
+
 
 
                 if (obj['カード名']) {
@@ -838,6 +989,7 @@
             });
             console.log('カードデータがロードされました:', Object.keys(allCardData).length, '枚');
         }
+
 
         function parseCsvLine(line) {
             const result = [];
@@ -862,6 +1014,7 @@
             result.push(currentField);
             return result;
         }
+
 
         async function loadCardData() {
             loadingIndicator.classList.remove('hidden');
@@ -888,6 +1041,7 @@
             }
         }
 
+
         /**
          * カード画像URLを生成するヘルパー関数
          * @param {Object} cardInfo - カードの全情報を持つオブジェクト
@@ -899,9 +1053,12 @@
                 return `https://placehold.co/300x420/cccccc/333333?text=No+Image`; // Updated placeholder size
             }
 
+
             const cardNumPrefix = cardInfo['カードナンバー'].split('/')[0];
             return `https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/${cardNumPrefix}.png`;
         }
+
+
 
 
         /**
@@ -916,7 +1073,96 @@
             if (!deckViewModal.classList.contains('hidden')) {
                 showDeckViewModal();
             }
+            // カード詳細モーダルが開いている場合は、関連カードの枚数表示も更新
+            if (!cardDetailModal.classList.contains('hidden')) {
+                const currentCardNameInDetail = modalCardName.textContent; // Get the name of the card currently in detail modal
+                if (currentCardNameInDetail) {
+                    showCardDetailModal(currentCardNameInDetail); // Re-render detail modal to update related card quantities
+                }
+            }
         }
+
+
+        /**
+         * カード表示項目を生成する汎用ヘルパー関数 (モーダル内での表示用)
+         * @param {Object} cardInfo - 表示するカードのデータ
+         * @param {boolean} isRelatedCard - 関連カードとして表示するかどうか (ボタン表示を調整するため)
+         * @returns {HTMLElement} 生成されたカード表示要素
+         */
+        function createCardDisplayItemForModal(cardInfo, isRelatedCard = false) {
+            const imageUrl = getCardImageUrl(cardInfo);
+            const itemDiv = document.createElement('div');
+            // Adjust base size here. For related cards, we use CSS in <style> block.
+            itemDiv.className = `relative group overflow-hidden rounded-md shadow-md flex flex-col items-center 
+                                ${isRelatedCard ? '' : 'w-24 h-32'}`; // Only apply fixed size if not a related card
+
+
+            let quantityDisplayHtml = '';
+            let removeBtnClass = 'text-red-500 hover:text-red-700'; // Default active color
+            let deckTypeForInteraction = ''; // 'main', 'leader', 'tactics'
+
+
+            if (cardInfo['カード種類'] === 'リーダーカード') {
+                deckTypeForInteraction = 'leader';
+                const inDeck = leaderDeck.some(dc => dc.name === cardInfo['カード名']);
+                quantityDisplayHtml = `<span class="card-image-quantity">${inDeck ? '1 / 1' : '0 / 1'}</span>`;
+                if (!inDeck) removeBtnClass += ' inactive'; // Add inactive class if not in deck
+            } else if (cardInfo['カード種類'] === 'アタックカード' || cardInfo['カード種類'] === 'メモリアカード') {
+                deckTypeForInteraction = 'main';
+                const deckCard = mainDeck.find(dc => dc.name === cardInfo['カード名']);
+                const quantity = deckCard ? deckCard.quantity : 0;
+                quantityDisplayHtml = `<span class="card-image-quantity">${quantity} / 4</span>`;
+                if (quantity <= 0) removeBtnClass += ' inactive'; // Add inactive class if quantity is 0
+            } else if (cardInfo['カード種類'] === 'タクティクスカード') {
+                deckTypeForInteraction = 'tactics';
+                const inDeck = tacticsDeck.some(dc => dc.name === cardInfo['カード名']);
+                quantityDisplayHtml = `<span class="card-image-quantity">${inDeck ? '1 / 1' : '0 / 1'}</span>`;
+                if (!inDeck) removeBtnClass += ' inactive'; // Add inactive class if not in deck
+            }
+
+
+            // Controls will always show detail button and remove button if applicable
+            const controlsJustifyClass = 'justify-around'; // Always space out detail and remove
+
+
+            itemDiv.innerHTML = `
+                <img src="${imageUrl}" alt="${cardInfo['カード名']}" class="w-full h-full object-cover cursor-pointer">
+                <div class="card-image-controls absolute bottom-0 bg-white bg-opacity-90 w-full py-2 px-1 ${controlsJustifyClass}">
+                    <button class="view-detail-btn text-blue-500 hover:text-blue-700 text-lg">🔎</button>
+                    ${quantityDisplayHtml}
+                    <button class="remove-card-btn ${removeBtnClass} text-lg">✕</button>
+                </div>
+            `;
+
+
+            // Event listener for adding card by clicking the image
+            itemDiv.querySelector('img').addEventListener('click', () => {
+                addCardToDeck(cardInfo['カード名'], 1, deckTypeForInteraction);
+            });
+
+
+            // Event listener for viewing detail
+            itemDiv.querySelector('.view-detail-btn').addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevent the image click (add card) from firing
+                showCardDetailModal(cardInfo['カード名']);
+            });
+
+
+            // Event listener for removing card
+            const removeBtn = itemDiv.querySelector('.remove-card-btn');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Prevent the image click (add card) from firing
+                    removeCardFromDeck(cardInfo['カード名'], deckTypeForInteraction, deckTypeForInteraction === 'main' ? 1 : null);
+                });
+            }
+
+
+            return itemDiv;
+        }
+
+
+
 
         /**
          * デッキ構築ルールに基づいてバリデーションを実行し、メッセージを更新する
@@ -935,10 +1181,12 @@
             }
             currentLeaderCountSpan.textContent = leaderDeck.length;
 
+
             // メインデッキのバリデーション
             let totalMainCards = 0;
             let totalAceCards = 0;
             const cardCounts = {}; // 同名カードの枚数をカウント
+
 
             mainDeck.forEach(card => {
                 totalMainCards += card.quantity;
@@ -948,11 +1196,14 @@
                 cardCounts[card.name] = (cardCounts[card.name] || 0) + card.quantity;
             });
 
+
             totalMainCardsSpan.textContent = totalMainCards;
             totalAceCardsSpan.textContent = totalAceCards;
 
+
             let mainDeckValidationMessages = [];
             let isMainDeckValid = true;
+
 
             if (totalMainCards === 50) {
                 mainDeckValidationMessages.push('合計カード数: OK (50/50枚)');
@@ -964,6 +1215,7 @@
                 isMainDeckValid = false;
             }
 
+
             if (totalAceCards <= 8) {
                 mainDeckValidationMessages.push(`エースカード数: OK (${totalAceCards}/8枚)`);
             } else {
@@ -971,12 +1223,14 @@
                 isMainDeckValid = false;
             }
 
+
             for (const cardName in cardCounts) {
                 if (cardCounts[cardName] > 4) {
                     mainDeckValidationMessages.push(`同名カードが多すぎます (${cardName}): ${cardCounts[cardName]}/4 枚`);
                     isMainDeckValid = false;
                 }
             }
+
 
             if (isMainDeckValid && totalMainCards === 50 && totalAceCards <= 8 && Object.values(cardCounts).every(count => count <= 4)) {
                 mainDeckValidation.className = 'validation-message validation-success';
@@ -989,6 +1243,7 @@
                     mainDeckValidation.innerHTML = mainDeckValidationMessages.join('<br>');
                 }
             }
+
 
             // タクティクスデッキのバリデーション
             if (tacticsDeck.length === 5) {
@@ -1003,6 +1258,7 @@
             }
             currentTacticsCountSpan.textContent = tacticsDeck.length;
 
+
             // 各バリデーションの状態を返す
             return {
                 isLeaderValid: leaderDeck.length === 4,
@@ -1010,6 +1266,7 @@
                 isTacticsValid: tacticsDeck.length === 5
             };
         }
+
 
         /**
          * カードを適切なデッキに追加する共通関数
@@ -1020,10 +1277,12 @@
         function addCardToDeck(cardName, quantity, targetDeckType) {
             const cardInfo = allCardData[cardName];
 
+
             if (!cardName || !cardInfo) {
                 // Should not happen with proper UI, but defensive check
                 return;
             }
+
 
             // デッキタイプに応じたルールチェック
             if (targetDeckType === 'leader') {
@@ -1037,6 +1296,7 @@
                 // リーダーカードの合計枚数制限（4枚）は構築中には強制しない（ダイアログなしで追加可能）
                 leaderDeck.push({ name: cardName, cardData: cardInfo });
 
+
             } else if (targetDeckType === 'main') {
                 if (cardInfo['カード種類'] === 'リーダーカード' || cardInfo['カード種類'] === 'タクティクスカード') {
                     return; // メインデッキには追加不可
@@ -1048,12 +1308,14 @@
                 const isAce = cardInfo['ACE'] === 'ACE' || cardInfo['ACE'] === 'エース';
                 let actualQuantityToAdd = Math.min(quantity, 4); // 1回の追加で4枚を超えることはないように
 
+
                 const existingCardIndex = mainDeck.findIndex(card => card.name === cardName);
                 
                 let currentCount = 0;
                 if (existingCardIndex > -1) {
                     currentCount = mainDeck[existingCardIndex].quantity;
                 }
+
 
                 // 同名カードが4枚を超える場合の調整
                 // 既に4枚ある場合は追加しない
@@ -1065,11 +1327,14 @@
                     actualQuantityToAdd = 4 - currentCount;
                 }
 
+
                 // 合計枚数50枚の制限は構築中には強制しない（ユーザーの要望により、合計枚数が50枚を超えても追加できるように変更）
+
 
                 if (actualQuantityToAdd <= 0) { // 追加可能な枚数が0以下なら何もしない
                     return;
                 }
+
 
                 if (existingCardIndex > -1) {
                     mainDeck[existingCardIndex].quantity += actualQuantityToAdd;
@@ -1088,8 +1353,10 @@
                 tacticsDeck.push({ name: cardName, cardData: cardInfo });
             }
 
+
             updateDeckDisplay();
         }
+
 
         /**
          * デッキからカードを削除する共通関数
@@ -1115,6 +1382,8 @@
         }
 
 
+
+
         /**
          * カードカタログを画像グリッドで表示する
          * @param {Array<Object>} cardsToDisplay - 表示するカードオブジェクトの配列
@@ -1126,47 +1395,58 @@
             // Apply Tailwind responsive grid classes directly
             grid.className = 'card-image-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6';
 
+
             if (cardsToDisplay.length === 0) {
                 grid.innerHTML = '<p class="text-center text-gray-500 italic col-span-full">該当するカードがありません。</p>';
                 catalogDisplayArea.appendChild(grid);
                 return;
             }
 
+
             cardsToDisplay.forEach(card => {
                 const imageUrl = getCardImageUrl(card); // Pass full card object
                 let quantityInDeck = 0;
                 let maxQuantity = 1; // Default max for individual leader/tactics cards
+                let removeBtnClass = 'text-red-500 hover:text-red-700';
+
 
                 if (currentDisplayTab === 'leader') {
                     quantityInDeck = leaderDeck.some(dc => dc.name === card['カード名']) ? 1 : 0;
                     maxQuantity = 1;
+                    if (!quantityInDeck) removeBtnClass += ' inactive';
                 } else if (currentDisplayTab === 'main') {
                     const deckCard = mainDeck.find(dc => dc.name === card['カード名']);
                     quantityInDeck = deckCard ? deckCard.quantity : 0;
                     maxQuantity = 4; // Main deck cards can have up to 4 copies
+                    if (quantityInDeck <= 0) removeBtnClass += ' inactive';
                 } else if (currentTab === 'tactics') {
                     quantityInDeck = tacticsDeck.some(dc => dc.name === card['カード名']) ? 1 : 0;
                     maxQuantity = 1;
+                    if (!quantityInDeck) removeBtnClass += ' inactive';
                 }
+
 
                 const cardItem = document.createElement('div');
                 cardItem.className = 'card-image-item';
                 cardItem.setAttribute('data-card-name', card['カード名']);
                 cardItem.setAttribute('data-card-type', currentDisplayTab); // For add/remove logic
 
+
                 cardItem.innerHTML = `
                     <img src="${imageUrl}" alt="${card['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/300x420/cccccc/333333?text=Load+Error';">
                     <div class="card-image-controls">
                         <button class="view-detail-btn" data-card-name="${card['カード名']}">🔎</button>
                         <span class="card-image-quantity">${quantityInDeck} / ${maxQuantity}</span>
-                        <button class="remove-card-btn" data-card-name="${card['カード名']}" data-card-type="${currentDisplayTab}">✕</button>
+                        <button class="remove-card-btn ${removeBtnClass}" data-card-name="${card['カード名']}" data-card-type="${currentDisplayTab}">✕</button>
                     </div>
                 `;
+
 
                 // Add card to deck on image click
                 cardItem.querySelector('img').addEventListener('click', () => {
                     addCardToDeck(card['カード名'], 1, currentDisplayTab);
                 });
+
 
                 // Remove card from deck on X button click
                 cardItem.querySelector('.remove-card-btn').addEventListener('click', (event) => {
@@ -1174,16 +1454,19 @@
                     removeCardFromDeck(card['カード名'], currentDisplayTab);
                 });
 
+
                 // View detail on 🔎 button click
                 cardItem.querySelector('.view-detail-btn').addEventListener('click', (event) => {
                     event.stopPropagation(); // Prevent card add click from firing
                     showCardDetailModal(card['カード名']);
                 });
 
+
                 grid.appendChild(cardItem);
             });
             catalogDisplayArea.appendChild(grid);
         }
+
 
         /**
          * カードカタログをテーブルで表示する (既存の機能)
@@ -1201,9 +1484,11 @@
             table.appendChild(thead);
             table.appendChild(tbody);
 
+
             let headers = [];
             let columnRenderers = [];
             let colspan = 0;
+
 
             if (currentDisplayTab === 'leader') {
                 headers = ['カード名', 'タグ', '色', 'HP', 'ATK', 'カードテキスト', ''];
@@ -1238,7 +1523,9 @@
                 colspan = headers.length;
             }
 
+
             thead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+
 
             if (cardsToDisplay.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="${colspan}" class="text-center text-gray-500 italic">該当するカードがありません。</td></tr>`;
@@ -1246,6 +1533,7 @@
                 catalogDisplayArea.appendChild(tableScrollContainer);
                 return;
             }
+
 
             cardsToDisplay.forEach(card => {
                 const tr = document.createElement('tr');
@@ -1266,12 +1554,14 @@
             catalogDisplayArea.appendChild(tableScrollContainer);
         }
 
+
         /**
          * 現在のタブと表示モードに基づいてカタログをレンダリングする
          */
         function renderCatalog() {
             let filteredCards = [];
             let allCardsOfType = [];
+
 
             // Step 1: Filter by current tab
             if (currentTab === 'leader') {
@@ -1282,6 +1572,7 @@
                 allCardsOfType = Object.values(allCardData).filter(card => card['カード種類'] === 'タクティクスカード');
             }
 
+
             // Step 2: Apply search query filter
             filteredCards = allCardsOfType.filter(card => {
                 const lowerCaseQuery = currentSearchQuery.toLowerCase();
@@ -1291,12 +1582,15 @@
             });
 
 
+
+
             // Step 3: Apply additional filters
             filteredCards = filteredCards.filter(card => {
                 // Color filter (always applies unless hidden by UI logic)
                 if (colorFilterSelect.style.display !== 'none' && selectedFilterColor !== '全て' && card['色'] !== selectedFilterColor) {
                     return false;
                 }
+
 
                 // Card Type filter (only applies if visible for the current tab)
                 if (cardTypeFilterSelect.style.display !== 'none' && selectedFilterCardType !== '全て') {
@@ -1318,6 +1612,7 @@
                     }
                 }
 
+
                 // New Build Rule / ACE filter logic - ONLY apply if currentTab is 'main'
                 if (currentTab === 'main' && buildRuleFilterSelect.style.display !== 'none') {
                     if (selectedBuildRuleFilter === 'ありのみ') {
@@ -1336,17 +1631,22 @@
                     }
                 }
 
+
                 return true;
             });
+
 
             // Step 4: Apply sorting - Prioritize selected criterion, then Color, then Cost, then Card ID
             const sortedCards = [...filteredCards].sort((a, b) => {
                 const direction = currentSort.direction; // 'asc' or 'desc'
 
+
                 const rarityOrder = { 'LR': 1, 'SR': 2, 'R': 3, 'UC': 4, 'C': 5, 'TR': 6, '': 99 };
                 const colorOrder = { '赤': 1, '青': 2, '黄': 3, '緑': 4, '無': 5, '': 99 };
 
+
                 let primaryCompareResult = 0;
+
 
                 // Apply the user's selected primary sort criterion
                 switch (currentSort.criterion) {
@@ -1373,12 +1673,15 @@
                         break;
                 }
 
+
                 if (primaryCompareResult !== 0) {
                     return direction === 'asc' ? primaryCompareResult : -primaryCompareResult;
                 }
 
+
                 // Apply the default hierarchy (色 -> コスト -> カードID) as tie-breakers
                 let secondaryCompareResult = 0;
+
 
                 // Tie-breaker 1: Color (if not already the primary sort)
                 if (currentSort.criterion !== '色') {
@@ -1394,11 +1697,13 @@
                     if (secondaryCompareResult !== 0) return direction === 'asc' ? secondaryCompareResult : -secondaryCompareResult;
                 }
 
+
                 // Tie-breaker 3: Card ID (ultimate tie-breaker)
                 const cardNumA = a['カードナンバー'] || '';
                 const cardNumB = b['カードナンバー'] || '';
                 return direction === 'asc' ? cardNumA.localeCompare(cardNumB) : -cardNumA.localeCompare(cardNumB);
             });
+
 
             // スクロール位置を保存する要素を特定
             let scrollableElement = null;
@@ -1412,12 +1717,16 @@
             const savedScrollTop = scrollableElement ? scrollableElement.scrollTop : 0;
 
 
+
+
             catalogDisplayArea.innerHTML = ''; // Clear previous content
+
 
             // Step 5: Render based on display mode
             if (displayMode === 'image') {
                 const grid = document.createElement('div');
                 grid.className = 'card-image-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6';
+
 
                 if (sortedCards.length === 0) {
                     grid.innerHTML = '<p class="text-center text-gray-500 italic col-span-full">該当するカードがありません。</p>';
@@ -1426,45 +1735,57 @@
                         const imageUrl = getCardImageUrl(card);
                         let quantityInDeck = 0;
                         let maxQuantity = 1;
+                        let removeBtnClass = 'text-red-500 hover:text-red-700';
+
 
                         if (currentTab === 'leader') {
                             quantityInDeck = leaderDeck.some(dc => dc.name === card['カード名']) ? 1 : 0;
                             maxQuantity = 1;
+                            if (!quantityInDeck) removeBtnClass += ' inactive';
                         } else if (currentTab === 'main') {
                             const deckCard = mainDeck.find(dc => dc.name === card['カード名']);
                             quantityInDeck = deckCard ? deckCard.quantity : 0;
                             maxQuantity = 4;
+                            if (quantityInDeck <= 0) removeBtnClass += ' inactive';
                         } else if (currentTab === 'tactics') {
                             quantityInDeck = tacticsDeck.some(dc => dc.name === card['カード名']) ? 1 : 0;
                             maxQuantity = 1;
+                            if (!quantityInDeck) removeBtnClass += ' inactive';
                         }
+
 
                         const cardItem = document.createElement('div');
                         cardItem.className = 'card-image-item';
                         cardItem.setAttribute('data-card-name', card['カード名']);
-                        cardItem.setAttribute('data-card-type', currentTab);
+                        cardItem.setAttribute('data-card-type', currentTab); // For add/remove logic
 
-                        // Use updated placeholder size
+
                         cardItem.innerHTML = `
                             <img src="${imageUrl}" alt="${card['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/300x420/cccccc/333333?text=Load+Error';">
                             <div class="card-image-controls">
                                 <button class="view-detail-btn" data-card-name="${card['カード名']}">🔎</button>
                                 <span class="card-image-quantity">${quantityInDeck} / ${maxQuantity}</span>
-                                <button class="remove-card-btn" data-card-name="${card['カード名']}" data-card-type="${currentTab}">✕</button>
+                                <button class="remove-card-btn ${removeBtnClass}" data-card-name="${card['カード名']}" data-card-type="${currentTab}">✕</button>
                             </div>
                         `;
 
+
+                        // Add card to deck on image click
                         cardItem.querySelector('img').addEventListener('click', () => {
                             addCardToDeck(card['カード名'], 1, currentTab);
                         });
 
+
+                        // Remove card from deck on X button click
                         cardItem.querySelector('.remove-card-btn').addEventListener('click', (event) => {
-                            event.stopPropagation();
+                            event.stopPropagation(); // Prevent card add click from firing
                             removeCardFromDeck(card['カード名'], currentTab);
                         });
 
+
+                        // View detail on 🔎 button click
                         cardItem.querySelector('.view-detail-btn').addEventListener('click', (event) => {
-                            event.stopPropagation();
+                            event.stopPropagation(); // Prevent card add click from firing
                             showCardDetailModal(card['カード名']);
                         });
                         grid.appendChild(cardItem);
@@ -1482,9 +1803,11 @@
                 table.appendChild(thead);
                 table.appendChild(tbody);
 
+
                 let headers = [];
                 let columnRenderers = [];
                 let colspan = 0;
+
 
                 if (currentTab === 'leader') {
                     headers = ['カード名', 'タグ', '色', 'HP', 'ATK', 'カードテキスト', ''];
@@ -1519,7 +1842,9 @@
                     colspan = headers.length;
                 }
 
+
                 thead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+
 
                 if (sortedCards.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="${colspan}" class="text-center text-gray-500 italic">該当するカードがありません。</td></tr>`;
@@ -1545,6 +1870,7 @@
                 scrollableElement = tableScrollContainer; // Update scrollable element reference to the new table container
             }
 
+
             // Restore scroll position after the new DOM is attached
             if (scrollableElement) {
                 // DOMが更新されるのを待ってからスクロール位置を復元
@@ -1553,6 +1879,7 @@
                 });
             }
         }
+
 
         /**
          * フィルターとソートUIの表示/非表示、オプションの更新を行う
@@ -1564,13 +1891,16 @@
             costFilterSelect.style.display = 'none';
             buildRuleFilterSelect.style.display = 'none'; // Hide new dropdown by default
 
+
             // Reset sort options to a default set and re-add based on tab
             sortCriterionSelect.innerHTML = ``; // Clear all options first
+
 
             // Update filter option display names
             colorFilterSelect.querySelector('option[value="全て"]').textContent = '色';
             cardTypeFilterSelect.querySelector('option[value="全て"]').textContent = '種類';
             costFilterSelect.querySelector('option[value="全て"]').textContent = 'コスト';
+
 
             // Add common options, then tab-specific ones
             // Ensure '色' is the first option for default selection
@@ -1580,6 +1910,7 @@
                 <option value="カード名">カード名でソート</option>
                 <option value="レアリティ">レアリティでソート</option>
             `;
+
 
             if (currentTab === 'leader') {
                 colorFilterSelect.style.display = 'inline-block'; // Show color filter for leaders
@@ -1605,6 +1936,7 @@
                 if (colorOption) colorOption.remove();
             }
 
+
             // Ensure current sort criterion is still valid for the selected tab. If not, reset to '色'.
             const validSortOptions = Array.from(sortCriterionSelect.options).map(opt => opt.value);
             if (!validSortOptions.includes(currentSort.criterion)) {
@@ -1612,12 +1944,21 @@
             }
             sortCriterionSelect.value = currentSort.criterion; // Set the UI to the current sort criterion
 
+
             // Reflect current filter values in UI
             colorFilterSelect.value = selectedFilterColor;
             cardTypeFilterSelect.value = selectedFilterCardType;
             costFilterSelect.value = selectedFilterCost;
             buildRuleFilterSelect.value = selectedBuildRuleFilter; // Set dropdown value
+
+
+            // Update active tab class
+            document.querySelectorAll('.btn-catalog-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`show${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)}CatalogBtn`).classList.add('active');
         }
+
 
         /**
          * デッキ表示モーダルを表示する
@@ -1628,68 +1969,36 @@
             modalMainCards.innerHTML = '';
             modalTacticsCards.innerHTML = '';
 
-            // Helper to create a card item with controls for the modal
-            const createModalCardItem = (card, deckType, quantity = 1, maxQuantity = 1) => {
-                const imageUrl = getCardImageUrl(card.cardData);
-                const imgDiv = document.createElement('div');
-                // Use a smaller fixed size for modal display, but still based on high-res image
-                imgDiv.className = 'relative group w-24 h-32 overflow-hidden rounded-md shadow-md flex flex-col items-center'; 
-                imgDiv.innerHTML = `
-                    <img src="${imageUrl}" alt="${card.name}" class="w-full h-full object-cover cursor-pointer">
-                    <div class="card-image-controls absolute bottom-0 bg-white bg-opacity-90 w-full py-1">
-                        <button class="view-detail-btn text-blue-500 hover:text-blue-700" data-card-name="${card.name}">🔎</button>
-                        <span class="card-image-quantity">${quantity} / ${maxQuantity}</span>
-                        <button class="remove-card-btn text-red-500 hover:text-red-700" data-card-name="${card.name}" data-card-type="${deckType}">✕</button>
-                    </div>
-                `;
-
-                // Add event listeners directly to the buttons within the created item
-                imgDiv.querySelector('.view-detail-btn').addEventListener('click', (event) => {
-                    event.stopPropagation();
-                    showCardDetailModal(card.name);
-                });
-
-                imgDiv.querySelector('.remove-card-btn').addEventListener('click', (event) => {
-                    event.stopPropagation();
-                    // For main deck cards, clicking 'X' reduces quantity by 1
-                    if (deckType === 'main') {
-                        removeCardFromDeck(card.name, deckType, 1);
-                    } else { // Leader and Tactics are removed entirely
-                        removeCardFromDeck(card.name, deckType);
-                    }
-                });
-
-                // Add image click to increase quantity
-                imgDiv.querySelector('img').addEventListener('click', () => {
-                    addCardToDeck(card.name, 1, deckType);
-                });
-
-                return imgDiv;
-            };
 
             // リーダーカード表示
             leaderDeck.forEach(card => {
-                modalLeaderCards.appendChild(createModalCardItem(card, 'leader', 1, 1));
+                modalLeaderCards.appendChild(createCardDisplayItemForModal(card.cardData, false)); // Pass false for not related
             });
             modalLeaderCount.textContent = leaderDeck.length;
 
+
             // メインデッキ表示
             mainDeck.forEach(card => {
-                modalMainCards.appendChild(createModalCardItem(card, 'main', card.quantity, 4));
+                modalMainCards.appendChild(createCardDisplayItemForModal(card.cardData, false)); // Pass false for not related
             });
             modalMainCount.textContent = mainDeck.reduce((sum, card) => sum + card.quantity, 0);
             modalAceCount.textContent = mainDeck.filter(c => c.isAce).reduce((sum, c) => sum + c.quantity, 0);
 
 
+
+
             // タクティクスデッキ表示
             tacticsDeck.forEach(card => {
-                modalTacticsCards.appendChild(createModalCardItem(card, 'tactics', 1, 1));
+                modalTacticsCards.appendChild(createCardDisplayItemForModal(card.cardData, false)); // Pass false for not related
             });
             modalTacticsCount.textContent = tacticsDeck.length;
 
 
+
+
             deckViewModal.classList.remove('hidden');
         }
+
 
         /**
          * カード詳細モーダルを表示する
@@ -1702,30 +2011,89 @@
                 return;
             }
 
+
             modalCardImage.src = getCardImageUrl(cardInfo); // Pass cardInfo
             modalCardImage.alt = cardInfo['カード名'];
             modalCardName.textContent = cardInfo['カード名'];
-            modalCardNumber.textContent = `カードナンバー: ${cardInfo['カードナンバー']}`;
-            modalCardType.textContent = `カード種類: ${cardInfo['カード種類']}`;
-            modalCardColor.textContent = `色: ${cardInfo['色']}`;
-            modalCardCost.textContent = `コスト: ${cardInfo['コスト']}`;
-            modalCardRarity.textContent = `レアリティ: ${cardInfo['レアリティ']}`;
-            modalCardRules.textContent = cardInfo['ビルドルール'] ? `ビルドルール: ${cardInfo['ビルドルール']}` : '';
-            modalCardTag.textContent = cardInfo['タグ'] ? `タグ: ${cardInfo['タグ']}` : '';
             
-            let stats = [];
-            if (cardInfo['覚醒前ATK'] && cardInfo['覚醒後ATK']) {
-                stats.push(`ATK: ${cardInfo['覚醒前ATK']} / ${cardInfo['覚醒後ATK']}`);
-            }
-            if (cardInfo['覚醒前HP'] && cardInfo['覚醒後HP']) {
-                stats.push(`HP: ${cardInfo['覚醒前HP']} / ${cardInfo['覚醒後HP']}`);
-            }
-            modalCardStats.textContent = stats.join(' | ');
+            // Clear previous related cards
+            relatedCardsGrid.innerHTML = '';
 
-            modalCardText.textContent = cardInfo['カードテキスト'];
+
+            let relatedCards = [];
+            const cardType = cardInfo['カード種類'];
+
+
+            if (cardType === 'リーダーカード') {
+                // Find Main Deck cards related to this Leader
+                relatedCards = Object.values(allCardData).filter(card => 
+                    (card['カード種類'] === 'アタックカード' || card['カード種類'] === 'メモリアカード') &&
+                    card['ビルドルール'] && card['ビルドルール'].includes(cardInfo['カード名'])
+                );
+            } else if (cardType === 'アタックカード' || cardType === 'メモリアカード') {
+                // Only show related cards if the current main deck card has a build rule
+                if (cardInfo['ビルドルール']) { // Check if build rule exists
+                    // Find other Main Deck cards with the same Build Rule
+                    relatedCards = Object.values(allCardData).filter(card =>
+                        (card['カード種類'] === 'アタックカード' || card['カード種類'] === 'メモリアカード') &&
+                        card['カード名'] !== cardInfo['カード名'] && // Exclude itself
+                        card['ビルドルール'] === cardInfo['ビルドルール'] // Match build rule
+                    );
+
+
+                    // Find the Leader Card mentioned in the Build Rule
+                    if (cardInfo['ビルドルール'].startsWith('リーダー：')) { 
+                        const leaderNameInRule = cardInfo['ビルドルール'].replace('リーダー：', '').trim();
+                        const leaderCard = Object.values(allCardData).find(card =>
+                            card['カード種類'] === 'リーダーカード' && card['カード名'] === leaderNameInRule
+                        );
+                        if (leaderCard) {
+                            relatedCards.push(leaderCard); // Add the related leader card
+                        }
+                    }
+                }
+            }
+            // Sort related cards by type, then color, then cost, then name
+            const colorOrder = { '赤': 1, '青': 2, '黄': 3, '緑': 4, '無': 5, '': 99 };
+            relatedCards.sort((a, b) => {
+                // Primary sort: Leader cards first, then Attack/Memoria, then Tactics
+                const typeOrder = { 'リーダーカード': 1, 'アタックカード': 2, 'メモリアカード': 3, 'タクティクスカード': 4 };
+                const typeA = typeOrder[a['カード種類']] || 99;
+                const typeB = typeOrder[b['カード種類']] || 99;
+                if (typeA !== typeB) return typeA - typeB;
+
+
+                // Secondary sort: Color
+                const colorA = colorOrder[a['色']] || 99;
+                const colorB = colorOrder[b['色']] || 99;
+                if (colorA !== colorB) return colorA - colorB;
+
+
+                // Tertiary sort: Cost
+                const costA = parseInt(a['コスト']) || 0;
+                const costB = parseInt(b['コスト']) || 0;
+                if (costA !== costB) return costA - costB;
+
+
+                // Quaternary sort: Card Name
+                return (a['カード名'] || '').localeCompare(b['カード名'] || '');
+            });
+
+
+
+
+            if (relatedCards.length > 0) {
+                relatedCards.forEach(relatedCard => {
+                    relatedCardsGrid.appendChild(createCardDisplayItemForModal(relatedCard, true)); // Pass true for related
+                });
+            } else {
+                relatedCardsGrid.innerHTML = '<p class="text-gray-500 italic col-span-full">関連カードがありません。</p>';
+            }
+
 
             cardDetailModal.classList.remove('hidden');
         }
+
 
         /**
          * デッキ画像をCanvasに描画する汎用関数
@@ -1743,6 +2111,7 @@
             const DECK_NAME_HEIGHT_BASE = 80;
             const NUM_COLUMNS = 7;
 
+
             const CARD_WIDTH = CARD_BASE_WIDTH * scaleFactor;
             const CARD_HEIGHT = CARD_BASE_HEIGHT * scaleFactor;
             const PADDING = PADDING_BASE * scaleFactor;
@@ -1750,7 +2119,9 @@
             const QUANTITY_FONT_SIZE = QUANTITY_FONT_SIZE_BASE * scaleFactor;
             const DECK_NAME_HEIGHT = deckNameForDisplay ? DECK_NAME_HEIGHT_BASE * scaleFactor : 0;
 
+
             const cardsToDraw = [];
+
 
             // リーダーカード
             const leaderCardEntries = Object.entries(deckData.LEADER);
@@ -1765,6 +2136,7 @@
                 }
             }
 
+
             // メインデッキ
             const mainCardsForDrawing = [];
             const mainCardEntries = Object.entries(deckData.MAIN);
@@ -1775,6 +2147,7 @@
                 }
             });
 
+
             // メインデッキのソート (カード種類、色、コスト、名前の順)
             mainCardsForDrawing.sort((a, b) => {
                 const typeOrder = { 'アタックカード': 1, 'メモリアカード': 2 };
@@ -1782,19 +2155,25 @@
                 const typeB = typeOrder[b.cardData['カード種類']] || 99;
                 if (typeA !== typeB) return typeA - typeB;
 
+
                 const colorOrder = { '赤': 1, '青': 2, '黄': 3, '緑': 4, '': 5 };
                 const colorA = colorOrder[a.cardData['色']] || 99;
                 const colorB = colorOrder[b.cardData['色']] || 99;
                 if (colorA !== colorB) return colorA - colorB;
 
+
                 const costA = parseInt(a.cardData['コスト']) || 0;
                 const costB = parseInt(b.cardData['コスト']) || 0;
                 if (costA !== costB) return costA - costB;
 
+
                 return a.cardData['カード名'].localeCompare(b.cardData['カード名']);
             });
 
+
             mainCardsForDrawing.forEach(card => cardsToDraw.push(card));
+
+
 
 
             // タクティクスカード
@@ -1806,6 +2185,7 @@
                     tacticsCardsFormatted.push({ cardData: cardInfo, displayQuantity: 1, type: 'tactics' });
                 }
             });
+
 
             // 最後の行の空きを埋める
             let currentLastRowLength = cardsToDraw.length % NUM_COLUMNS;
@@ -1820,7 +2200,10 @@
             }
 
 
+
+
             const numRows = Math.ceil(cardsToDraw.length / NUM_COLUMNS);
+
 
             canvas.width = NUM_COLUMNS * (CARD_WIDTH + PADDING) + PADDING;
             canvas.height = DECK_NAME_HEIGHT + numRows * (CARD_HEIGHT + TEXT_HEIGHT + PADDING) + PADDING;
@@ -1830,6 +2213,7 @@
             ctx.fillStyle = '#f0f2f5';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+
             if (deckNameForDisplay) {
                 ctx.fillStyle = '#2c3e50';
                 ctx.font = `700 ${DECK_NAME_HEIGHT / 2}px Inter`;
@@ -1837,6 +2221,7 @@
                 ctx.textBaseline = 'middle';
                 ctx.fillText(deckNameForDisplay, canvas.width / 2, DECK_NAME_HEIGHT / 2);
             }
+
 
             const imagePromises = cardsToDraw.map(item => {
                 if (!item.cardData) return Promise.resolve(null);
@@ -1855,15 +2240,19 @@
                 });
             });
 
+
             const loadedImages = await Promise.all(imagePromises);
+
 
             loadedImages.forEach((img, index) => {
                 const item = cardsToDraw[index];
                 const col = index % NUM_COLUMNS;
                 const row = Math.floor(index / NUM_COLUMNS);
 
+
                 const x = PADDING + col * (CARD_WIDTH + PADDING);
                 const y = DECK_NAME_HEIGHT + PADDING + row * (CARD_HEIGHT + TEXT_HEIGHT + PADDING);
+
 
                 if (img) {
                     ctx.save();
@@ -1876,6 +2265,7 @@
                     }
                     ctx.restore();
 
+
                     // Card name text (not rotated)
                     ctx.fillStyle = '#333';
                     ctx.font = `600 ${TEXT_HEIGHT * 0.6}px Inter`;
@@ -1883,6 +2273,7 @@
                     const cardName = item.cardData['カード名'];
                     const textY = DECK_NAME_HEIGHT + (PADDING + row * (CARD_HEIGHT + TEXT_HEIGHT + PADDING)) + CARD_HEIGHT + TEXT_HEIGHT / 2 + (5 * scaleFactor);
                     ctx.fillText(cardName, (PADDING + col * (CARD_WIDTH + PADDING)) + CARD_WIDTH / 2, textY, CARD_WIDTH - PADDING);
+
 
                     // Quantity for main deck cards (not rotated)
                     if (item.type === 'main' && item.displayQuantity >= 1) {
@@ -1894,6 +2285,7 @@
                         ctx.arc(circleX, circleY, radius, 0, Math.PI * 2, true);
                         ctx.fill();
 
+
                         ctx.fillStyle = 'white';
                         ctx.font = `bold ${QUANTITY_FONT_SIZE}px Inter`;
                         ctx.textAlign = 'center';
@@ -1903,6 +2295,8 @@
                 }
             });
         }
+
+
 
 
         /**
@@ -1918,6 +2312,7 @@
                     return;
                 }
 
+
                 // Prepare deck data in the format expected by drawDeckPreviewOnCanvas
                 const currentLeaderExport = {};
                 leaderDeck.forEach(card => {
@@ -1925,11 +2320,13 @@
                     currentLeaderExport[cardNumPrefix] = 1;
                 });
 
+
                 const currentMainExport = {};
                 mainDeck.forEach(card => {
                     const cardNumPrefix = card.cardData['カードナンバー'] ? card.cardData['カードナンバー'].split('/')[0] : card.name;
                     currentMainExport[cardNumPrefix] = card.quantity;
                 });
+
 
                 const currentTacticsExport = {};
                 tacticsDeck.forEach(card => {
@@ -1937,13 +2334,21 @@
                     currentTacticsExport[cardNumPrefix] = 1;
                 });
 
+
                 const currentDeckDataForDraw = {
                     LEADER: currentLeaderExport,
                     MAIN: currentMainExport,
                     TACTICS: currentTacticsExport
                 };
 
-                await drawDeckPreviewOnCanvas(currentDeckDataForDraw, deckCanvas, deckNameInput.value.trim(), 1); // Full size (scaleFactor = 1)
+
+                // Determine deck name for display on the image and for the file name
+                const deckNameToDisplay = deckNameInputLocal.value.trim() || deckNameInput.value.trim() || '無題のデッキ';
+
+
+
+
+                await drawDeckPreviewOnCanvas(currentDeckDataForDraw, deckCanvas, deckNameToDisplay, 1); // Full size (scaleFactor = 1)
                 
                 const now = new Date();
                 const timestamp = now.getFullYear().toString() +
@@ -1952,10 +2357,12 @@
                                   now.getHours().toString().padStart(2, '0') +
                                   now.getMinutes().toString().padStart(2, '0') +
                                   now.getSeconds().toString().padStart(2, '0');
-                downloadDeckImageBtn.download = `XrossStars_Deck_${timestamp}.png`;
+                // Use the determined deck name for the download filename
+                downloadDeckImageBtn.download = `XrossStars_Deck_${deckNameToDisplay.replace(/ /g, '_')}_${timestamp}.png`;
                 downloadDeckImageBtn.href = deckCanvas.toDataURL('image/png'); // Get data URL after drawing
                 
                 deckImageModal.classList.remove('hidden');
+
 
             } catch (error) {
                 console.error("デッキ画像の生成中にエラーが発生しました:", error);
@@ -1965,12 +2372,14 @@
             }
         }
 
+
         /**
          * デッキ完成と保存を処理する関数 (Google Sheets連携は削除)
          */
         async function handleDeckCompletionAndSave() {
             alert("「デッキ完成 (デッキコード生成 & 保存)」ボタンは現在無効化されています。ローカル保存機能をご利用ください。");
         }
+
 
         /**
          * ローカルストレージにデッキを保存する
@@ -1983,6 +2392,7 @@
                 return;
             }
 
+
             const validations = validateDeck();
             if (!validations.isLeaderValid || !validations.isMainValid || !validations.isTacticsValid) {
                 localStorageMessage.className = 'validation-message validation-error';
@@ -1990,11 +2400,13 @@
                 return;
             }
 
+
             const exportedLeader = {};
             leaderDeck.forEach(card => {
                 const cardNumPrefix = card.cardData['カードナンバー'] ? card.cardData['カードナンバー'].split('/')[0] : card.name;
                 exportedLeader[cardNumPrefix] = 1;
             });
+
 
             const exportedMain = {};
             mainDeck.forEach(card => {
@@ -2002,11 +2414,13 @@
                 exportedMain[cardNumPrefix] = card.quantity;
             });
 
+
             const exportedTactics = {};
             tacticsDeck.forEach(card => {
                 const cardNumPrefix = card.cardData['カードナンバー'] ? card.cardData['カードナンバー'].split('/')[0] : card.name;
                 exportedTactics[cardNumPrefix] = 1;
             });
+
 
             const savedDeck = {
                 deckName: currentDeckName,
@@ -2017,6 +2431,7 @@
                     TACTICS: exportedTactics
                 }
             };
+
 
             let savedDecks = JSON.parse(localStorage.getItem('xrossstars_decks') || '[]');
             // Deck name collision check and overwrite
@@ -2033,12 +2448,14 @@
             localStorageMessage.className = 'validation-message validation-success';
         }
 
+
         /**
          * 保存されたデッキ一覧モーダルを表示する
          */
         function showDeckListModal() {
             const savedDecks = JSON.parse(localStorage.getItem('xrossstars_decks') || '[]');
             deckListContainer.innerHTML = ''; // Clear previous list
+
 
             if (savedDecks.length === 0) {
                 deckListContainer.innerHTML = '<p class="text-gray-600 text-center">保存されたデッキはありません。</p>';
@@ -2060,6 +2477,7 @@
                     deckListContainer.appendChild(deckItem);
                 });
 
+
                 // Add event listeners to newly created buttons
                 deckListContainer.querySelectorAll('.load-local-deck-item-btn').forEach(button => {
                     button.addEventListener('click', (event) => {
@@ -2069,12 +2487,14 @@
                     });
                 });
 
+
                 deckListContainer.querySelectorAll('.delete-local-deck-btn').forEach(button => {
                     button.addEventListener('click', (event) => {
                         const index = parseInt(event.target.dataset.index, 10);
                         deleteLocalDeck(index);
                     });
                 });
+
 
                 deckListContainer.querySelectorAll('.rename-local-deck-btn').forEach(button => {
                     button.addEventListener('click', (event) => {
@@ -2085,6 +2505,7 @@
             }
             deckListModal.classList.remove('hidden');
         }
+
 
         /**
          * デッキ読み込み確認モーダルを表示する
@@ -2097,9 +2518,11 @@
             // Draw a mini preview of the deck
             await drawDeckPreviewOnCanvas(selectedDeck.deck, loadConfirmationCanvas, selectedDeck.deckName, 0.5); // Scaled down to 50%
 
+
             deckListModal.classList.add('hidden'); // Hide deck list modal
             loadConfirmationModal.classList.remove('hidden'); // Show confirmation modal
         }
+
 
         /**
          * ローカルストレージからデッキを削除する
@@ -2119,6 +2542,7 @@
             }
         }
 
+
         /**
          * ローカルストレージ内のデッキの名前を変更する
          * @param {number} index - 名前を変更するデッキのインデックス
@@ -2128,6 +2552,7 @@
             if (index >= 0 && index < savedDecks.length) {
                 const currentDeckName = savedDecks[index].deckName;
                 const newName = prompt(`デッキ「${currentDeckName}」の新しい名前を入力してください:`, currentDeckName);
+
 
                 if (newName !== null && newName.trim() !== '') {
                     const trimmedNewName = newName.trim();
@@ -2152,6 +2577,8 @@
         }
 
 
+
+
         /**
          * Google Sheetsからデッキ情報を読み込む (このアプリでは使用しないが、以前のコードから残すため)
          */
@@ -2160,11 +2587,14 @@
             return; 
         }
 
+
         // Google Sheetsに保存する関数 (このアプリでは使用しないが、以前のコードから残すため)
         async function saveToSheets() {
             alert("この機能は現在無効化されています。ローカル保存機能をご利用ください。");
             return;
         }
+
+
 
 
         // イベントリスナー
@@ -2192,6 +2622,7 @@
         closeCardDetailModalBtn.addEventListener('click', () => cardDetailModal.classList.add('hidden'));
         closeDeckImageModalBtn.addEventListener('click', () => deckImageModal.classList.add('hidden'));
 
+
         // Load Confirmation Modal Event Listeners
         closeLoadConfirmationModalBtn.addEventListener('click', () => loadConfirmationModal.classList.add('hidden'));
         confirmLoadBtn.addEventListener('click', () => {
@@ -2211,11 +2642,14 @@
         });
 
 
+
+
         // 検索入力時の処理
         searchCatalogInput.addEventListener('input', () => {
             currentSearchQuery = searchCatalogInput.value.trim();
             renderCatalog();
         });
+
 
         // フィルター変更時の処理
         colorFilterSelect.addEventListener('change', (event) => {
@@ -2223,26 +2657,31 @@
             renderCatalog();
         });
 
+
         cardTypeFilterSelect.addEventListener('change', (event) => {
             selectedFilterCardType = event.target.value;
             renderCatalog();
         });
+
 
         costFilterSelect.addEventListener('change', (event) => {
             selectedFilterCost = event.target.value;
             renderCatalog();
         });
 
+
         buildRuleFilterSelect.addEventListener('change', (event) => {
             selectedBuildRuleFilter = event.target.value;
             renderCatalog();
         });
+
 
         // ソート基準変更時の処理
         sortCriterionSelect.addEventListener('change', (event) => {
             currentSort.criterion = event.target.value;
             renderCatalog();
         });
+
 
         // ソート方向変更時の処理
         sortDirectionBtn.addEventListener('click', () => {
@@ -2251,12 +2690,15 @@
             renderCatalog();
         });
 
+
         // 表示モード切り替え
         toggleDisplayBtn.addEventListener('click', () => {
             displayMode = displayMode === 'image' ? 'table' : 'image';
             toggleDisplayBtn.textContent = `表示切替: ${displayMode === 'image' ? '画像一覧' : 'テーブル'}`;
             renderCatalog();
         });
+
+
 
 
         // カードカタログからの追加（共通化 - テーブル表示時のボタン）
@@ -2270,6 +2712,7 @@
                 addCardToDeck(cardName, quantity, cardType);
             }
         });
+
 
         /**
          * フィルターをリセットする関数
@@ -2290,6 +2733,8 @@
         }
 
 
+
+
         /**
          * デッキデータをJSON文字列としてエクスポートする（テキストエリア表示）
          */
@@ -2300,17 +2745,20 @@
                 exportedLeader[cardNumPrefix] = 1;
             });
 
+
             const exportedMain = {};
             mainDeck.forEach(card => {
                 const cardNumPrefix = card.cardData['カードナンバー'] ? card.cardData['カードナンバー'].split('/')[0] : card.name;
                 exportedMain[cardNumPrefix] = card.quantity;
             });
 
+
             const exportedTactics = {};
             tacticsDeck.forEach(card => {
                 const cardNumPrefix = card.cardData['カードナンバー'] ? card.cardData['カードナンバー'].split('/')[0] : card.name;
                 exportedTactics[cardNumPrefix] = 1;
             });
+
 
             const deckData = {
                 deckName: deckNameInput.value.trim(),
@@ -2327,6 +2775,7 @@
             importExportMessage.textContent = 'デッキデータがエクスポートされました。テキストエリアからコピーしてください。';
         });
 
+
         /**
          * テキストエリアのデータをクリップボードにコピーする
          */
@@ -2336,6 +2785,7 @@
             importExportMessage.className = 'validation-message validation-success';
             importExportMessage.textContent = 'デッキデータがクリップボードにコピーされました！';
         });
+
 
         /**
          * デッキデータをJSONファイルとしてダウンロードする
@@ -2347,17 +2797,20 @@
                 exportedLeader[cardNumPrefix] = 1;
             });
 
+
             const exportedMain = {};
             mainDeck.forEach(card => {
                 const cardNumPrefix = card.cardData['カードナンバー'] ? card.cardData['カードナンバー'].split('/')[0] : card.name;
                 exportedMain[cardNumPrefix] = card.quantity;
             });
 
+
             const exportedTactics = {};
             tacticsDeck.forEach(card => {
                 const cardNumPrefix = card.cardData['カードナンバー'] ? card.cardData['カードナンバー'].split('/')[0] : card.name;
                 exportedTactics[cardNumPrefix] = 1;
             });
+
 
             const deckData = {
                 deckName: deckNameInput.value.trim() || '無題のデッキ',
@@ -2378,10 +2831,12 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
 
+
             importExportMessage.classList.remove('hidden');
             importExportMessage.className = 'validation-message validation-success';
             importExportMessage.textContent = 'デッキデータがJSONファイルとしてダウンロードされました！';
         });
+
 
         /**
          * JSONファイルをアップロードしてデッキをインポートする
@@ -2392,11 +2847,13 @@
                 return;
             }
 
+
             if (file.type !== 'application/json') {
                 importExportMessage.className = 'validation-message validation-error';
                 importExportMessage.textContent = 'JSONファイルを選択してください。';
                 return;
             }
+
 
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -2409,7 +2866,7 @@
                     importExportMessage.textContent = `ファイルの読み込みまたはパース中にエラーが発生しました。JSON形式が正しいか確認してください。エラー: ${error.message}`;
                 } finally {
                     importFileInput.value = '';
-                }
+                };
             };
             reader.onerror = () => {
                 console.error('FileReaderエラー:', reader.error);
@@ -2420,6 +2877,7 @@
             reader.readAsText(file);
         });
 
+
         /**
          * パースされたデッキデータ（JSON）をデッキにロードする共通関数
          * @param {Object} importedStructure - インポートされたデッキデータ構造
@@ -2427,17 +2885,21 @@
         function loadDeckFromParsedData(importedStructure) {
             const importedData = importedStructure.deck;
 
+
             // データの妥当性チェック
             if (!importedData || !importedData.LEADER || !importedData.MAIN || !importedData.TACTICS) {
                 alert('無効なデッキデータ形式です。必要なセクション（LEADER, MAIN, TACTICS）が見つかりません。');
                 return; // Exit if invalid structure
             }
 
+
             const newLeaderDeck = [];
             const newMainDeck = [];
             const newTacticsDeck = [];
 
+
             let importError = false;
+
 
             // リーダーデッキのインポート
             let parsedLeaderData = typeof importedData.LEADER === 'string' ? JSON.parse(importedData.LEADER) : importedData.LEADER;
@@ -2465,6 +2927,7 @@
                     newLeaderDeck.push({ name: cardInfo['カード名'], cardData: cardInfo });
                 }
             }
+
 
             // メインデッキのインポート
             if (!importError) {
@@ -2503,6 +2966,7 @@
                 }
             }
 
+
             // タクティクスデッキのインポート
             if (!importError) {
                 let parsedTacticsData = typeof importedData.TACTICS === 'string' ? JSON.parse(importedData.TACTICS) : importedData.TACTICS;
@@ -2531,6 +2995,7 @@
                 }
             }
 
+
             if (!importError) {
                 leaderDeck = newLeaderDeck;
                 mainDeck = newMainDeck;
@@ -2549,6 +3014,8 @@
         }
 
 
+
+
         /**
          * テキストエリアのJSONデータからデッキをインポートする
          */
@@ -2560,6 +3027,7 @@
                 return;
             }
 
+
             try {
                 const importedStructure = JSON.parse(importText);
                 loadDeckFromParsedData(importedStructure);
@@ -2570,15 +3038,19 @@
             }
         });
 
+
         // デッキ入出力セクションの表示/非表示切り替え
         toggleExportImportBtn.addEventListener('click', () => {
             exportImportContent.classList.toggle('hidden');
         });
 
+
         // Local Storage関連のイベントリスナー
         saveLocalDeckBtn.addEventListener('click', saveDeckToLocalStorage);
         loadLocalDecksBtn.addEventListener('click', showDeckListModal);
         closeDeckListModalBtn.addEventListener('click', () => deckListModal.classList.add('hidden'));
+
+
 
 
         // 初期ロード時にカードデータを読み込み、オートコンプリートを設定
@@ -2590,5 +3062,3 @@
     </script>
 </body>
 </html>
-
-
