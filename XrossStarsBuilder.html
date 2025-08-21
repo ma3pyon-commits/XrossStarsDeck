@@ -717,15 +717,11 @@
         <div class="modal-content max-w-full max-h-full p-5">
             <button class="modal-close-btn" id="closeDeckImageModal">&times;</button>
             <h3 class="text-2xl font-bold mb-5 text-center">生成されたデッキ画像</h3>
-            <!-- New Checkboxes for Image Options -->
+            <!-- High Quality Checkbox -->
             <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-5 text-lg">
                 <label for="highQualityCheckbox" class="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" id="highQualityCheckbox" class="rounded-md transform scale-125">
                     <span>高画質化</span>
-                </label>
-                <label for="qrVisibilityCheckbox" class="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" id="qrVisibilityCheckbox" class="rounded-md transform scale-125">
-                    <span>QRコードを非表示</span>
                 </label>
             </div>
             <div class="flex flex-col items-center">
@@ -762,8 +758,12 @@
         </div>
     </div>
 
-    <!-- Removed the QR Code checkbox and its container from the footer -->
+    <!-- Moved QR Code checkbox to the footer -->
     <div class="footer-content">
+        <label for="hideQrCodeCheckbox">
+            <input type="checkbox" id="hideQrCodeCheckbox" class="rounded-md">
+            <span>デッキ画像のQRコードを非表示</span>
+        </label>
         <p>Thanks for visiting! – PineAme@tcepseredutitta</p>
     </div>
 
@@ -877,13 +877,13 @@
 
         let deckToLoad = null; // Store deck data temporarily for confirmation
 
-        // NEW: QR Code related variables
+        // QR Code related variables
         let qrCodeImage = null; // To store the loaded QR code image object
         
-        // NEW: Checkbox elements within the deck image modal
+        // Checkbox elements
         const highQualityCheckbox = document.getElementById('highQualityCheckbox');
-        // Changed from qrVisibilityCheckbox to represent "hide QR"
-        const qrVisibilityCheckbox = document.getElementById('qrVisibilityCheckbox');
+        // This is now the ONLY QR code checkbox, located in the footer
+        const hideQrCodeCheckbox = document.getElementById('hideQrCodeCheckbox');
 
 
         /**
@@ -1027,12 +1027,19 @@
                     });
                 }
 
-                // Initialize modal checkboxes based on saved preferences or sensible defaults
+                // Initialize high quality checkbox from local storage
                 highQualityCheckbox.checked = localStorage.getItem('highQualityImage') === 'true';
-                // For "QRコードを非表示" checkbox, if 'qrCodeHiddenInModal' is true, it means QR should be hidden, so checkbox is checked.
-                qrVisibilityCheckbox.checked = localStorage.getItem('qrCodeHiddenInModal') === 'true';
-
-
+                // Initialize "hide QR code" checkbox from local storage
+                // If 'qrCodeHiddenInModal' was previously used, transfer its value
+                const oldQrHiddenState = localStorage.getItem('qrCodeHiddenInModal');
+                if (oldQrHiddenState !== null) {
+                    hideQrCodeCheckbox.checked = oldQrHiddenState === 'true';
+                    localStorage.removeItem('qrCodeHiddenInModal'); // Clean up old key
+                } else {
+                    // Default behavior: QR code is visible, so "hide QR code" checkbox is unchecked
+                    hideQrCodeCheckbox.checked = false; 
+                }
+                
             } catch (error) {
                 console.error("Error loading initial data:", error);
                 alert(`初期データの読み込みに失敗しました。詳細: ${error.message}`);
@@ -2168,8 +2175,7 @@
                 }
             });
 
-            // NEW: Draw QR code if required and available
-            // Note: `includeQr` here means "should show QR". If qrVisibilityCheckbox.checked is true (meaning "hide QR"), then !qrVisibilityCheckbox.checked is false.
+            // Draw QR code if required and available
             if (includeQr && qrImg) {
                 const qrPadding = PADDING_BASE * scaleFactor; // Padding from canvas edges
                 const qrX = canvas.width - QR_SIZE - qrPadding;
@@ -2202,9 +2208,8 @@
 
             try {
                 const deckNameToDisplay = deckNameInputLocal.value.trim() || deckNameInput.value.trim() || '無題のデッキ';
-                // モーダル内のチェックボックスの状態を直接読み取る
-                // qrVisibilityCheckbox.checked が true の場合（非表示を選択した場合）はQRコードを含めない (false)
-                const shouldIncludeQr = !qrVisibilityCheckbox.checked; 
+                // フッターのチェックボックスの状態を読み取る: チェックが入っている場合はQRコードを含めない (false)
+                const shouldIncludeQr = !hideQrCodeCheckbox.checked; 
                 const scaleFactorForImage = highQualityCheckbox.checked ? 2 : 1; // 高画質化チェックボックスの状態に応じてスケールを設定
 
                 await drawDeckPreviewOnCanvas(lastGeneratedDeckData, deckCanvas, deckNameToDisplay, scaleFactorForImage, shouldIncludeQr, qrCodeImage, 3);
@@ -2269,9 +2274,8 @@
                 // Determine deck name for display on the image and for the file name
                 const deckNameToDisplay = deckNameInputLocal.value.trim() || deckNameInput.value.trim() || '無題のデッキ';
 
-                // モーダル内のチェックボックスの初期状態を、ローカルストレージから読み込んだ値に設定
+                // モーダル内の高画質化チェックボックスの初期状態をローカルストレージから読み込む
                 highQualityCheckbox.checked = localStorage.getItem('highQualityImage') === 'true';
-                qrVisibilityCheckbox.checked = localStorage.getItem('qrCodeHiddenInModal') === 'true'; // Use 'qrCodeHiddenInModal'
 
                 // モーダルを表示してから、プレビューを更新する
                 deckImageModal.classList.remove('hidden');
@@ -2902,15 +2906,17 @@
         loadLocalDecksBtn.addEventListener('click', showDeckListModal);
         closeDeckListModalBtn.addEventListener('click', () => deckListModal.classList.add('hidden'));
 
-        // NEW: Checkboxes in deck image modal event listeners
+        // High Quality Checkbox in deck image modal event listener
         highQualityCheckbox.addEventListener('change', (event) => {
             localStorage.setItem('highQualityImage', event.target.checked);
             updateDeckImagePreview();
         });
-        qrVisibilityCheckbox.addEventListener('change', (event) => {
+
+        // QR Code visibility checkbox in footer event listener
+        hideQrCodeCheckbox.addEventListener('change', (event) => {
             // Checkbox means "hide QR code", so store its checked state directly
             localStorage.setItem('qrCodeHiddenInModal', event.target.checked);
-            updateDeckImagePreview();
+            updateDeckImagePreview(); // Update preview to reflect the change
         });
 
 
@@ -2923,3 +2929,5 @@
     </script>
 </body>
 </html>
+
+
