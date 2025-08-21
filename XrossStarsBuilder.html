@@ -717,6 +717,17 @@
         <div class="modal-content max-w-full max-h-full p-5">
             <button class="modal-close-btn" id="closeDeckImageModal">&times;</button>
             <h3 class="text-2xl font-bold mb-5 text-center">生成されたデッキ画像</h3>
+            <!-- New Checkboxes for Image Options -->
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-5 text-lg">
+                <label for="highQualityCheckbox" class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="highQualityCheckbox" class="rounded-md transform scale-125">
+                    <span>高画質化</span>
+                </label>
+                <label for="qrVisibilityCheckbox" class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="qrVisibilityCheckbox" class="rounded-md transform scale-125">
+                    <span>QRコードを非表示</span>
+                </label>
+            </div>
             <div class="flex flex-col items-center">
                 <canvas id="deckCanvas" class="border border-gray-300 rounded-md shadow-xl"></canvas>
                 <a id="downloadDeckImage" download="XrossStars_Deck_Image.png" class="btn btn-primary mt-5 py-3 px-7">画像をダウンロード</a>
@@ -751,12 +762,8 @@
         </div>
     </div>
 
-    <!-- New checkbox and "Thanks for visiting! – PineAme@tcepseredutitta" section at the very bottom -->
+    <!-- Removed the QR Code checkbox and its container from the footer -->
     <div class="footer-content">
-        <label for="hideQrCodeCheckbox">
-            <input type="checkbox" id="hideQrCodeCheckbox" class="rounded-md">
-            <span>デッキ画像にQRコードを表示しない</span>
-        </label>
         <p>Thanks for visiting! – PineAme@tcepseredutitta</p>
     </div>
 
@@ -784,6 +791,7 @@
         let selectedFilterCost = '全て';
         let selectedBuildRuleFilter = 'すべて'; // New state for the dropdown
 
+        let lastGeneratedDeckData = null; // Stores the processed deck data for redraws
 
         // HTML要素への参照
         const loadingIndicator = document.getElementById('loadingIndicator');
@@ -848,16 +856,6 @@
         const closeCardDetailModalBtn = document.getElementById('closeCardDetailModal');
         const modalCardImage = document.getElementById('modalCardImage');
         const modalCardName = document.getElementById('modalCardName');
-        // Removed references to old text info elements as per user request
-        // const modalCardNumber = document.getElementById('modalCardNumber');
-        // const modalCardType = document.getElementById('modalCardType');
-        // const modalCardColor = document.getElementById('modalCardColor');
-        // const modalCardCost = document.getElementById('modalCardCost');
-        // const modalCardRarity = document.getElementById('modalCardRarity');
-        // const modalCardRules = document.getElementById('modalCardRules');
-        // const modalCardTag = document.getElementById('modalCardTag');
-        // const modalCardStats = document.getElementById('modalCardStats');
-        // const modalCardText = document.getElementById('modalCardText');
         const relatedCardsGrid = document.getElementById('relatedCardsGrid'); // New: Reference to related cards grid
 
         const deckImageModal = document.getElementById('deckImageModal'); // New modal for deck image
@@ -881,10 +879,11 @@
 
         // NEW: QR Code related variables
         let qrCodeImage = null; // To store the loaded QR code image object
-        let hideQrCode = false; // State for the QR code visibility checkbox
-
-        // NEW: QR Code checkbox element reference
-        const hideQrCodeCheckbox = document.getElementById('hideQrCodeCheckbox');
+        
+        // NEW: Checkbox elements within the deck image modal
+        const highQualityCheckbox = document.getElementById('highQualityCheckbox');
+        // Changed from qrVisibilityCheckbox to represent "hide QR"
+        const qrVisibilityCheckbox = document.getElementById('qrVisibilityCheckbox');
 
 
         /**
@@ -1028,9 +1027,11 @@
                     });
                 }
 
-                // Initialize QR code preference from local storage
-                hideQrCode = localStorage.getItem('hideQrCode') === 'true';
-                hideQrCodeCheckbox.checked = hideQrCode;
+                // Initialize modal checkboxes based on saved preferences or sensible defaults
+                highQualityCheckbox.checked = localStorage.getItem('highQualityImage') === 'true';
+                // For "QRコードを非表示" checkbox, if 'qrCodeHiddenInModal' is true, it means QR should be hidden, so checkbox is checked.
+                qrVisibilityCheckbox.checked = localStorage.getItem('qrCodeHiddenInModal') === 'true';
+
 
             } catch (error) {
                 console.error("Error loading initial data:", error);
@@ -1038,7 +1039,7 @@
             } finally {
                 loadingIndicator.classList.add('hidden');
                 updateFilterAndSortUI();
-                renderCatalog(); 
+                updateDeckDisplay(); // Call updateDeckDisplay here to refresh catalog and validations
             }
         }
 
@@ -1376,7 +1377,7 @@
                     if (!quantityInDeck) removeBtnClass += ' inactive';
                 } else if (currentDisplayTab === 'main') {
                     const deckCard = mainDeck.find(dc => dc.name === card['カード名']);
-                    quantityInDeck = deckCard ? deckCard.quantity : 0;
+                    const quantity = deckCard ? deckCard.quantity : 0;
                     maxQuantity = 4; // Main deck cards can have up to 4 copies
                     if (quantityInDeck <= 0) removeBtnClass += ' inactive';
                 } else if (currentTab === 'tactics') {
@@ -2168,6 +2169,7 @@
             });
 
             // NEW: Draw QR code if required and available
+            // Note: `includeQr` here means "should show QR". If qrVisibilityCheckbox.checked is true (meaning "hide QR"), then !qrVisibilityCheckbox.checked is false.
             if (includeQr && qrImg) {
                 const qrPadding = PADDING_BASE * scaleFactor; // Padding from canvas edges
                 const qrX = canvas.width - QR_SIZE - qrPadding;
@@ -2181,6 +2183,49 @@
             }
         }
 
+        /**
+         * デッキ画像プレビューを更新する関数
+         * この関数は、デッキデータが既に生成されている場合のみ呼び出されます。
+         */
+        async function updateDeckImagePreview() {
+            // lastGeneratedDeckData が null の場合、まだデッキ画像が生成されていないので何もしない
+            if (!lastGeneratedDeckData) {
+                return;
+            }
+            
+            // モーダルが非表示の場合は、無駄な描画を避ける
+            if (deckImageModal.classList.contains('hidden')) {
+                return;
+            }
+
+            loadingIndicator.classList.remove('hidden'); // ローディングインジケーターを表示
+
+            try {
+                const deckNameToDisplay = deckNameInputLocal.value.trim() || deckNameInput.value.trim() || '無題のデッキ';
+                // モーダル内のチェックボックスの状態を直接読み取る
+                // qrVisibilityCheckbox.checked が true の場合（非表示を選択した場合）はQRコードを含めない (false)
+                const shouldIncludeQr = !qrVisibilityCheckbox.checked; 
+                const scaleFactorForImage = highQualityCheckbox.checked ? 2 : 1; // 高画質化チェックボックスの状態に応じてスケールを設定
+
+                await drawDeckPreviewOnCanvas(lastGeneratedDeckData, deckCanvas, deckNameToDisplay, scaleFactorForImage, shouldIncludeQr, qrCodeImage, 3);
+                
+                const now = new Date();
+                const timestamp = now.getFullYear().toString() +
+                                  (now.getMonth() + 1).toString().padStart(2, '0') +
+                                  now.getDate().toString().padStart(2, '0') +
+                                  now.getHours().toString().padStart(2, '0') +
+                                  now.getMinutes().toString().padStart(2, '0') +
+                                  now.getSeconds().toString().padStart(2, '0');
+                downloadDeckImageBtn.download = `XrossStars_Deck_${deckNameToDisplay.replace(/ /g, '_')}_${timestamp}.png`;
+                downloadDeckImageBtn.href = deckCanvas.toDataURL('image/png');
+
+            } catch (error) {
+                console.error("デッキ画像プレビューの更新中にエラーが発生しました:", error);
+                // 小さなプレビュー更新エラーではアラートを表示しない
+            } finally {
+                loadingIndicator.classList.add('hidden'); // ローディングインジケーターを非表示
+            }
+        }
 
         /**
          * デッキ画像を生成して表示する (通常の大きい画像)
@@ -2219,27 +2264,19 @@
                     MAIN: exportedMain,
                     TACTICS: exportedTactics
                 };
+                lastGeneratedDeckData = currentDeckDataForDraw; // 今後の再描画のためにデータを保存
 
                 // Determine deck name for display on the image and for the file name
                 const deckNameToDisplay = deckNameInputLocal.value.trim() || deckNameInput.value.trim() || '無題のデッキ';
 
-                // Pass the QR code visibility state and image object
-                const shouldIncludeQr = !hideQrCode; // Invert logic: if checkbox is checked (hide), then don't include
-                // QRコードを3倍の大きさで表示
-                await drawDeckPreviewOnCanvas(currentDeckDataForDraw, deckCanvas, deckNameToDisplay, 1, shouldIncludeQr, qrCodeImage, 3);
-                
-                const now = new Date();
-                const timestamp = now.getFullYear().toString() +
-                                  (now.getMonth() + 1).toString().padStart(2, '0') +
-                                  now.getDate().toString().padStart(2, '0') +
-                                  now.getHours().toString().padStart(2, '0') +
-                                  now.getMinutes().toString().padStart(2, '0') +
-                                  now.getSeconds().toString().padStart(2, '0');
-                // Use the determined deck name for the download filename
-                downloadDeckImageBtn.download = `XrossStars_Deck_${deckNameToDisplay.replace(/ /g, '_')}_${timestamp}.png`;
-                downloadDeckImageBtn.href = deckCanvas.toDataURL('image/png'); // Get data URL after drawing
-                
+                // モーダル内のチェックボックスの初期状態を、ローカルストレージから読み込んだ値に設定
+                highQualityCheckbox.checked = localStorage.getItem('highQualityImage') === 'true';
+                qrVisibilityCheckbox.checked = localStorage.getItem('qrCodeHiddenInModal') === 'true'; // Use 'qrCodeHiddenInModal'
+
+                // モーダルを表示してから、プレビューを更新する
                 deckImageModal.classList.remove('hidden');
+                await updateDeckImagePreview();
+                
 
             } catch (error) {
                 console.error("デッキ画像の生成中にエラーが発生しました:", error);
@@ -2379,7 +2416,8 @@
             confirmLoadDeckName.textContent = selectedDeck.deckName;
             
             // Draw a mini preview of the deck. QR code should NOT be included here.
-            await drawDeckPreviewOnCanvas(selectedDeck.deck, loadConfirmationCanvas, selectedDeck.deckName, 0.5, false, null, 1); // Scaled down to 50%, no QR code, QR magnification 1
+            // Scale down to 50%, no QR code, QR magnification 1
+            await drawDeckPreviewOnCanvas(selectedDeck.deck, loadConfirmationCanvas, selectedDeck.deckName, 0.5, false, null, 1);
             
             deckListModal.classList.add('hidden'); // Hide deck list modal
             loadConfirmationModal.classList.remove('hidden'); // Show confirmation modal
@@ -2864,16 +2902,21 @@
         loadLocalDecksBtn.addEventListener('click', showDeckListModal);
         closeDeckListModalBtn.addEventListener('click', () => deckListModal.classList.add('hidden'));
 
-        // NEW: QR code checkbox event listener
-        hideQrCodeCheckbox.addEventListener('change', (event) => {
-            hideQrCode = event.target.checked;
-            localStorage.setItem('hideQrCode', hideQrCode); // Save preference to local storage
+        // NEW: Checkboxes in deck image modal event listeners
+        highQualityCheckbox.addEventListener('change', (event) => {
+            localStorage.setItem('highQualityImage', event.target.checked);
+            updateDeckImagePreview();
+        });
+        qrVisibilityCheckbox.addEventListener('change', (event) => {
+            // Checkbox means "hide QR code", so store its checked state directly
+            localStorage.setItem('qrCodeHiddenInModal', event.target.checked);
+            updateDeckImagePreview();
         });
 
 
         // 初期ロード時にカードデータを読み込み、オートコンプリートを設定
         window.onload = async () => {
-            await loadCardData(); // This now also loads QR image and sets checkbox state
+            await loadCardData(); // This now also loads QR image and sets footer and modal checkbox states
             // currentSort is already initialized to { criterion: '色', direction: 'asc' }
             // updateFilterAndSortUI will correctly set the dropdown and then renderCatalog will apply the sort.
         };
