@@ -477,11 +477,11 @@
             </select>
 
             <select id="sortCriterion" class="p-3 border border-gray-300 rounded-md">
-                <!-- Default sort order set to コスト in JS -->
+                <!-- Default sort order set to 色 -->
+                <option value="色">色でソート</option> 
                 <option value="コスト">コストでソート</option>
                 <option value="カード名">カード名でソート</option>
                 <option value="レアリティ">レアリティでソート</option>
-                <option value="色">色でソート</option>
             </select>
             <button id="sortDirectionBtn" class="btn btn-primary px-5 py-2.5">昇順</button>
             <button id="toggleDisplayBtn" class="btn btn-secondary px-5 py-2.5">表示切替: 画像一覧</button>
@@ -652,8 +652,8 @@
         let currentTab = 'leader'; // 'leader', 'main', 'tactics' - デフォルトをリーダーに変更
         let displayMode = 'image'; // 'image' or 'table'
         let currentSearchQuery = '';
-        // Default sort order changed to Cost, then Card ID
-        let currentSort = { criterion: 'コスト', direction: 'asc' }; 
+        // DEFAULT: Sort by Color, then Cost, then Card ID
+        let currentSort = { criterion: '色', direction: 'asc' }; 
 
         // フィルターの状態
         let selectedFilterColor = '全て';
@@ -1034,8 +1034,7 @@
                 if (leaderDeck.some(card => card.name === cardName)) {
                     return; 
                 }
-                // リーダーカードの合計枚数制限は、構築中には強制しない（ダイアログなしで追加可能）
-                // ただし、もしデッキが既に4枚で、新しいカードを追加しても5枚目以降になる場合でも追加する
+                // リーダーカードの合計枚数制限（4枚）は構築中には強制しない（ダイアログなしで追加可能）
                 leaderDeck.push({ name: cardName, cardData: cardInfo });
 
             } else if (targetDeckType === 'main') {
@@ -1066,8 +1065,7 @@
                     actualQuantityToAdd = 4 - currentCount;
                 }
 
-                // 合計枚数50枚の制限は構築中には強制しない
-                // ユーザーの要望により、合計枚数が50枚を超えても追加できるように変更
+                // 合計枚数50枚の制限は構築中には強制しない（ユーザーの要望により、合計枚数が50枚を超えても追加できるように変更）
 
                 if (actualQuantityToAdd <= 0) { // 追加可能な枚数が0以下なら何もしない
                     return;
@@ -1086,8 +1084,7 @@
                 if (tacticsDeck.some(card => card.name === cardName)) {
                     return; 
                 }
-                // タクティクスカードの合計枚数制限は、構築中には強制しない（ダイアログなしで追加可能）
-                // ただし、もしデッキが既に5枚で、新しいカードを追加しても6枚目以降になる場合でも追加する
+                // タクティクスカードの合計枚数制限（5枚）は構築中には強制しない（ダイアログなしで追加可能）
                 tacticsDeck.push({ name: cardName, cardData: cardInfo });
             }
 
@@ -1342,67 +1339,65 @@
                 return true;
             });
 
-            // Step 4: Apply sorting
+            // Step 4: Apply sorting - Prioritize selected criterion, then Color, then Cost, then Card ID
             const sortedCards = [...filteredCards].sort((a, b) => {
-                const criterion = currentSort.criterion;
-                const direction = currentSort.direction;
+                const direction = currentSort.direction; // 'asc' or 'desc'
 
-                const colorOrder = { '赤': 1, '青': 2, '黄': 3, '緑': 4, '無': 5, '': 99 }; // '無' added for Tactics cards, '' for unknown colors
+                const rarityOrder = { 'LR': 1, 'SR': 2, 'R': 3, 'UC': 4, 'C': 5, 'TR': 6, '': 99 };
+                const colorOrder = { '赤': 1, '青': 2, '黄': 3, '緑': 4, '無': 5, '': 99 };
 
-                let compareResult = 0;
+                let primaryCompareResult = 0;
 
-                // Primary sort for Main/Tactics by 'コスト' (if applicable)
-                if (criterion === 'コスト' && (currentTab === 'main' || currentTab === 'tactics')) {
-                    const costA = parseInt(a[criterion]) || 0;
-                    const costB = parseInt(b[criterion]) || 0;
-                    compareResult = costA - costB;
-                    // If costs are equal, secondary sort by Card Number
-                    if (compareResult === 0) {
-                        const cardNumA = a['カードナンバー'] || '';
-                        const cardNumB = b['カードナンバー'] || '';
-                        compareResult = cardNumA.localeCompare(cardNumB);
-                    }
-                    if (compareResult !== 0) return direction === 'asc' ? compareResult : -compareResult;
-                }
-                // Secondary sort for Cost by Card Number (for Main and Tactics)
-                // This logic is now integrated directly above within the 'コスト' criterion block.
-                // if (criterion === 'コスト' && compareResult === 0 && (currentTab === 'main' || currentTab === 'tactics')) {
-                //     const cardNumA = a['カードナンバー'] || '';
-                //     const cardNumB = b['カードナンバー'] || '';
-                //     compareResult = cardNumA.localeCompare(cardNumB);
-                //     if (compareResult !== 0) return direction === 'asc' ? compareResult : -compareResult;
-                // }
-
-                // Primary sort for Leader/Main by '色'
-                if (criterion === '色' && currentTab !== 'tactics') { // Tactics cards don't use '色' for sorting
-                    const colorA = colorOrder[a['色']] || 99;
-                    const colorB = colorOrder[b['色']] || 99;
-                    compareResult = colorA - colorB;
-                    if (compareResult !== 0) return direction === 'asc' ? compareResult : -compareResult;
+                // Apply the user's selected primary sort criterion
+                switch (currentSort.criterion) {
+                    case '色':
+                        primaryCompareResult = (colorOrder[a['色']] || 99) - (colorOrder[b['色']] || 99);
+                        break;
+                    case 'コスト':
+                        primaryCompareResult = (parseInt(a['コスト']) || 0) - (parseInt(b['コスト']) || 0);
+                        break;
+                    case 'カード名':
+                        primaryCompareResult = (a['カード名'] || '').localeCompare(b['カード名'] || '');
+                        break;
+                    case 'レアリティ':
+                        primaryCompareResult = (rarityOrder[a['レアリティ']] || 99) - (rarityOrder[b['レアリティ']] || 99);
+                        break;
+                    case 'タグ':
+                        if (currentTab === 'leader') { // Only applies to leader cards
+                            primaryCompareResult = (a['タグ'] || '').localeCompare(b['タグ'] || '');
+                        }
+                        break;
+                    default:
+                        // Fallback to '色' as default if currentSort.criterion is not recognized or available for the tab
+                        primaryCompareResult = (colorOrder[a['色']] || 99) - (colorOrder[b['色']] || 99);
+                        break;
                 }
 
-                // Secondary sort for Leader by 'タグ'
-                if (criterion === 'タグ' && currentTab === 'leader') {
-                    const tagA = a['タグ'] || '';
-                    const tagB = b['タグ'] || '';
-                    compareResult = tagA.localeCompare(tagB);
-                    if (compareResult !== 0) return direction === 'asc' ? compareResult : -compareResult;
+                if (primaryCompareResult !== 0) {
+                    return direction === 'asc' ? primaryCompareResult : -primaryCompareResult;
                 }
 
-                // Primary sort for Main/Leader by 'レアリティ'
-                if (criterion === 'レアリティ' && currentTab !== 'tactics') { // Tactics cards don't use 'レアリティ' for sorting
-                    const rarityOrder = { 'LR': 1, 'SR': 2, 'R': 3, 'UC': 4, 'C': 5, 'TR': 6 }; // TR for Tactics
-                    const rarityA = rarityOrder[a[criterion]] || 99;
-                    const rarityB = rarityOrder[b[criterion]] || 99;
-                    compareResult = rarityA - rarityB;
-                    if (compareResult !== 0) return direction === 'asc' ? compareResult : -compareResult;
+                // Apply the default hierarchy (色 -> コスト -> カードID) as tie-breakers
+                let secondaryCompareResult = 0;
+
+                // Tie-breaker 1: Color (if not already the primary sort)
+                if (currentSort.criterion !== '色') {
+                    secondaryCompareResult = (colorOrder[a['色']] || 99) - (colorOrder[b['色']] || 99);
+                    if (secondaryCompareResult !== 0) return direction === 'asc' ? secondaryCompareResult : -secondaryCompareResult;
+                }
+                
+                // Tie-breaker 2: Cost (if not already the primary sort AND not already handled by color tie-breaker)
+                if (currentSort.criterion !== 'コスト') {
+                    const costA = parseInt(a['コスト']) || 0;
+                    const costB = parseInt(b['コスト']) || 0;
+                    secondaryCompareResult = costA - costB;
+                    if (secondaryCompareResult !== 0) return direction === 'asc' ? secondaryCompareResult : -secondaryCompareResult;
                 }
 
-
-                // Fallback / Primary sort by Card Name (alphabetic)
-                return direction === 'asc' ?
-                    (a['カード名'] || '').localeCompare(b['カード名'] || '') :
-                    (b['カード名'] || '').localeCompare(a['カード名'] || '');
+                // Tie-breaker 3: Card ID (ultimate tie-breaker)
+                const cardNumA = a['カードナンバー'] || '';
+                const cardNumB = b['カードナンバー'] || '';
+                return direction === 'asc' ? cardNumA.localeCompare(cardNumB) : -cardNumA.localeCompare(cardNumB);
             });
 
             // スクロール位置を保存する要素を特定
@@ -1570,52 +1565,50 @@
             buildRuleFilterSelect.style.display = 'none'; // Hide new dropdown by default
 
             // Reset sort options to a default set and re-add based on tab
-            sortCriterionSelect.innerHTML = `<option value="カード名">カード名でソート</option>`;
+            sortCriterionSelect.innerHTML = ``; // Clear all options first
 
             // Update filter option display names
             colorFilterSelect.querySelector('option[value="全て"]').textContent = '色';
             cardTypeFilterSelect.querySelector('option[value="全て"]').textContent = '種類';
             costFilterSelect.querySelector('option[value="全て"]').textContent = 'コスト';
 
+            // Add common options, then tab-specific ones
+            // Ensure '色' is the first option for default selection
+            sortCriterionSelect.innerHTML += `
+                <option value="色">色でソート</option>
+                <option value="コスト">コストでソート</option>
+                <option value="カード名">カード名でソート</option>
+                <option value="レアリティ">レアリティでソート</option>
+            `;
 
             if (currentTab === 'leader') {
                 colorFilterSelect.style.display = 'inline-block'; // Show color filter for leaders
-                // Add sorting options specific to Leader cards
                 sortCriterionSelect.innerHTML += `
                     <option value="タグ">タグでソート</option>
-                    <option value="色">色でソート</option>
-                    <option value="レアリティ">レアリティでソート</option>
                 `;
             } else if (currentTab === 'main') {
                 colorFilterSelect.style.display = 'inline-block';
                 cardTypeFilterSelect.style.display = 'inline-block';
                 costFilterSelect.style.display = 'inline-block';
                 buildRuleFilterSelect.style.display = 'inline-block'; // Show new dropdown for main cards
-                // Add sorting options specific to Main cards
-                sortCriterionSelect.innerHTML += `
-                    <option value="コスト">コストでソート</option>
-                    <option value="レアリティ">レアリティでソート</option>
-                    <option value="色">色でソート</option>
-                `;
-                // Main deck specific card type options
                 cardTypeFilterSelect.innerHTML = `
                     <option value="全て">種類</option>
                     <option value="アタックカード">アタックカード</option>
                     <option value="メモリアカード">メモリアカード</option>
                 `;
             } else if (currentTab === 'tactics') {
-                // Tactics cards only have Cost and Card Name as meaningful sort/filter options
                 costFilterSelect.style.display = 'inline-block';
-                // Add sorting options specific to Tactics cards
-                sortCriterionSelect.innerHTML += `
-                    <option value="コスト">コストでソート</option>
-                `;
+                // Remove irrelevant options for tactics
+                const rarityOption = sortCriterionSelect.querySelector('option[value="レアリティ"]');
+                if (rarityOption) rarityOption.remove();
+                const colorOption = sortCriterionSelect.querySelector('option[value="色"]');
+                if (colorOption) colorOption.remove();
             }
 
-            // Ensure current sort criterion is still valid for the selected tab. If not, reset to 'カード名'.
+            // Ensure current sort criterion is still valid for the selected tab. If not, reset to '色'.
             const validSortOptions = Array.from(sortCriterionSelect.options).map(opt => opt.value);
             if (!validSortOptions.includes(currentSort.criterion)) {
-                currentSort.criterion = 'カード名'; // Fallback to card name
+                currentSort.criterion = '色'; // Fallback to Color as new default primary
             }
             sortCriterionSelect.value = currentSort.criterion; // Set the UI to the current sort criterion
 
@@ -2591,12 +2584,11 @@
         // 初期ロード時にカードデータを読み込み、オートコンプリートを設定
         window.onload = async () => {
             await loadCardData();
-            // Set initial sort criterion to "コスト" (Cost) and "昇順" (asc)
-            sortCriterionSelect.value = 'コスト';
-            sortDirectionBtn.textContent = '昇順';
-            currentSort = { criterion: 'コスト', direction: 'asc' };
-            renderCatalog(); // Re-render with default sorting
+            // currentSort is already initialized to { criterion: '色', direction: 'asc' }
+            // updateFilterAndSortUI will correctly set the dropdown and then renderCatalog will apply the sort.
         };
     </script>
 </body>
 </html>
+
+
