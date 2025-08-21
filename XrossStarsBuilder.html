@@ -304,8 +304,8 @@
         .card-image-controls button {
             background: none;
             border: none;
-            cursor: pointer;
             font-size: 1.3rem;
+            cursor: pointer;
             color: #2563eb; /* Use primary blue for icons */
             transition: color 0.2s;
         }
@@ -762,7 +762,7 @@
     <div class="footer-content">
         <label for="hideQrCodeCheckbox">
             <input type="checkbox" id="hideQrCodeCheckbox" class="rounded-md">
-            <span>デッキ画像のQRコードを非表示</span>
+            <span>QRコードを非表示</span>
         </label>
         <p>Thanks for visiting! – PineAme@tcepseredutitta</p>
     </div>
@@ -2179,11 +2179,11 @@
             if (includeQr && qrImg) {
                 const qrPadding = PADDING_BASE * scaleFactor; // Padding from canvas edges
                 const qrX = canvas.width - QR_SIZE - qrPadding;
-                const qrY = DECK_NAME_HEIGHT + qrPadding; // Position below deck name, with top padding
+                const qrY = canvas.height - QR_SIZE - qrPadding; // Position at bottom-right
 
                 // Ensure QR code doesn't go below the canvas or off to the left
                 const finalQrX = Math.max(qrPadding, Math.min(qrX, canvas.width - QR_SIZE - qrPadding));
-                const finalQrY = Math.max(DECK_NAME_HEIGHT + qrPadding, Math.min(qrY, canvas.height - QR_SIZE - qrPadding));
+                const finalQrY = Math.max(DECK_NAME_HEIGHT + qrPadding, Math.min(qrY, canvas.height - QR_SIZE - qrPadding)); // Make sure it's below deck name if present
 
                 ctx.drawImage(qrImg, finalQrX, finalQrY, QR_SIZE, QR_SIZE);
             }
@@ -2915,7 +2915,7 @@
         // QR Code visibility checkbox in footer event listener
         hideQrCodeCheckbox.addEventListener('change', (event) => {
             // Checkbox means "hide QR code", so store its checked state directly
-            localStorage.setItem('qrCodeHiddenInModal', event.target.checked);
+            localStorage.setItem('qrCodeHiddenInModal', event.target.checked); // Use the same key as before for consistency
             updateDeckImagePreview(); // Update preview to reflect the change
         });
 
@@ -2929,5 +2929,4 @@
     </script>
 </body>
 </html>
-
 
