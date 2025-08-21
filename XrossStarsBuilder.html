@@ -6,6 +6,7 @@
     <title>XrossStars デッキ構築</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- QRコード生成ライブラリは削除されました -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -400,26 +401,26 @@
             </div>
         </div>
 
-        <!-- Top Navigation and Deck Button -->
-        <div class="flex flex-col gap-4 mb-8"> <!-- ギャップとマージンを調整 -->
-            <div class="flex justify-center gap-4">
-                <button id="showDeckBtn" class="btn btn-primary px-6 py-3">デッキ</button> <!-- パディングを調整 -->
+        <!-- Top Navigation and Deck Button (Flex wrap added) -->
+        <div class="flex flex-col gap-4 mb-8">
+            <div class="flex justify-center gap-4 flex-wrap"> <!-- Added flex-wrap -->
+                <button id="showDeckBtn" class="btn btn-primary px-6 py-3">デッキ</button>
                 <button id="generateDeckImageBtn" class="btn btn-primary px-6 py-3">デッキ画像</button>
             </div>
-            <div class="flex justify-center gap-4">
-                <button id="showLeaderCatalogBtn" class="btn btn-primary px-6 py-3">リーダー</button>
-                <button id="showMainCatalogBtn" class="btn btn-primary px-6 py-3">メイン</button>
-                <button id="showTacticsCatalogBtn" class="btn btn-primary px-6 py-3">タクティクス</button>
+            <div class="flex justify-center gap-4 flex-wrap"> <!-- Added flex-wrap -->
+                <button id="showLeaderCatalogBtn" class="btn btn-primary px-4 py-2 sm:text-sm">リーダー</button> <!-- Adjusted padding/font for sm -->
+                <button id="showMainCatalogBtn" class="btn btn-primary px-4 py-2 sm:text-sm">メイン</button>   <!-- Adjusted padding/font for sm -->
+                <button id="showTacticsCatalogBtn" class="btn btn-primary px-4 py-2 sm:text-sm">タクティクス</button> <!-- Adjusted padding/font for sm -->
             </div>
         </div>
 
         <!-- Search, Sort, Display Toggle -->
-        <div class="flex flex-wrap items-center gap-4 mb-8 p-5 bg-blue-50 rounded-lg shadow-inner"> <!-- パディングとマージンを調整 -->
+        <div class="flex flex-wrap items-center gap-4 mb-8 p-5 bg-blue-50 rounded-lg shadow-inner">
             <div class="input-container flex-grow max-w-sm">
                 <input type="text" id="searchCatalogInput" placeholder="カードを検索..." class="input-field w-full">
             </div>
             
-            <select id="colorFilterSelect" class="p-3 border border-gray-300 rounded-md"> <!-- パディングを調整 -->
+            <select id="colorFilterSelect" class="p-3 border border-gray-300 rounded-md">
                 <option value="全て">色</option>
                 <option value="赤">赤</option>
                 <option value="青">青</option>
@@ -466,9 +467,9 @@
         </div>
 
         <!-- Validation and Summary Section -->
-        <div class="mt-10 p-7 bg-gray-50 rounded-lg shadow-inner"> <!-- マージンとパディングを調整 -->
+        <div class="mt-10 p-7 bg-gray-50 rounded-lg shadow-inner">
             <h2 class="section-title">現在のデッキ状況</h2>
-            <div id="leaderValidation" class="validation-message validation-warning mb-3"> <!-- マージンを調整 -->
+            <div id="leaderValidation" class="validation-message validation-warning mb-3">
                 リーダーカードは現在 <span id="currentLeaderCount">0</span>/4 枚です。
             </div>
             <div id="mainDeckSummary" class="p-5 bg-blue-50 rounded-lg text-blue-800 font-semibold mb-3">
@@ -483,25 +484,33 @@
         </div>
 
         <!-- Export/Import Section -->
-        <div class="mt-8 p-7 bg-blue-50 rounded-lg shadow-inner"> <!-- マージンとパディングを調整 -->
+        <div class="mt-8 p-7 bg-blue-50 rounded-lg shadow-inner">
             <h2 class="section-title">デッキの入出力</h2>
-            <button id="toggleExportImportBtn" class="btn btn-secondary w-full mb-5">入出力セクションを表示/非表示</button> <!-- マージンを調整 -->
+            <button id="toggleExportImportBtn" class="btn btn-secondary w-full mb-5">入出力セクションを表示/非表示</button>
             <div id="exportImportContent" class="hidden">
                 <div class="input-group">
                     <label for="deckNameInput" class="font-semibold text-gray-700">デッキ名:</label>
                     <input type="text" id="deckNameInput" placeholder="デッキ名を入力" class="input-field">
                 </div>
-                <div class="flex flex-col gap-4">
-                    <div>
-                        <button id="exportDeckBtn" class="btn btn-primary w-full">デッキをエクスポート</button>
-                        <button id="copyExportedDataBtn" class="btn btn-primary w-full mt-3 hidden">コピー</button> <!-- マージンを調整 -->
-                    </div>
-                    <textarea id="deckDataTextarea" class="input-field h-48 text-sm" placeholder="ここにデッキデータが表示されます（エクスポート/インポート用）。"></textarea> <!-- 高さを調整 -->
-                    <div>
-                        <button id="importDeckBtn" class="btn btn-primary w-full">デッキをインポート</button>
-                    </div>
-                    <div id="importExportMessage" class="validation-message hidden"></div>
+
+                <!-- Export Section -->
+                <div class="mb-6 p-4 bg-gray-100 rounded-lg shadow-inner">
+                    <h3 class="text-xl font-semibold mb-3 text-gray-700 border-b pb-2">エクスポート</h3>
+                    <button id="exportDeckBtn" class="btn btn-primary w-full">デッキをテキストでエクスポート</button>
+                    <button id="copyExportedDataBtn" class="btn btn-primary w-full mt-3 hidden">コピー</button>
+                    <button id="downloadJsonBtn" class="btn btn-primary w-full mt-3">デッキをJSONファイルでダウンロード</button>
                 </div>
+
+                <!-- Import Section -->
+                <div class="p-4 bg-gray-100 rounded-lg shadow-inner">
+                    <h3 class="text-xl font-semibold mb-3 text-gray-700 border-b pb-2">インポート</h3>
+                    <textarea id="deckDataTextarea" class="input-field h-48 text-sm mb-3" placeholder="ここにデッキデータを貼り付けてインポート、またはエクスポートされたデータが表示されます。"></textarea>
+                    <label for="importFileInput" class="btn btn-primary w-full text-center cursor-pointer block">ファイルからインポート</label>
+                    <input type="file" id="importFileInput" accept=".json" class="hidden">
+                    <button id="importDeckBtn" class="btn btn-primary w-full mt-3">テキストからインポート</button>
+                </div>
+
+                <div id="importExportMessage" class="validation-message hidden mt-4"></div>
             </div>
         </div>
 
@@ -512,10 +521,10 @@
         <div class="modal-content w-11/12 md:w-3/4 lg:w-2/3">
             <button class="modal-close-btn" id="closeDeckViewModal">&times;</button>
             <h3 class="text-2xl font-bold mb-4">現在のデッキ: <span id="modalDeckName"></span></h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-7"> <!-- ギャップとマージンを調整 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-7">
                 <div>
-                    <h4 class="font-semibold text-xl mb-3">リーダーカード (<span id="modalLeaderCount">0</span>/4)</h4> <!-- フォントサイズを調整 -->
-                    <div id="modalLeaderCards" class="flex flex-wrap gap-3"></div> <!-- ギャップを調整 -->
+                    <h4 class="font-semibold text-xl mb-3">リーダーカード (<span id="modalLeaderCount">0</span>/4)</h4>
+                    <div id="modalLeaderCards" class="flex flex-wrap gap-3"></div>
                 </div>
                 <div>
                     <h4 class="font-semibold text-xl mb-3">メインデッキ (<span id="modalMainCount">0</span>/50)</h4>
@@ -526,7 +535,7 @@
                     <div id="modalTacticsCards" class="flex flex-wrap gap-3"></div>
                 </div>
             </div>
-            <div class="text-base text-gray-600"> <!-- フォントサイズを調整 -->
+            <div class="text-base text-gray-600">
                 <p>エースカード: <span id="modalAceCount">0</span>/8</p>
             </div>
         </div>
@@ -536,8 +545,8 @@
     <div id="cardDetailModal" class="modal-overlay hidden">
         <div class="modal-content w-11/12 md:w-1/2 lg:w-1/3">
             <button class="modal-close-btn" id="closeCardDetailModal">&times;</button>
-            <img id="modalCardImage" src="" alt="Card Image" class="w-full h-auto rounded-lg mb-4 shadow-lg"> <!-- 画像にもシャドウ -->
-            <h3 id="modalCardName" class="text-2xl font-bold mb-2"></h3> <!-- フォントサイズを調整 -->
+            <img id="modalCardImage" src="" alt="Card Image" class="w-full h-auto rounded-lg mb-4 shadow-lg">
+            <h3 id="modalCardName" class="text-2xl font-bold mb-2"></h3>
             <p id="modalCardNumber" class="text-sm text-gray-600 mb-1"></p>
             <p id="modalCardType" class="text-sm text-gray-600 mb-1"></p>
             <p id="modalCardColor" class="text-sm text-gray-600 mb-1"></p>
@@ -546,21 +555,23 @@
             <p id="modalCardRules" class="text-sm text-gray-600 mb-1"></p>
             <p id="modalCardTag" class="text-sm text-gray-600 mb-1"></p>
             <p id="modalCardStats" class="text-sm text-gray-600 mb-1"></p>
-            <p id="modalCardText" class="text-lg text-gray-800 whitespace-pre-wrap mt-3"></p> <!-- フォントサイズとマージンを調整 -->
+            <p id="modalCardText" class="text-lg text-gray-800 whitespace-pre-wrap mt-3"></p>
         </div>
     </div>
 
     <!-- Deck Image Modal -->
     <div id="deckImageModal" class="modal-overlay hidden">
-        <div class="modal-content max-w-full max-h-full p-5"> <!-- パディングを調整 -->
+        <div class="modal-content max-w-full max-h-full p-5">
             <button class="modal-close-btn" id="closeDeckImageModal">&times;</button>
-            <h3 class="text-2xl font-bold mb-5 text-center">生成されたデッキ画像</h3> <!-- マージンを調整 -->
+            <h3 class="text-2xl font-bold mb-5 text-center">生成されたデッキ画像</h3>
             <div class="flex flex-col items-center">
-                <canvas id="deckCanvas" class="border border-gray-300 rounded-md shadow-xl"></canvas> <!-- キャンバスにもシャドウ -->
-                <a id="downloadDeckImage" download="XrossStars_Deck_Image.png" class="btn btn-primary mt-5 py-3 px-7">画像をダウンロード</a> <!-- マージンとパディングを調整 -->
+                <canvas id="deckCanvas" class="border border-gray-300 rounded-md shadow-xl"></canvas>
+                <a id="downloadDeckImage" download="XrossStars_Deck_Image.png" class="btn btn-primary mt-5 py-3 px-7">画像をダウンロード</a>
             </div>
         </div>
     </div>
+
+    <!-- QRコードを一時的に生成するための隠し要素は削除されました -->
 
     <script>
         // デッキの状態を管理する配列
@@ -618,6 +629,8 @@
         const deckDataTextarea = document.getElementById('deckDataTextarea');
         const exportDeckBtn = document.getElementById('exportDeckBtn');
         const copyExportedDataBtn = document.getElementById('copyExportedDataBtn');
+        const downloadJsonBtn = document.getElementById('downloadJsonBtn'); // New: Download JSON File Button
+        const importFileInput = document.getElementById('importFileInput'); // New: File Input for Import
         const importDeckBtn = document.getElementById('importDeckBtn');
         const importExportMessage = document.getElementById('importExportMessage');
 
@@ -647,7 +660,7 @@
         const modalCardColor = document.getElementById('modalCardColor');
         const modalCardCost = document.getElementById('modalCardCost');
         const modalCardRarity = document.getElementById('modalCardRarity');
-        const modalCardRules = document = document.getElementById('modalCardRules');
+        const modalCardRules = document.getElementById('modalCardRules');
         const modalCardTag = document.getElementById('modalCardTag');
         const modalCardStats = document.getElementById('modalCardStats');
         const modalCardText = document.getElementById('modalCardText');
@@ -656,6 +669,8 @@
         const closeDeckImageModalBtn = document.getElementById('closeDeckImageModal');
         const deckCanvas = document.getElementById('deckCanvas');
         const downloadDeckImageBtn = document.getElementById('downloadDeckImage');
+
+        // QRコードを一時的に生成するための隠し要素への参照は削除されました
 
 
         /**
@@ -799,11 +814,10 @@
         function getCardImageUrl(cardInfo) {
             if (!cardInfo || !cardInfo['カードナンバー']) {
                 console.warn("Missing card info or card number for image URL generation:", cardInfo);
-                return 'https://placehold.co/150x210/cccccc/333333?text=No+Image'; // Fallback for incomplete data
+                return `https://placehold.co/300x420/cccccc/333333?text=No+Image`; // Updated placeholder size
             }
 
             const cardNumPrefix = cardInfo['カードナンバー'].split('/')[0];
-            // 新しいURL形式に合わせて修正
             return `https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/${cardNumPrefix}.png`;
         }
 
@@ -1059,7 +1073,7 @@
                 cardItem.setAttribute('data-card-type', currentDisplayTab); // For add/remove logic
 
                 cardItem.innerHTML = `
-                    <img src="${imageUrl}" alt="${card['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/150x210/cccccc/333333?text=Load+Error';">
+                    <img src="${imageUrl}" alt="${card['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/300x420/cccccc/333333?text=Load+Error';">
                     <div class="card-image-controls">
                         <button class="view-detail-btn" data-card-name="${card['カード名']}">🔎</button>
                         <span class="card-image-quantity">${quantityInDeck} / ${maxQuantity}</span>
@@ -1336,8 +1350,9 @@
                         cardItem.setAttribute('data-card-name', card['カード名']);
                         cardItem.setAttribute('data-card-type', currentTab);
 
+                        // Use updated placeholder size
                         cardItem.innerHTML = `
-                            <img src="${imageUrl}" alt="${card['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/150x210/cccccc/333333?text=Load+Error';">
+                            <img src="${imageUrl}" alt="${card['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/300x420/cccccc/333333?text=Load+Error';">
                             <div class="card-image-controls">
                                 <button class="view-detail-btn" data-card-name="${card['カード名']}">🔎</button>
                                 <span class="card-image-quantity">${quantityInDeck} / ${maxQuantity}</span>
@@ -1525,7 +1540,8 @@
             const createModalCardItem = (card, deckType, quantity = 1, maxQuantity = 1) => {
                 const imageUrl = getCardImageUrl(card.cardData);
                 const imgDiv = document.createElement('div');
-                imgDiv.className = 'relative group w-24 h-32 overflow-hidden rounded-md shadow-md flex flex-col items-center'; // Added flex for layout
+                // Use a smaller fixed size for modal display, but still based on high-res image
+                imgDiv.className = 'relative group w-24 h-32 overflow-hidden rounded-md shadow-md flex flex-col items-center'; 
                 imgDiv.innerHTML = `
                     <img src="${imageUrl}" alt="${card.name}" class="w-full h-full object-cover cursor-pointer">
                     <div class="card-image-controls absolute bottom-0 bg-white bg-opacity-90 w-full py-1">
@@ -1632,16 +1648,18 @@
                     return;
                 }
 
-                const CARD_WIDTH = 150;
-                const CARD_HEIGHT = 210;
-                const PADDING = 10;
-                const TEXT_HEIGHT = 20; // Space for card name below image
-                const QUANTITY_FONT_SIZE = 24; // Larger font for quantity
+                // Increased resolution for card rendering
+                const CARD_WIDTH = 300;
+                const CARD_HEIGHT = 420;
+                const PADDING = 20; // Proportional increase from 10
+                const TEXT_HEIGHT = 40; // Proportional increase from 20 (for card name below)
+                const QUANTITY_FONT_SIZE = 48; // Proportional increase from 24
                 const NUM_COLUMNS = 7; // Fixed number of columns
+                // QR_CODE_SIZE は削除されました
 
                 const deckNameToDisplay = deckNameInput.value.trim();
                 const hasDeckName = deckNameToDisplay.length > 0;
-                const DECK_NAME_HEIGHT = hasDeckName ? 40 : 0; // Space for deck name if present
+                const DECK_NAME_HEIGHT = hasDeckName ? 80 : 0; // Proportional increase from 40
 
                 const cardsToDraw = []; // Array to hold all cards (or empty slots) to be drawn
 
@@ -1653,7 +1671,6 @@
 
                 // メインデッキのソート (カード種類、色、コスト、名前の順)
                 const sortedMainDeckToDraw = [];
-                // 修正: メインデッキはユニークなカードごとに1エントリのみ追加
                 mainDeck.forEach(card => {
                     sortedMainDeckToDraw.push({ cardData: card.cardData, displayQuantity: card.quantity, type: 'main' });
                 });
@@ -1682,56 +1699,49 @@
                 // 最後の行: タクティクスカード (5枚 + 空欄2枚)
                 const tacticsCardsFormatted = tacticsDeck.map(card => ({ cardData: card.cardData, displayQuantity: 1, type: 'tactics' }));
                 const currentLastRowLength = cardsToDraw.length % NUM_COLUMNS;
-                // Add empty slots to fill current last row before adding tactics cards, if it's not the leader row
                 if (currentLastRowLength !== 0) {
                      for (let i = currentLastRowLength; i < NUM_COLUMNS; i++) {
                         cardsToDraw.push({ cardData: null, type: 'empty' });
                     }
                 }
                 
-                // Add tactics cards to a new row (or continuing the last one if it was full)
                 for (let i = 0; i < NUM_COLUMNS; i++) {
                     cardsToDraw.push(tacticsCardsFormatted[i] || { cardData: null, type: 'empty' });
                 }
 
-                // Calculate total rows needed
                 const numRows = Math.ceil(cardsToDraw.length / NUM_COLUMNS);
 
-                // キャンバスサイズの計算
                 const CANVAS_WIDTH = NUM_COLUMNS * (CARD_WIDTH + PADDING) + PADDING;
-                // CANVAS_HEIGHTは、デッキ名とタクティクスカードの回転を考慮して計算
                 const CANVAS_HEIGHT = DECK_NAME_HEIGHT + numRows * (CARD_HEIGHT + TEXT_HEIGHT + PADDING) + PADDING;
 
                 deckCanvas.width = CANVAS_WIDTH;
                 deckCanvas.height = CANVAS_HEIGHT;
                 const ctx = deckCanvas.getContext('2d');
 
-                ctx.fillStyle = '#f0f2f5'; // アプリ全体の背景色と同じにする
+                ctx.fillStyle = '#f0f2f5';
                 ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-                // Draw deck name if present
                 if (hasDeckName) {
-                    ctx.fillStyle = '#2c3e50'; // Darker text color
-                    ctx.font = '700 24px Inter'; // Larger, bold font
+                    ctx.fillStyle = '#2c3e50';
+                    ctx.font = `700 ${DECK_NAME_HEIGHT / 2}px Inter`; // Adjust font size proportionally
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(deckNameToDisplay, CANVAS_WIDTH / 2, DECK_NAME_HEIGHT / 2);
                 }
 
                 const imagePromises = cardsToDraw.map(item => {
-                    if (!item.cardData) { // 空欄の場合は画像を読み込まない
+                    if (!item.cardData) {
                         return Promise.resolve(null);
                     }
                     const img = new Image();
-                    img.crossOrigin = 'Anonymous'; // ⭐ IMPORTANT: Add this line for CORS
-                    img.src = getCardImageUrl(item.cardData);
+                    img.crossOrigin = 'Anonymous';
+                    img.src = getCardImageUrl(item.cardData); // This uses the higher resolution placeholder
                     return new Promise((resolve) => {
                         img.onload = () => resolve(img);
                         img.onerror = () => {
                             console.error("Failed to load image for card:", item.cardData['カード名']);
                             const placeholder = new Image();
-                            // Placeholder dimensions should match the intended draw size (portrait or landscape)
-                            // 修正: タクティクスカードも縦向き表示に戻すため、常にポートレートサイズでプレースホルダーを生成
+                            // Placeholder dimensions match the higher resolution
                             placeholder.src = `https://placehold.co/${CARD_WIDTH}x${CARD_HEIGHT}/cccccc/333333?text=Load+Error\\n${item.cardData['カード名']}`;
                             placeholder.onload = () => resolve(placeholder);
                             placeholder.onerror = () => resolve(null);
@@ -1746,55 +1756,52 @@
                     const col = index % NUM_COLUMNS;
                     const row = Math.floor(index / NUM_COLUMNS);
 
-                    // 修正: タクティクスカードも縦向きで描画
-                    let currentCardDrawW = CARD_WIDTH;
-                    let currentCardDrawH = CARD_HEIGHT;
-                    // offsetX, offsetYは不要になる
-
-                    // Calculate position based on the fixed grid spacing (portrait card size)
-                    // The image will be drawn WITHIN this space.
-                    // Adjust Y position by DECK_NAME_HEIGHT if a deck name is present
-                    const x = PADDING + col * (CARD_WIDTH + PADDING); // offsetX removed
-                    const y = DECK_NAME_HEIGHT + PADDING + row * (CARD_HEIGHT + TEXT_HEIGHT + PADDING); // offsetY removed
+                    const x = PADDING + col * (CARD_WIDTH + PADDING);
+                    const y = DECK_NAME_HEIGHT + PADDING + row * (CARD_HEIGHT + TEXT_HEIGHT + PADDING);
 
                     if (img) {
-                        ctx.drawImage(img, x, y, currentCardDrawW, currentCardDrawH);
+                        ctx.save();
 
-                        // カード名を描画
+                        if (item.type === 'tactics') {
+                            ctx.translate(x + CARD_WIDTH / 2, y + CARD_HEIGHT / 2);
+                            ctx.rotate(Math.PI / 2);
+                            // Draw image with swapped dimensions for rotated display
+                            ctx.drawImage(img, -CARD_HEIGHT / 2, -CARD_WIDTH / 2, CARD_HEIGHT, CARD_WIDTH);
+                        } else {
+                            ctx.drawImage(img, x, y, CARD_WIDTH, CARD_HEIGHT);
+                        }
+
+                        ctx.restore();
+
+                        // Card name text (not rotated)
                         ctx.fillStyle = '#333';
-                        ctx.font = '600 12px Inter';
+                        ctx.font = `600 ${TEXT_HEIGHT * 0.6}px Inter`; // Adjust font size for card name
                         ctx.textAlign = 'center';
                         const cardName = item.cardData['カード名'];
-                        // Adjust textY based on the fixed CARD_HEIGHT of the grid slot, not currentCardDrawH
                         const textY = DECK_NAME_HEIGHT + (PADDING + row * (CARD_HEIGHT + TEXT_HEIGHT + PADDING)) + CARD_HEIGHT + TEXT_HEIGHT / 2 + 5;
-                        ctx.fillText(cardName, (PADDING + col * (CARD_WIDTH + PADDING)) + CARD_WIDTH / 2, textY, CARD_WIDTH - 4);
+                        ctx.fillText(cardName, (PADDING + col * (CARD_WIDTH + PADDING)) + CARD_WIDTH / 2, textY, CARD_WIDTH - PADDING); // Constrain width
 
-
-                        // メインデッキカードで枚数が1以上の場合に枚数を描画
+                        // Quantity for main deck cards (not rotated)
                         if (item.type === 'main' && item.displayQuantity >= 1) {
-                            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'; // 数量の背景色
+                            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
                             ctx.beginPath();
-                            const radius = QUANTITY_FONT_SIZE / 2 + 8;
-                            // Position quantity circle relative to the actual drawn card dimensions
-                            const circleX = (PADDING + col * (CARD_WIDTH + PADDING)) + CARD_WIDTH - radius + 5;
-                            const circleY = DECK_NAME_HEIGHT + (PADDING + row * (CARD_HEIGHT + TEXT_HEIGHT + PADDING)) + CARD_HEIGHT - radius + 5;
+                            const radius = QUANTITY_FONT_SIZE / 2 + (PADDING / 2); // Adjust radius proportionally
+                            const circleX = (PADDING + col * (CARD_WIDTH + PADDING)) + CARD_WIDTH - radius + PADDING / 2; // Adjust position
+                            const circleY = DECK_NAME_HEIGHT + (PADDING + row * (CARD_HEIGHT + TEXT_HEIGHT + PADDING)) + CARD_HEIGHT - radius + PADDING / 2; // Adjust position
                             ctx.arc(circleX, circleY, radius, 0, Math.PI * 2, true);
                             ctx.fill();
 
-                            ctx.fillStyle = 'white'; // 数量の文字色
+                            ctx.fillStyle = 'white';
                             ctx.font = `bold ${QUANTITY_FONT_SIZE}px Inter`;
                             ctx.textAlign = 'center';
                             ctx.textBaseline = 'middle';
-                            ctx.fillText(item.displayQuantity.toString(), circleX, circleY + 2);
+                            ctx.fillText(item.displayQuantity.toString(), circleX, circleY + (QUANTITY_FONT_SIZE * 0.05)); // Slight vertical adjust
                         }
-                    } else {
-                        // 空欄の場合、背景色(#f0f2f5)のみ表示 (何もしない)
                     }
                 });
 
                 const dataURL = deckCanvas.toDataURL('image/png');
                 
-                // タイムスタンプ付きのファイル名を生成
                 const now = new Date();
                 const timestamp = now.getFullYear().toString() +
                                   (now.getMonth() + 1).toString().padStart(2, '0') +
@@ -1817,14 +1824,29 @@
 
 
         // イベントリスナー
-        showLeaderCatalogBtn.addEventListener('click', () => { currentTab = 'leader'; updateFilterAndSortUI(); renderCatalog(); }); // Render order changed
-        showMainCatalogBtn.addEventListener('click', () => { currentTab = 'main'; updateFilterAndSortUI(); renderCatalog(); }); // Render order changed
-        showTacticsCatalogBtn.addEventListener('click', () => { currentTab = 'tactics'; updateFilterAndSortUI(); renderCatalog(); }); // Render order changed
+        showLeaderCatalogBtn.addEventListener('click', () => { 
+            currentTab = 'leader'; 
+            resetFilters(); // Reset filters on tab change
+            updateFilterAndSortUI(); 
+            renderCatalog(); 
+        });
+        showMainCatalogBtn.addEventListener('click', () => { 
+            currentTab = 'main'; 
+            resetFilters(); // Reset filters on tab change
+            updateFilterAndSortUI(); 
+            renderCatalog(); 
+        });
+        showTacticsCatalogBtn.addEventListener('click', () => { 
+            currentTab = 'tactics'; 
+            resetFilters(); // Reset filters on tab change
+            updateFilterAndSortUI(); 
+            renderCatalog(); 
+        });
         showDeckBtn.addEventListener('click', showDeckViewModal);
-        generateDeckImageBtn.addEventListener('click', generateDeckImage); // New button event listener
+        generateDeckImageBtn.addEventListener('click', generateDeckImage);
         closeDeckViewModalBtn.addEventListener('click', () => deckViewModal.classList.add('hidden'));
         closeCardDetailModalBtn.addEventListener('click', () => cardDetailModal.classList.add('hidden'));
-        closeDeckImageModalBtn.addEventListener('click', () => deckImageModal.classList.add('hidden')); // Close deck image modal
+        closeDeckImageModalBtn.addEventListener('click', () => deckImageModal.classList.add('hidden'));
 
         // 検索入力時の処理
         searchCatalogInput.addEventListener('input', () => {
@@ -1848,7 +1870,6 @@
             renderCatalog();
         });
 
-        // Event listener for the new build rule/ACE filter dropdown
         buildRuleFilterSelect.addEventListener('change', (event) => {
             selectedBuildRuleFilter = event.target.value;
             renderCatalog();
@@ -1876,7 +1897,6 @@
 
 
         // カードカタログからの追加（共通化 - テーブル表示時のボタン）
-        // イベント委譲で処理
         catalogDisplayArea.addEventListener('click', (event) => {
             if (event.target.classList.contains('add-card-from-catalog')) {
                 const cardName = event.target.dataset.cardName;
@@ -1888,15 +1908,33 @@
             }
         });
 
+        /**
+         * フィルターをリセットする関数
+         */
+        function resetFilters() {
+            currentSearchQuery = '';
+            selectedFilterColor = '全て';
+            selectedFilterCardType = '全て';
+            selectedFilterCost = '全て';
+            selectedBuildRuleFilter = 'すべて';
+            
+            // UIを更新してリセットされた状態を反映
+            searchCatalogInput.value = '';
+            colorFilterSelect.value = '全て';
+            cardTypeFilterSelect.value = '全て';
+            costFilterSelect.value = '全て';
+            buildRuleFilterSelect.value = 'すべて';
+        }
+
 
         /**
-         * デッキデータをJSON文字列としてエクスポートする
+         * デッキデータをJSON文字列としてエクスポートする（テキストエリア表示）
          */
         exportDeckBtn.addEventListener('click', () => {
             const exportedLeader = {};
             leaderDeck.forEach(card => {
                 const cardNumPrefix = card.cardData['カードナンバー'] ? card.cardData['カードナンバー'].split('/')[0] : card.name;
-                exportedLeader[cardNumPrefix] = 1; // リーダーカードは常に1枚
+                exportedLeader[cardNumPrefix] = 1;
             });
 
             const exportedMain = {};
@@ -1908,7 +1946,7 @@
             const exportedTactics = {};
             tacticsDeck.forEach(card => {
                 const cardNumPrefix = card.cardData['カードナンバー'] ? card.cardData['カードナンバー'].split('/')[0] : card.name;
-                exportedTactics[cardNumPrefix] = 1; // タクティクスカードは常に1枚
+                exportedTactics[cardNumPrefix] = 1;
             });
 
             const deckData = {
@@ -1919,7 +1957,7 @@
                     TACTICS: exportedTactics
                 }
             };
-            deckDataTextarea.value = JSON.stringify(deckData, null, 2); // Pretty print JSON
+            deckDataTextarea.value = JSON.stringify(deckData, null, 2);
             copyExportedDataBtn.classList.remove('hidden');
             importExportMessage.classList.remove('hidden');
             importExportMessage.className = 'validation-message validation-success';
@@ -1937,6 +1975,211 @@
         });
 
         /**
+         * デッキデータをJSONファイルとしてダウンロードする
+         */
+        downloadJsonBtn.addEventListener('click', () => {
+            const exportedLeader = {};
+            leaderDeck.forEach(card => {
+                const cardNumPrefix = card.cardData['カードナンバー'] ? card.cardData['カードナンバー'].split('/')[0] : card.name;
+                exportedLeader[cardNumPrefix] = 1;
+            });
+
+            const exportedMain = {};
+            mainDeck.forEach(card => {
+                const cardNumPrefix = card.cardData['カードナンバー'] ? card.cardData['カードナンバー'].split('/')[0] : card.name;
+                exportedMain[cardNumPrefix] = card.quantity;
+            });
+
+            const exportedTactics = {};
+            tacticsDeck.forEach(card => {
+                const cardNumPrefix = card.cardData['カードナンバー'] ? card.cardData['カードナンバー'].split('/')[0] : card.name;
+                exportedTactics[cardNumPrefix] = 1;
+            });
+
+            const deckData = {
+                deckName: deckNameInput.value.trim() || '無題のデッキ',
+                deck: {
+                    LEADER: exportedLeader,
+                    MAIN: exportedMain,
+                    TACTICS: exportedTactics
+                }
+            };
+            const jsonString = JSON.stringify(deckData, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${deckNameInput.value.trim() || 'XrossStars_Deck'}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            importExportMessage.classList.remove('hidden');
+            importExportMessage.className = 'validation-message validation-success';
+            importExportMessage.textContent = 'デッキデータがJSONファイルとしてダウンロードされました！';
+        });
+
+        /**
+         * JSONファイルをアップロードしてデッキをインポートする
+         */
+        importFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            if (file.type !== 'application/json') {
+                importExportMessage.className = 'validation-message validation-error';
+                importExportMessage.textContent = 'JSONファイルを選択してください。';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const importedStructure = JSON.parse(e.target.result);
+                    loadDeckFromParsedData(importedStructure);
+                } catch (error) {
+                    console.error('ファイルからのデッキインポート中にエラーが発生しました:', error);
+                    importExportMessage.className = 'validation-message validation-error';
+                    importExportMessage.textContent = `ファイルの読み込みまたはパース中にエラーが発生しました。JSON形式が正しいか確認してください。エラー: ${error.message}`;
+                } finally {
+                    importFileInput.value = '';
+                }
+            };
+            reader.onerror = () => {
+                console.error('FileReaderエラー:', reader.error);
+                importExportMessage.className = 'validation-message validation-error';
+                importExportMessage.textContent = 'ファイルの読み込み中にエラーが発生しました。';
+                importFileInput.value = '';
+            };
+            reader.readAsText(file);
+        });
+
+        /**
+         * パースされたデッキデータ（JSON）をデッキにロードする共通関数
+         * @param {Object} importedStructure - インポートされたデッキデータ構造
+         */
+        function loadDeckFromParsedData(importedStructure) {
+            const importedData = importedStructure.deck;
+
+            // データの妥当性チェック
+            if (!importedData || !importedData.LEADER || !importedData.MAIN || !importedData.TACTICS) {
+                throw new Error('無効なデッキデータ形式です。必要なセクション（LEADER, MAIN, TACTICS）が見つかりません。');
+            }
+
+            const newLeaderDeck = [];
+            const newMainDeck = [];
+            const newTacticsDeck = [];
+
+            let importError = false;
+
+            // リーダーデッキのインポート
+            const leaderCardEntries = Object.entries(importedData.LEADER);
+            if (leaderCardEntries.length > 4) {
+                alert('インポートするリーダーカードが多すぎます（最大4枚）。');
+                importError = true;
+            } else {
+                for (const [cardNumPrefix, quantity] of leaderCardEntries) {
+                    const cardInfo = allCardDataByNumberPrefix[cardNumPrefix];
+                    if (!cardInfo || cardInfo['カード種類'] !== 'リーダーカード') {
+                        alert(`カード番号 "${cardNumPrefix}" は有効なリーダーカードではありません。`);
+                        importError = true;
+                        break;
+                    }
+                    if (newLeaderDeck.some(lc => lc.name === cardInfo['カード名'])) {
+                        alert(`リーダーカード "${cardInfo['カード名']}" はすでにデッキに重複しています（カード番号: ${cardNumPrefix}）。`);
+                        importError = true;
+                        break;
+                    }
+                    if (quantity !== 1) {
+                        alert(`リーダーカード "${cardInfo['カード名']}" の枚数が不正です（カード番号: ${cardNumPrefix}）。リーダーカードは1枚のみ追加できます。`);
+                    }
+                    newLeaderDeck.push({ name: cardInfo['カード名'], cardData: cardInfo });
+                }
+            }
+
+            // メインデッキのインポート
+            if (!importError) {
+                let totalImportedMainCards = 0;
+                const importedMainCardCounts = {};
+                for (const [cardNumPrefix, quantity] of Object.entries(importedData.MAIN)) {
+                    const cardInfo = allCardDataByNumberPrefix[cardNumPrefix];
+                    if (!cardInfo || (cardInfo['カード種類'] === 'リーダーカード' || cardInfo['カード種類'] === 'タクティクスカード')) {
+                        alert(`カード番号 "${cardNumPrefix}" は有効なメインデッキカードではありません。`);
+                        importError = true;
+                        break;
+                    }
+                    if (quantity < 1 || quantity > 4) {
+                        alert(`カード番号 "${cardNumPrefix}" の枚数が不正です（1〜4枚）。`);
+                        importError = true;
+                        break;
+                    }
+                    importedMainCardCounts[cardInfo['カード名']] = (importedMainCardCounts[cardInfo['カード名']] || 0) + quantity;
+                    if (importedMainCardCounts[cardInfo['カード名']] > 4) {
+                        alert(`同名カード "${cardInfo['カード名']}" が4枚を超えています（カード番号: ${cardNumPrefix}）。`);
+                        importError = true;
+                        break;
+                    }
+                    totalImportedMainCards += quantity;
+                    newMainDeck.push({ name: cardInfo['カード名'], quantity: quantity, isAce: cardInfo['ACE'] === 'ACE' || cardInfo['ACE'] === 'エース', cardData: cardInfo });
+                }
+                if (!importError && totalImportedMainCards !== 50) {
+                    alert(`メインデッキの合計枚数が50枚ではありません（現在 ${totalImportedMainCards}枚）。`);
+                }
+                if (!importError) {
+                    let totalImportedAceCards = newMainDeck.filter(c => c.isAce).reduce((sum, c) => sum + c.quantity, 0);
+                    if (totalImportedAceCards > 8) {
+                        alert(`メインデッキのエースカードが8枚を超えています（現在 ${totalImportedAceCards}枚）。`);
+                    }
+                }
+            }
+
+            // タクティクスデッキのインポート
+            if (!importError) {
+                const tacticsCardEntries = Object.entries(importedData.TACTICS);
+                if (tacticsCardEntries.length > 5) {
+                    alert('インポートするタクティクスカードが多すぎます（最大5枚）。');
+                    importError = true;
+                } else {
+                    for (const [cardNumPrefix, quantity] of tacticsCardEntries) {
+                        const cardInfo = allCardDataByNumberPrefix[cardNumPrefix];
+                        if (!cardInfo || cardInfo['カード種類'] !== 'タクティクスカード') {
+                            alert(`カード番号 "${cardNumPrefix}" は有効なタクティクスカードではありません。`);
+                            importError = true;
+                            break;
+                        }
+                        if (newTacticsDeck.some(tc => tc.name === cardInfo['カード名'])) {
+                            alert(`タクティクスカード "${cardInfo['カード名']}" はすでにデッキに存在します（カード番号: ${cardNumPrefix}）。`);
+                            importError = true;
+                            break;
+                        }
+                        if (quantity !== 1) {
+                            alert(`タクティクスカード "${cardInfo['カード名']}" の枚数が不正です（カード番号: ${cardNumPrefix}）。タクティクスカードは1枚のみ追加できます。`);
+                        }
+                        newTacticsDeck.push({ name: cardInfo['カード名'], cardData: cardInfo });
+                    }
+                }
+            }
+
+            if (!importError) {
+                leaderDeck = newLeaderDeck;
+                mainDeck = newMainDeck;
+                tacticsDeck = newTacticsDeck;
+                deckNameInput.value = importedStructure.deckName || '';
+                updateDeckDisplay();
+                importExportMessage.className = 'validation-message validation-success';
+                importExportMessage.textContent = 'デッキデータが正常にインポートされました！';
+                copyExportedDataBtn.classList.add('hidden');
+            } else {
+                importExportMessage.className = 'validation-message validation-error';
+                importExportMessage.textContent = 'デッキデータのインポートに失敗しました。詳細については上記のエラーメッセージを確認してください。';
+            }
+        }
+
+
+        /**
          * テキストエリアのJSONデータからデッキをインポートする
          */
         importDeckBtn.addEventListener('click', () => {
@@ -1949,226 +2192,13 @@
 
             try {
                 const importedStructure = JSON.parse(importText);
-                const importedData = importedStructure.deck;
-
-                // データの妥当性チェック
-                if (!importedData || !importedData.LEADER || !importedData.MAIN || !importedData.TACTICS) {
-                    throw new Error('無効なデッキデータ形式です。必要なセクション（LEADER, MAIN, TACTICS）が見つかりません。');
-                }
-
-                const newLeaderDeck = [];
-                const newMainDeck = [];
-                const newTacticsDeck = [];
-
-                let importError = false;
-
-                // リーダーデッキのインポート
-                const leaderCardEntries = Object.entries(importedData.LEADER);
-                if (leaderCardEntries.length > 4) {
-                    alert('インポートするリーダーカードが多すぎます（最大4枚）。');
-                    importError = true;
-                } else {
-                    for (const [cardNumPrefix, quantity] of leaderCardEntries) {
-                        const cardInfo = allCardDataByNumberPrefix[cardNumPrefix];
-                        if (!cardInfo || cardInfo['カード種類'] !== 'リーダーカード') {
-                            alert(`カード番号 "${cardNumPrefix}" は有効なリーダーカードではありません。`);
-                            importError = true;
-                            break;
-                        }
-                        if (newLeaderDeck.some(lc => lc.name === cardInfo['カード名'])) {
-                            alert(`リーダーカード "${cardInfo['カード名']}" はすでにデッキに重複しています（カード番号: ${cardNumPrefix}）。`);
-                            importError = true;
-                            break;
-                        }
-                        if (quantity !== 1) { // リーダーカードは常に1枚であることを確認
-                            alert(`リーダーカード "${cardInfo['カード名']}" の枚数が不正です（カード番号: ${cardNumPrefix}）。リーダーカードは1枚のみ追加できます。`);
-                            // importError = true; // エラーにするかは要検討
-                        }
-                        newLeaderDeck.push({ name: cardInfo['カード名'], cardData: cardInfo });
-                    }
-                }
-
-                // メインデッキのインポート
-                if (!importError) {
-                    let totalImportedMainCards = 0;
-                    const importedMainCardCounts = {};
-                    for (const [cardNumPrefix, quantity] of Object.entries(importedData.MAIN)) { // Changed `of` to `in` for object iteration
-                        const cardInfo = allCardDataByNumberPrefix[cardNumPrefix];
-                        if (!cardInfo || (cardInfo['カード種類'] === 'リーダーカード' || cardInfo['カード種類'] === 'タクティクスカード')) {
-                            alert(`カード番号 "${cardNumPrefix}" は有効なメインデッキカードではありません。`);
-                            importError = true;
-                            break;
-                        }
-                        if (quantity < 1 || quantity > 4) {
-                            alert(`カード番号 "${cardNumPrefix}" の枚数が不正です（1〜4枚）。`);
-                            importError = true;
-                            break;
-                        }
-                        importedMainCardCounts[cardInfo['カード名']] = (importedMainCardCounts[cardInfo['カード名']] || 0) + quantity;
-                        if (importedMainCardCounts[cardInfo['カード名']] > 4) {
-                            alert(`同名カード "${cardInfo['カード名']}" が4枚を超えています（カード番号: ${cardNumPrefix}）。`);
-                            importError = true;
-                            break;
-                        }
-                        totalImportedMainCards += quantity;
-                        newMainDeck.push({ name: cardInfo['カード名'], quantity: quantity, isAce: cardInfo['ACE'] === 'ACE' || cardInfo['ACE'] === 'エース', cardData: cardInfo });
-                    }
-                    if (!importError && totalImportedMainCards !== 50) {
-                        alert(`メインデッキの合計枚数が50枚ではありません（現在 ${totalImportedMainCards}枚）。`);
-                        // importError = true; // デッキ構築アプリのバリデーションに任せるため、ここではブロックしない
-                    }
-                    if (!importError) {
-                        let totalImportedAceCards = newMainDeck.filter(c => c.isAce).reduce((sum, c) => sum + c.quantity, 0);
-                        if (totalImportedAceCards > 8) {
-                            alert(`メインデッキのエースカードが8枚を超えています（現在 ${totalImportedAceCards}枚）。`);
-                            // importError = true; // デッキ構築アプリのバリデーションに任せるため、ここではブロックしない
-                        }
-                    }
-                }
-
-                // タクティクスデッキのインポート
-                if (!importError) {
-                    const tacticsCardEntries = Object.entries(importedData.TACTICS);
-                    if (tacticsCardEntries.length > 5) {
-                        alert('インポートするタクティクスカードが多すぎます（最大5枚）。');
-                        importError = true;
-                    } else {
-                        for (const [cardNumPrefix, quantity] of tacticsCardEntries) {
-                            const cardInfo = allCardDataByNumberPrefix[cardNumPrefix];
-                            if (!cardInfo || cardInfo['カード種類'] !== 'タクティクスカード') {
-                                alert(`カード番号 "${cardNumPrefix}" は有効なタクティクスカードではありません。`);
-                                importError = true;
-                                break;
-                            }
-                            if (newTacticsDeck.some(tc => tc.name === cardInfo['カード名'])) {
-                                alert(`タクティクスカード "${cardInfo['カード名']}" はすでにデッキに存在します（カード番号: ${cardNumPrefix}）。`);
-                                importError = true;
-                                break;
-                            }
-                            if (quantity !== 1) { // タクティクスカードは常に1枚であることを確認
-                                alert(`タクティクスカード "${cardInfo['カード名']}" の枚数が不正です（カード番号: ${cardNumPrefix}）。タクティクスカードは1枚のみ追加できます。`);
-                                // importError = true; // エラーにするかは要検討
-                            }
-                            newTacticsDeck.push({ name: cardInfo['カード名'], cardData: cardInfo });
-                        }
-                    }
-                }
-
-                if (!importError) {
-                    leaderDeck = newLeaderDeck;
-                    mainDeck = newMainDeck;
-                    tacticsDeck = newTacticsDeck;
-                    deckNameInput.value = importedStructure.deckName || '';
-                    updateDeckDisplay();
-                    importExportMessage.className = 'validation-message validation-success';
-                    importExportMessage.textContent = 'デッキデータが正常にインポートされました！';
-                    copyExportedDataBtn.classList.add('hidden'); // Hide copy button after import
-                } else {
-                    importExportMessage.className = 'validation-message validation-error';
-                    importExportMessage.textContent = 'デッキデータのインポートに失敗しました。詳細については上記のエラーメッセージを確認してください。';
-                }
-
+                loadDeckFromParsedData(importedStructure);
             } catch (error) {
                 console.error('デッキデータのパースまたはインポート中にエラーが発生しました:', error);
                 importExportMessage.className = 'validation-message validation-error';
                 importExportMessage.textContent = `デッキデータのインポートに失敗しました。JSON形式が正しいか確認してください。エラー: ${error.message}`;
             }
         });
-
-        // サンプルデッキを生成する関数 (今回は使用しないためコメントアウト)
-        /*
-        function generateSampleDeck() {
-            const sampleDeckData = {
-                "deckName": "サンプルデッキ (青単)",
-                "deck": {
-                    "LEADER": {
-                        "BP01-005": 1, // Kamito
-                        "BP01-006": 1, // 渋谷ハル
-                        "BP01-007": 1, // 白雪レイド
-                        "BP01-008": 1  // 英リサ
-                    },
-                    "MAIN": {
-                        "BP01-026": 4, // CLUTCH!!! (ACE)
-                        "BP01-033": 4, // ブリッツブラスト
-                        "BP01-032": 4, // ドリル開錠
-                        "BP01-030": 4, // 神速フリック
-                        "BP01-027": 4, // フラッシュバン
-                        "BP01-068": 4, // 運命のルーレット
-                        "BP01-069": 4, // 運もミスもない
-                        "BP01-066": 4, // 博聞強記
-                        "BP01-034": 4, // 巧みな裏取り
-                        "BP01-062": 4, // Never Fall (ACE)
-                        "BP01-070": 4, // BEAUTY SALON -HANABUSA-
-                        "BP01-064": 4, // ゾーン状態
-                        "BP01-028": 2  // リスキーエントリー (残りの2枚)
-                    },
-                    "TACTICS": {
-                        "BP01-093": 1, // ジャミングパルス
-                        "BP01-094": 1, // 復活ポータル
-                        "BP01-095": 1, // ライトシールド
-                        "BP01-096": 1, // ボディアーマー
-                        "BP01-091": 1  // 救急キット
-                    }
-                }
-            };
-
-            // デッキをクリア
-            leaderDeck = [];
-            mainDeck = [];
-            tacticsDeck = [];
-            deckNameInput.value = sampleDeckData.deckName;
-
-            let importError = false;
-
-            // リーダーデッキをインポート
-            for (const cardNumPrefix in sampleDeckData.deck.LEADER) {
-                const cardInfo = allCardDataByNumberPrefix[cardNumPrefix];
-                if (cardInfo && cardInfo['カード種類'] === 'リーダーカード') {
-                    if (!leaderDeck.some(lc => lc.name === cardInfo['カード名'])) {
-                        leaderDeck.push({ name: cardInfo['カード名'], cardData: cardInfo });
-                    }
-                } else {
-                    console.warn(`Sample leader card "${cardNumPrefix}" not found or is not a leader card.`);
-                    importError = true;
-                }
-            }
-
-            // メインデッキをインポート
-            for (const cardNumPrefix in sampleDeckData.deck.MAIN) {
-                const quantity = sampleDeckData.deck.MAIN[cardNumPrefix];
-                const cardInfo = allCardDataByNumberPrefix[cardNumPrefix];
-                if (cardInfo && cardInfo['カード種類'] !== 'リーダーカード' && cardInfo['カード種類'] !== 'タクティクスカード') {
-                    const isAce = cardInfo['ACE'] === 'ACE' || cardInfo['ACE'] === 'エース';
-                    mainDeck.push({ name: cardInfo['カード名'], quantity: quantity, isAce: isAce, cardData: cardInfo });
-                } else {
-                    console.warn(`Sample main card "${cardNumPrefix}" not found or is not a main deck card.`);
-                    importError = true;
-                }
-            }
-
-            // タクティクスデッキをインポート
-            for (const cardNumPrefix in sampleDeckData.deck.TACTICS) {
-                const cardInfo = allCardDataByNumberPrefix[cardNumPrefix];
-                if (cardInfo && cardInfo['カード種類'] === 'タクティクスカード') {
-                    if (!tacticsDeck.some(tc => tc.name === cardInfo['カード名'])) {
-                        tacticsDeck.push({ name: cardInfo['カード名'], cardData: cardInfo });
-                    }
-                } else {
-                    console.warn(`Sample tactics card "${cardNumPrefix}" not found or is not a tactics card.`);
-                    importError = true;
-                }
-            }
-            
-            updateDeckDisplay();
-
-            if (importError) {
-                importExportMessage.className = 'validation-message validation-warning';
-                importExportMessage.textContent = 'サンプルデッキの一部カードが見つからないか、タイプが正しくないため、完全にロードされませんでした。';
-            } else {
-                importExportMessage.classList.add('hidden'); // Clear previous message
-            }
-        }
-        */
 
         // デッキ入出力セクションの表示/非表示切り替え
         toggleExportImportBtn.addEventListener('click', () => {
