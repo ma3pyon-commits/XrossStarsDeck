@@ -2181,11 +2181,29 @@
                 const qrX = canvas.width - QR_SIZE - qrPadding;
                 const qrY = canvas.height - QR_SIZE - qrPadding; // Position at bottom-right
 
-                // Ensure QR code doesn't go below the canvas or off to the left
-                const finalQrX = Math.max(qrPadding, Math.min(qrX, canvas.width - QR_SIZE - qrPadding));
-                const finalQrY = Math.max(DECK_NAME_HEIGHT + qrPadding, Math.min(qrY, canvas.height - QR_SIZE - qrPadding)); // Make sure it's below deck name if present
+                // Draw rounded rectangle around QR code
+                const cornerRadius = 10 * scaleFactor; // Adjust corner radius as needed
+                ctx.fillStyle = 'white'; // Background for the QR code box
+                ctx.strokeStyle = '#333'; // Border color
+                ctx.lineWidth = 2 * scaleFactor; // Border width
 
-                ctx.drawImage(qrImg, finalQrX, finalQrY, QR_SIZE, QR_SIZE);
+                // Draw rounded rectangle path
+                ctx.beginPath();
+                ctx.moveTo(qrX + cornerRadius, qrY);
+                ctx.lineTo(qrX + QR_SIZE - cornerRadius, qrY);
+                ctx.arcTo(qrX + QR_SIZE, qrY, qrX + QR_SIZE, qrY + cornerRadius, cornerRadius);
+                ctx.lineTo(qrX + QR_SIZE, qrY + QR_SIZE - cornerRadius);
+                ctx.arcTo(qrX + QR_SIZE, qrY + QR_SIZE, qrX + QR_SIZE - cornerRadius, qrY + QR_SIZE, cornerRadius);
+                ctx.lineTo(qrX + cornerRadius, qrY + QR_SIZE);
+                ctx.arcTo(qrX, qrY + QR_SIZE, qrX, qrY + QR_SIZE - cornerRadius, cornerRadius);
+                ctx.lineTo(qrX, qrY + cornerRadius);
+                ctx.arcTo(qrX, qrY, qrX + cornerRadius, qrY, cornerRadius);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // Draw QR image inside the rounded rectangle
+                ctx.drawImage(qrImg, qrX, qrY, QR_SIZE, QR_SIZE);
             }
         }
 
@@ -2929,4 +2947,3 @@
     </script>
 </body>
 </html>
-
