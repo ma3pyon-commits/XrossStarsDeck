@@ -82,6 +82,17 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
         }
+        /* New style for catalog tab buttons */
+        .btn-catalog-tab {
+            background-color: #bfdbfe; /* Lighter blue */
+            color: #1e40af; /* Darker blue text */
+        }
+        .btn-catalog-tab:hover {
+            background-color: #93c5fd; /* Even lighter blue on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
         .card-list {
             background-color: #f9fafb;
             border-radius: 12px;
@@ -403,14 +414,14 @@
 
         <!-- Top Navigation and Deck Button (Flex wrap added) -->
         <div class="flex flex-col gap-4 mb-8">
-            <div class="flex justify-center gap-4 flex-wrap"> <!-- Added flex-wrap -->
+            <div class="flex justify-center gap-4 flex-wrap"> <!-- Changed to flex-wrap -->
                 <button id="showDeckBtn" class="btn btn-primary px-6 py-3">デッキ</button>
                 <button id="generateDeckImageBtn" class="btn btn-primary px-6 py-3">デッキ画像</button>
             </div>
-            <div class="flex justify-center gap-4 flex-wrap"> <!-- Added flex-wrap -->
-                <button id="showLeaderCatalogBtn" class="btn btn-primary px-4 py-2 sm:text-sm">リーダー</button> <!-- Adjusted padding/font for sm -->
-                <button id="showMainCatalogBtn" class="btn btn-primary px-4 py-2 sm:text-sm">メイン</button>   <!-- Adjusted padding/font for sm -->
-                <button id="showTacticsCatalogBtn" class="btn btn-primary px-4 py-2 sm:text-sm">タクティクス</button> <!-- Adjusted padding/font for sm -->
+            <div class="flex justify-center gap-4 flex-nowrap overflow-x-auto"> <!-- Changed to flex-nowrap and added overflow-x-auto -->
+                <button id="showLeaderCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">リーダー</button>
+                <button id="showMainCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">メイン</button>
+                <button id="showTacticsCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">タクティクス</button>
             </div>
         </div>
 
@@ -571,8 +582,6 @@
         </div>
     </div>
 
-    <!-- QRコードを一時的に生成するための隠し要素は削除されました -->
-
     <script>
         // デッキの状態を管理する配列
         let leaderDeck = [];
@@ -669,8 +678,6 @@
         const closeDeckImageModalBtn = document.getElementById('closeDeckImageModal');
         const deckCanvas = document.getElementById('deckCanvas');
         const downloadDeckImageBtn = document.getElementById('downloadDeckImage');
-
-        // QRコードを一時的に生成するための隠し要素への参照は削除されました
 
 
         /**
