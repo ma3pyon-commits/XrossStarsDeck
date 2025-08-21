@@ -34,6 +34,7 @@
             gap: 1.25rem; /* ギャップを広げる */
             margin-bottom: 1.25rem;
             align-items: center;
+            flex-wrap: wrap; /* 追加: 画面が小さい場合に要素を折り返す */
         }
         .input-field {
             flex-grow: 1;
@@ -42,6 +43,7 @@
             border-radius: 10px; /* 角丸を調整 */
             outline: none;
             transition: border-color 0.3s, box-shadow 0.3s;
+            min-width: 0; /* 追加: flexアイテムとして適切に縮むように設定 */
         }
         .input-field:focus {
             border-color: #3b82f6;
@@ -1019,70 +1021,73 @@
             const cardInfo = allCardData[cardName];
 
             if (!cardName || !cardInfo) {
-                alert('カード情報が見つかりません。');
+                // Should not happen with proper UI, but defensive check
                 return;
             }
 
             // デッキタイプに応じたルールチェック
             if (targetDeckType === 'leader') {
                 if (cardInfo['カード種類'] !== 'リーダーカード') {
-                    alert('このカードはリーダーカードではありません。');
-                    return;
+                    return; // リーダーカードではない
                 }
-                if (leaderDeck.length >= 4) {
-                    alert('リーダーカードは4枚までです。');
-                    return;
-                }
+                // リーダーカードは同名1枚まで
                 if (leaderDeck.some(card => card.name === cardName)) {
-                    alert('このリーダーカードはすでにデッキに存在します。');
-                    return;
+                    return; 
                 }
+                // リーダーカードの合計枚数制限は、構築中には強制しない（ダイアログなしで追加可能）
+                // ただし、もしデッキが既に4枚で、新しいカードを追加しても5枚目以降になる場合でも追加する
                 leaderDeck.push({ name: cardName, cardData: cardInfo });
+
             } else if (targetDeckType === 'main') {
                 if (cardInfo['カード種類'] === 'リーダーカード' || cardInfo['カード種類'] === 'タクティクスカード') {
-                    alert('このカードはメインデッキには追加できません。');
+                    return; // メインデッキには追加不可
+                }
+                if (quantity < 1) { // 負の数は追加しない
                     return;
                 }
-                if (quantity < 1 || quantity > 4) { // Quantity check for single card add
-                    alert('追加する枚数は1から4の間で指定してください。');
-                    return;
-                }
-
+                
                 const isAce = cardInfo['ACE'] === 'ACE' || cardInfo['ACE'] === 'エース';
-                let totalCurrentMainCards = mainDeck.reduce((sum, card) => sum + card.quantity, 0);
+                let actualQuantityToAdd = Math.min(quantity, 4); // 1回の追加で4枚を超えることはないように
 
                 const existingCardIndex = mainDeck.findIndex(card => card.name === cardName);
+                
+                let currentCount = 0;
                 if (existingCardIndex > -1) {
-                    const currentCount = mainDeck[existingCardIndex].quantity;
-                    if (currentCount + quantity > 4) {
-                        alert(`同名カードは4枚までです。現在${currentCount}枚存在します。`);
-                        return;
-                    }
-                    if (totalCurrentMainCards + quantity > 50) {
-                        alert(`メインデッキの合計が50枚を超えます。現在${totalCurrentMainCards}枚です。`);
-                        return;
-                    }
-                    mainDeck[existingCardIndex].quantity += quantity;
+                    currentCount = mainDeck[existingCardIndex].quantity;
+                }
+
+                // 同名カードが4枚を超える場合の調整
+                // 既に4枚ある場合は追加しない
+                if (currentCount >= 4) {
+                    return;
+                }
+                // 現在の枚数に加えても4枚を超える場合、4枚になるように調整
+                if (currentCount + actualQuantityToAdd > 4) {
+                    actualQuantityToAdd = 4 - currentCount;
+                }
+
+                // 合計枚数50枚の制限は構築中には強制しない
+                // ユーザーの要望により、合計枚数が50枚を超えても追加できるように変更
+
+                if (actualQuantityToAdd <= 0) { // 追加可能な枚数が0以下なら何もしない
+                    return;
+                }
+
+                if (existingCardIndex > -1) {
+                    mainDeck[existingCardIndex].quantity += actualQuantityToAdd;
                 } else {
-                    if (totalCurrentMainCards + quantity > 50) {
-                        alert(`メインデッキの合計が50枚を超えます。現在${totalCurrentMainCards}枚です。`);
-                        return;
-                    }
-                    mainDeck.push({ name: cardName, quantity: quantity, isAce: isAce, cardData: cardInfo });
+                    mainDeck.push({ name: cardName, quantity: actualQuantityToAdd, isAce: isAce, cardData: cardInfo });
                 }
             } else if (targetDeckType === 'tactics') {
                 if (cardInfo['カード種類'] !== 'タクティクスカード') {
-                    alert('このカードはタクティクスカードではありません。');
-                    return;
+                    return; // タクティクスカードではない
                 }
-                if (tacticsDeck.length >= 5) {
-                    alert('タクティクスカードは5枚までです。');
-                    return;
-                }
+                // タクティクスカードは同名1枚まで
                 if (tacticsDeck.some(card => card.name === cardName)) {
-                    alert('このタクティクスカードはすでにデッキに存在します。');
-                    return;
+                    return; 
                 }
+                // タクティクスカードの合計枚数制限は、構築中には強制しない（ダイアログなしで追加可能）
+                // ただし、もしデッキが既に5枚で、新しいカードを追加しても6枚目以降になる場合でも追加する
                 tacticsDeck.push({ name: cardName, cardData: cardInfo });
             }
 
@@ -1915,7 +1920,7 @@
             try {
                 const validations = validateDeck();
                 if (!validations.isLeaderValid || !validations.isMainValid || !validations.isTacticsValid) {
-                    alert('デッキ構築ルールに問題があるため、デッキ画像は生成できません。上記のバリデーションメッセージを確認してください。');
+                    alert('デッキ構築ルールに問題があるため、デッキ画像は生成できません。画面下部のバリデーションメッセージを確認してください。');
                     loadingIndicator.classList.add('hidden'); // Ensure loading indicator is hidden on validation failure
                     return;
                 }
@@ -1988,7 +1993,7 @@
             const validations = validateDeck();
             if (!validations.isLeaderValid || !validations.isMainValid || !validations.isTacticsValid) {
                 localStorageMessage.className = 'validation-message validation-error';
-                localStorageMessage.textContent = 'デッキ構築ルールに問題があるため、保存できません。上記のバリデーションメッセージを確認してください。';
+                localStorageMessage.textContent = 'デッキ構築ルールに問題があるため、保存できません。画面下部のバリデーションメッセージを確認してください。';
                 return;
             }
 
