@@ -427,11 +427,13 @@
                 <button id="showDeckBtn" class="btn btn-primary px-6 py-3">デッキ</button>
                 <button id="generateDeckImageBtn" class="btn btn-primary px-6 py-3">デッキ画像</button>
             </div>
-            <!-- Changed justify-center to justify-start for better scroll visibility -->
-            <div class="flex justify-start gap-4 flex-nowrap overflow-x-auto">
-                <button id="showLeaderCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">リーダー</button>
-                <button id="showMainCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">メイン</button>
-                <button id="showTacticsCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">タクティクス</button>
+            <!-- Centering for tabs: use text-center on parent and inline-flex on the scrollable container -->
+            <div class="text-center"> 
+                <div class="inline-flex gap-4 flex-nowrap overflow-x-auto pb-2 px-2"> <!-- Added px-2 for padding on sides when scrolling, and pb-2 -->
+                    <button id="showLeaderCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">リーダー</button>
+                    <button id="showMainCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">メイン</button>
+                    <button id="showTacticsCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">タクティクス</button>
+                </div>
             </div>
         </div>
 
@@ -1349,15 +1351,22 @@
                     const costA = parseInt(a[criterion]) || 0;
                     const costB = parseInt(b[criterion]) || 0;
                     compareResult = costA - costB;
+                    // If costs are equal, secondary sort by Card Number
+                    if (compareResult === 0) {
+                        const cardNumA = a['カードナンバー'] || '';
+                        const cardNumB = b['カードナンバー'] || '';
+                        compareResult = cardNumA.localeCompare(cardNumB);
+                    }
                     if (compareResult !== 0) return direction === 'asc' ? compareResult : -compareResult;
                 }
                 // Secondary sort for Cost by Card Number (for Main and Tactics)
-                if (criterion === 'コスト' && compareResult === 0 && (currentTab === 'main' || currentTab === 'tactics')) {
-                    const cardNumA = a['カードナンバー'] || '';
-                    const cardNumB = b['カードナンバー'] || '';
-                    compareResult = cardNumA.localeCompare(cardNumB);
-                    if (compareResult !== 0) return direction === 'asc' ? compareResult : -compareResult;
-                }
+                // This logic is now integrated directly above within the 'コスト' criterion block.
+                // if (criterion === 'コスト' && compareResult === 0 && (currentTab === 'main' || currentTab === 'tactics')) {
+                //     const cardNumA = a['カードナンバー'] || '';
+                //     const cardNumB = b['カードナンバー'] || '';
+                //     compareResult = cardNumA.localeCompare(cardNumB);
+                //     if (compareResult !== 0) return direction === 'asc' ? compareResult : -compareResult;
+                // }
 
                 // Primary sort for Leader/Main by '色'
                 if (criterion === '色' && currentTab !== 'tactics') { // Tactics cards don't use '色' for sorting
