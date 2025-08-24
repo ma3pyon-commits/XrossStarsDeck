@@ -517,46 +517,6 @@
             cursor: pointer;
         }
 
-        /* NEW: Temporary Save/Load Modal for Session Storage */
-        #tempSaveConfirmationModal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.85); /* Slightly darker overlay */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 200; /* Higher than other modals */
-        }
-        #tempSaveConfirmationModal .modal-content {
-            padding: 2rem;
-            text-align: center;
-            max-width: 450px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-        }
-        #tempSaveConfirmationModal .modal-content h3 {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            color: #2c3e50;
-        }
-        #tempSaveConfirmationModal .modal-content p {
-            font-size: 1.1rem;
-            color: #4b5563;
-            margin-bottom: 1.75rem;
-        }
-        #tempSaveConfirmationModal .modal-buttons {
-            display: flex;
-            justify-content: space-around;
-            gap: 1.25rem;
-            margin-top: 1.5rem;
-        }
-        #tempSaveConfirmationModal .modal-buttons .btn {
-            padding: 0.9rem 2.2rem;
-            font-size: 1.1rem;
-        }
-
     </style>
 </head>
 <body class="p-4">
@@ -581,6 +541,8 @@
             <div class="flex justify-center gap-4 flex-wrap">
                 <button id="showDeckBtn" class="btn btn-primary px-6 py-3">デッキ</button>
                 <button id="generateDeckImageBtn" class="btn btn-primary px-6 py-3">デッキ画像</button>
+                <!-- NEW: 新規デッキ作成ボタン -->
+                <button id="createNewDeckBtn" class="btn btn-danger px-6 py-3">新規デッキ作成</button>
             </div>
             <!-- Centering for tabs: use text-center on parent and inline-flex on the scrollable container -->
             <div class="text-center"> 
@@ -807,18 +769,6 @@
         </div>
     </div>
 
-    <!-- NEW: Temporary Save Confirmation Modal -->
-    <div id="tempSaveConfirmationModal" class="hidden">
-        <div class="modal-content">
-            <h3 class="text-center font-bold">一時保存されたデッキがあります</h3>
-            <p class="text-center">前回の編集を続けますか？</p>
-            <div class="modal-buttons">
-                <button id="loadTempDeckBtn" class="btn btn-primary">読み込む</button>
-                <button id="discardTempDeckBtn" class="btn btn-secondary">破棄して新規作成</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Moved QR Code checkbox to the footer -->
     <div class="footer-content">
         <label for="hideQrCodeCheckbox">
@@ -862,6 +812,7 @@
         const showTacticsCatalogBtn = document.getElementById('showTacticsCatalogBtn');
         const showDeckBtn = document.getElementById('showDeckBtn');
         const generateDeckImageBtn = document.getElementById('generateDeckImageBtn'); // New button
+        const createNewDeckBtn = document.getElementById('createNewDeckBtn'); // NEW: 新規デッキ作成ボタン
 
         const searchCatalogInput = document.getElementById('searchCatalogInput');
         const colorFilterSelect = document.getElementById('colorFilterSelect');
@@ -941,11 +892,6 @@
         const loadConfirmationCanvas = document.getElementById('loadConfirmationCanvas');
         const confirmLoadBtn = document.getElementById('confirmLoadBtn');
         const cancelLoadBtn = document.getElementById('cancelLoadBtn');
-
-        // NEW: Temporary Save Confirmation Modal elements
-        const tempSaveConfirmationModal = document.getElementById('tempSaveConfirmationModal');
-        const loadTempDeckBtn = document.getElementById('loadTempDeckBtn');
-        const discardTempDeckBtn = document.getElementById('discardTempDeckBtn');
 
         let deckToLoad = null; // Store deck data temporarily for confirmation
 
@@ -1118,10 +1064,7 @@
             } finally {
                 loadingIndicator.classList.add('hidden');
                 updateFilterAndSortUI();
-                updateDeckDisplay(); // Call updateDeckDisplay here to refresh catalog and validations
-
-                // NEW: Check for temporary saved deck on page load
-                checkForTemporaryDeck();
+                // updateDeckDisplay() will be called after temporary deck is loaded (or not)
             }
         }
 
@@ -2021,7 +1964,7 @@
                     relatedCards = Object.values(allCardData).filter(card =>
                         (card['カード種類'] === 'アタックカード' || card['カード種類'] === 'メモリアカード') &&
                         card['カード名'] !== cardInfo['カード名'] && // Exclude itself
-                        card['ビルドルール'] === cardInfo['ビルdLルール'] // Corrected: Match build rule
+                        card['ビルドルール'] === cardInfo['ビルドルール'] // Corrected: Match build rule
                     );
 
                     // Find the Leader Card mentioned in the Build Rule
@@ -2690,6 +2633,7 @@
                 }
             };
             sessionStorage.setItem('xrossstars_temp_deck', JSON.stringify(tempDeckState));
+            console.log("デッキの状態が一時保存されました。");
         }
 
         /**
@@ -2697,54 +2641,37 @@
          */
         function loadTemporaryDeckState() {
             const tempDeckJson = sessionStorage.getItem('xrossstars_temp_deck');
+            console.log('loadTemporaryDeckState - sessionStorage raw content:', tempDeckJson); // Debug log
+
             if (tempDeckJson) {
                 try {
                     const tempDeck = JSON.parse(tempDeckJson);
-                    loadDeckFromParsedData(tempDeck);
-                    console.log("一時保存されたデッキを読み込みました。");
-                    // Update the input fields with the temporary deck's name
-                    deckNameInput.value = tempDeck.deckName;
-                    deckNameInputLocal.value = tempDeck.deckName;
-                    updateDeckDisplay(); // NEW: UIを更新
-                } catch (e) {
-                    console.error("一時保存されたデッキのパースに失敗しました。", e);
-                    sessionStorage.removeItem('xrossstars_temp_deck'); // 無効なデータを削除
-                }
-            }
-        }
-
-        /**
-         * sessionStorageに一時保存データがあるかチェックし、あればダイアログを表示する
-         */
-        function checkForTemporaryDeck() {
-            const tempDeckJson = sessionStorage.getItem('xrossstars_temp_deck');
-            console.log('checkForTemporaryDeck - sessionStorage raw content:', tempDeckJson); // Debug log
-
-            if (tempDeckJson) {
-                try {
-                    const tempDeckState = JSON.parse(tempDeckJson);
                     // Check if the parsed object contains actual deck data
-                    // Assuming a deck is "saved" if it has any cards in any of its sections
-                    const hasLeaderCards = Object.keys(tempDeckState.deck.LEADER).length > 0;
-                    const hasMainCards = Object.keys(tempDeckState.deck.MAIN).length > 0;
-                    const hasTacticsCards = Object.keys(tempDeckState.deck.TACTICS).length > 0;
+                    const hasLeaderCards = Object.keys(tempDeck.deck.LEADER).length > 0;
+                    const hasMainCards = Object.keys(tempDeck.deck.MAIN).length > 0;
+                    const hasTacticsCards = Object.keys(tempDeck.deck.TACTICS).length > 0;
 
                     if (hasLeaderCards || hasMainCards || hasTacticsCards) {
-                        console.log("Valid temporary deck found. Displaying confirmation modal.");
-                        tempSaveConfirmationModal.classList.remove('hidden');
+                        loadDeckFromParsedData(tempDeck);
+                        console.log("一時保存されたデッキを自動で読み込みました。");
+                        // Update the input fields with the temporary deck's name
+                        deckNameInput.value = tempDeck.deckName;
+                        deckNameInputLocal.value = tempDeck.deckName;
+                        updateDeckDisplay();
                     } else {
-                        console.log("Empty or invalid temporary deck found in sessionStorage. Not displaying modal.");
-                        sessionStorage.removeItem('xrossstars_temp_deck'); // Clean up empty data
+                        console.log("空の一時保存デッキのため、読み込みをスキップしました。");
+                        sessionStorage.removeItem('xrossstars_temp_deck'); // 空のデータをクリーンアップ
                     }
                 } catch (e) {
-                    console.error("Error parsing temporary deck from sessionStorage:", e);
-                    sessionStorage.removeItem('xrossstars_temp_deck'); // Clear malformed data
+                    console.error("一時保存されたデッキのパースに失敗しました。データを破棄します。", e);
+                    sessionStorage.removeItem('xrossstars_temp_deck'); // 無効なデータを削除
                 }
             } else {
-                console.log("No temporary deck found in sessionStorage.");
+                console.log("sessionStorageに一時保存されたデッキはありません。");
+                updateDeckDisplay(); // 一時保存がない場合もUIを更新して初期状態を表示
             }
         }
-
+        
         // イベントリスナー
         showLeaderCatalogBtn.addEventListener('click', () => { 
             console.log('リーダーボタンがクリックされました。'); // Debug log
@@ -3189,32 +3116,27 @@
             updateDeckImagePreview(); // Update preview to reflect the change
         });
 
-        // NEW: Temporary Save Confirmation Modal Event Listeners
-        loadTempDeckBtn.addEventListener('click', () => {
-            console.log('loadTempDeckBtnがクリックされました。'); // Debug log
-            loadTemporaryDeckState();
-            tempSaveConfirmationModal.classList.add('hidden');
-            console.log('一時保存確認モーダルが非表示になりました。'); // Debug log
-        });
-
-        discardTempDeckBtn.addEventListener('click', () => {
-            console.log('discardTempDeckBtnがクリックされました。'); // Debug log
-            sessionStorage.removeItem('xrossstars_temp_deck');
-            tempSaveConfirmationModal.classList.add('hidden');
-            console.log('一時保存確認モーダルが非表示になりました。'); // Debug log
-            leaderDeck = [];
-            mainDeck = [];
-            tacticsDeck = [];
-            deckNameInput.value = '';
-            deckNameInputLocal.value = '';
-            updateDeckDisplay(); // NEW: UIを更新して空のデッキ状態を反映
-            console.log("一時保存されたデッキは破棄されました。");
+        // NEW: 新規デッキ作成ボタンのイベントリスナー
+        createNewDeckBtn.addEventListener('click', () => {
+            if (confirm('現在のデッキは破棄され、新しいデッキが作成されます。よろしいですか？')) {
+                leaderDeck = [];
+                mainDeck = [];
+                tacticsDeck = [];
+                deckNameInput.value = '';
+                deckNameInputLocal.value = '';
+                sessionStorage.removeItem('xrossstars_temp_deck'); // 一時保存されたデッキもクリア
+                updateDeckDisplay();
+                alert('新しいデッキが作成されました。');
+                console.log("新しいデッキが作成されました。一時保存データはクリアされました。");
+            }
         });
 
 
         // 初期ロード時にカードデータを読み込み、オートコンプリートを設定
         window.onload = async () => {
             await loadCardData(); // This now also loads QR image and sets footer and modal checkbox states
+            // カードデータのロード後、一時保存されたデッキを自動的に読み込む
+            loadTemporaryDeckState();
             // currentSort is already initialized to { criterion: '色', direction: 'asc' }
             // updateFilterAndSortUI will correctly set the dropdown and then renderCatalog will apply the sort.
         };
