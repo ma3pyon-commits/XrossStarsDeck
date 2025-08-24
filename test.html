@@ -1205,7 +1205,7 @@
             const controlsJustifyClass = 'justify-around'; // Always space out detail and remove
 
             itemDiv.innerHTML = `
-                <img src="${imageUrl}" alt="${cardInfo['カード名']}" class="w-full h-full object-cover cursor-pointer">
+                <img src="${imageUrl}" alt="${cardInfo['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/300x420/cccccc/333333?text=Load+Error';">
                 <div class="card-image-controls absolute bottom-0 bg-white bg-opacity-90 w-full py-2 px-1 ${controlsJustifyClass}">
                     <button class="view-detail-btn text-blue-500 hover:text-blue-700 text-lg">🔎</button>
                     ${quantityDisplayHtml}
@@ -1550,7 +1550,7 @@
                     card => card['カードテキスト'] || ''
                 ];
                 colspan = headers.length;
-            } else if (currentDisplayTab === 'tactics') {
+            } else if (currentTab === 'tactics') { // Changed from currentDisplayTab to currentTab for consistency, assuming it's a global state
                 headers = ['カード名', '種類', 'コスト', 'カードテキスト', ''];
                 columnRenderers = [
                     card => card['カード名'],
@@ -1579,7 +1579,7 @@
                     <td>
                         <div class="catalog-add-controls">
                             <input type="number" value="1" min="1" max="4" class="card-quantity-input">
-                            <button class="add-card-from-catalog btn btn-primary text-sm" data-card-name="${card['カード名']}" data-card-type="${currentDisplayTab}">追加</button>
+                            <button class="add-card-from-catalog btn btn-primary text-sm" data-card-name="${card['カード名']}" data-card-type="${currentTab}">追加</button>
                         </div>
                     </td>
                 `;
@@ -1974,7 +1974,7 @@
                 modalMainCards.appendChild(createCardDisplayItemForModal(card.cardData, false)); // Pass false for not related
             });
             modalMainCount.textContent = mainDeck.reduce((sum, card) => sum + card.quantity, 0);
-            modalAceCount.textContent = mainDeck.filter(c => c.isAce).reduce((sum, c => sum + c.quantity, 0));
+            modalAceCount.textContent = mainDeck.filter(c => c.isAce).reduce((sum, c) => sum + c.quantity, 0);
 
 
             // タクティクスデッキ表示
@@ -2021,7 +2021,7 @@
                     relatedCards = Object.values(allCardData).filter(card =>
                         (card['カード種類'] === 'アタックカード' || card['カード種類'] === 'メモリアカード') &&
                         card['カード名'] !== cardInfo['カード名'] && // Exclude itself
-                        card['ビルドルール'] === cardInfo['ビルドルール'] // Corrected: Match build rule
+                        card['ビルドルール'] === cardInfo['ビルdLルール'] // Corrected: Match build rule
                     );
 
                     // Find the Leader Card mentioned in the Build Rule
@@ -2718,10 +2718,30 @@
          */
         function checkForTemporaryDeck() {
             const tempDeckJson = sessionStorage.getItem('xrossstars_temp_deck');
-            console.log('checkForTemporaryDeck - sessionStorage content:', tempDeckJson); // Debug log
-            // データが存在し、かつ空文字列や空白のみではない場合にダイアログを表示
-            if (tempDeckJson && tempDeckJson.trim() !== '') { 
-                tempSaveConfirmationModal.classList.remove('hidden');
+            console.log('checkForTemporaryDeck - sessionStorage raw content:', tempDeckJson); // Debug log
+
+            if (tempDeckJson) {
+                try {
+                    const tempDeckState = JSON.parse(tempDeckJson);
+                    // Check if the parsed object contains actual deck data
+                    // Assuming a deck is "saved" if it has any cards in any of its sections
+                    const hasLeaderCards = Object.keys(tempDeckState.deck.LEADER).length > 0;
+                    const hasMainCards = Object.keys(tempDeckState.deck.MAIN).length > 0;
+                    const hasTacticsCards = Object.keys(tempDeckState.deck.TACTICS).length > 0;
+
+                    if (hasLeaderCards || hasMainCards || hasTacticsCards) {
+                        console.log("Valid temporary deck found. Displaying confirmation modal.");
+                        tempSaveConfirmationModal.classList.remove('hidden');
+                    } else {
+                        console.log("Empty or invalid temporary deck found in sessionStorage. Not displaying modal.");
+                        sessionStorage.removeItem('xrossstars_temp_deck'); // Clean up empty data
+                    }
+                } catch (e) {
+                    console.error("Error parsing temporary deck from sessionStorage:", e);
+                    sessionStorage.removeItem('xrossstars_temp_deck'); // Clear malformed data
+                }
+            } else {
+                console.log("No temporary deck found in sessionStorage.");
             }
         }
 
