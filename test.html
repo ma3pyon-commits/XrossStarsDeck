@@ -1128,7 +1128,7 @@
         /**
          * カード画像URLを生成するヘルパー関数
          * @param {Object} cardInfo - カードの全情報を持つオブジェクト
-         * @returns {string} 画像URLまたはプレースホルダーURL
+        * @returns {string} 画像URLまたはプレースホルダーURL
          */
         function getCardImageUrl(cardInfo) {
             if (!cardInfo || !cardInfo['カードナンバー']) {
@@ -1143,6 +1143,9 @@
 
         /**
          * デッキの表示を更新し、バリデーションを実行する
+         * @returns {void}
+         * @description この関数は、デッキの内容が変更されたときや、UIの更新が必要なときに呼び出されます。
+         * カードカタログ、デッキバリデーション、および開いているモーダルの内容を更新します。
          */
         function updateDeckDisplay() {
             // バリデーションの更新
@@ -1160,6 +1163,7 @@
                     showCardDetailModal(currentCardNameInDetail); // Re-render detail modal to update related card quantities
                 }
             }
+            console.log("UI表示が更新されました。"); // デバッグログ
         }
 
         /**
@@ -1970,7 +1974,7 @@
                 modalMainCards.appendChild(createCardDisplayItemForModal(card.cardData, false)); // Pass false for not related
             });
             modalMainCount.textContent = mainDeck.reduce((sum, card) => sum + card.quantity, 0);
-            modalAceCount.textContent = mainDeck.filter(c => c.isAce).reduce((sum, c) => sum + c.quantity, 0);
+            modalAceCount.textContent = mainDeck.filter(c => c.isAce).reduce((sum, c => sum + c.quantity, 0));
 
 
             // タクティクスデッキ表示
@@ -2713,14 +2717,17 @@
          * sessionStorageに一時保存データがあるかチェックし、あればダイアログを表示する
          */
         function checkForTemporaryDeck() {
-            // NEW: sessionStorageにデータがある場合のみダイアログを表示
-            if (sessionStorage.getItem('xrossstars_temp_deck')) {
+            const tempDeckJson = sessionStorage.getItem('xrossstars_temp_deck');
+            console.log('checkForTemporaryDeck - sessionStorage content:', tempDeckJson); // Debug log
+            // データが存在し、かつ空文字列や空白のみではない場合にダイアログを表示
+            if (tempDeckJson && tempDeckJson.trim() !== '') { 
                 tempSaveConfirmationModal.classList.remove('hidden');
             }
         }
 
         // イベントリスナー
         showLeaderCatalogBtn.addEventListener('click', () => { 
+            console.log('リーダーボタンがクリックされました。'); // Debug log
             saveTemporaryDeckState(); // NEW: 一時保存
             currentTab = 'leader'; 
             resetFilters(); // Reset filters on tab change
@@ -2728,6 +2735,7 @@
             renderCatalog(); 
         });
         showMainCatalogBtn.addEventListener('click', () => { 
+            console.log('メインボタンがクリックされました。'); // Debug log
             saveTemporaryDeckState(); // NEW: 一時保存
             currentTab = 'main'; 
             resetFilters(); // Reset filters on tab change
@@ -2735,6 +2743,7 @@
             renderCatalog(); 
         });
         showTacticsCatalogBtn.addEventListener('click', () => { 
+            console.log('タクティクスボタンがクリックされました。'); // Debug log
             saveTemporaryDeckState(); // NEW: 一時保存
             currentTab = 'tactics'; 
             resetFilters(); // Reset filters on tab change
@@ -2742,10 +2751,12 @@
             renderCatalog(); 
         });
         showDeckBtn.addEventListener('click', () => {
+            console.log('デッキボタンがクリックされました。'); // Debug log
             saveTemporaryDeckState(); // NEW: 一時保存
             showDeckViewModal();
         });
         generateDeckImageBtn.addEventListener('click', () => {
+            console.log('デッキ画像ボタンがクリックされました。'); // Debug log
             saveTemporaryDeckState(); // NEW: 一時保存
             generateDeckImage();
         });
@@ -2988,6 +2999,7 @@
          * @param {Object} importedStructure - インポートされたデッキデータ構造
          */
         function loadDeckFromParsedData(importedStructure) {
+            console.log('loadDeckFromParsedDataが呼ばれました。'); // Debug log
             const importedData = importedStructure.deck;
 
             // データの妥当性チェック
@@ -3159,14 +3171,17 @@
 
         // NEW: Temporary Save Confirmation Modal Event Listeners
         loadTempDeckBtn.addEventListener('click', () => {
+            console.log('loadTempDeckBtnがクリックされました。'); // Debug log
             loadTemporaryDeckState();
             tempSaveConfirmationModal.classList.add('hidden');
-            // updateDeckDisplay() is now called within loadTemporaryDeckState()
+            console.log('一時保存確認モーダルが非表示になりました。'); // Debug log
         });
 
         discardTempDeckBtn.addEventListener('click', () => {
+            console.log('discardTempDeckBtnがクリックされました。'); // Debug log
             sessionStorage.removeItem('xrossstars_temp_deck');
             tempSaveConfirmationModal.classList.add('hidden');
+            console.log('一時保存確認モーダルが非表示になりました。'); // Debug log
             leaderDeck = [];
             mainDeck = [];
             tacticsDeck = [];
