@@ -436,7 +436,7 @@
             font-size: 1.1rem;
         }
         #relatedCardsGrid .card-image-quantity {
-            font-size: 0.9rem;
+            font-weight: 0.9rem;
         }
 
         /* NEW: Section background colors for consistent theme */
@@ -536,22 +536,25 @@
             </div>
         </div>
 
-        <!-- Top Navigation and Deck Button (Flex wrap added) -->
+        <!-- Top Navigation and Deck Button -->
         <div class="flex flex-col gap-4 mb-8">
-            <div class="flex justify-center gap-4 flex-wrap">
-                <button id="showDeckBtn" class="btn btn-primary px-6 py-3">デッキ</button>
-                <button id="generateDeckImageBtn" class="btn btn-primary px-6 py-3">デッキ画像</button>
-                <!-- NEW: 新規デッキ作成ボタン -->
-                <button id="createNewDeckBtn" class="btn btn-danger px-6 py-3">新規デッキ作成</button>
-            </div>
-            <!-- Centering for tabs: use text-center on parent and inline-flex on the scrollable container -->
-            <div class="text-center"> 
-                <div class="inline-flex gap-4 flex-nowrap overflow-x-auto pb-2 px-2">
-                    <!-- Added 'active' class example for the default tab -->
-                    <button id="showLeaderCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0 active">リーダー</button>
-                    <button id="showMainCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">メイン</button>
-                    <button id="showTacticsCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">タクティクス</button>
+            <!-- Primary navigation: Deck View / Catalog Tabs -->
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <button id="showDeckBtn" class="btn btn-primary px-6 py-3 w-full sm:w-auto">デッキ</button>
+                <!-- Horizontal scroll for tabs, takes full width on small screens, or grows on larger -->
+                <div class="flex-grow w-full sm:w-auto text-center">
+                    <div class="inline-flex gap-4 flex-nowrap overflow-x-auto pb-2 px-2">
+                        <button id="showLeaderCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0 active">リーダー</button>
+                        <button id="showMainCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">メイン</button>
+                        <button id="showTacticsCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">タクティクス</button>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Secondary actions: Generate Image / New Deck -->
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button id="generateDeckImageBtn" class="btn btn-primary px-6 py-3 w-full sm:w-auto">デッキ画像</button>
+                <button id="createNewDeckBtn" class="btn btn-danger px-6 py-3 w-full sm:w-auto">新規デッキ作成</button>
             </div>
         </div>
 
@@ -706,7 +709,7 @@
             <div id="modalCardQuantityControls" class="flex justify-center items-center gap-4 mb-4">
                 <button id="modalCardAddBtn" class="btn btn-primary text-2xl px-5 py-3 rounded-full">+</button>
                 <span id="modalCardCurrentQuantity" class="text-xl font-bold">0 / 4</span>
-                <button id="modalCardRemoveBtn" class="btn btn-danger text-xl px-4 py-2 rounded-full">×</button>
+                <button id="modalCardRemoveBtn" class="btn btn-danger text-2xl px-4 py-3 rounded-full">✕</button>
             </div>
             <!-- END NEW -->
 
@@ -2657,7 +2660,6 @@
                         // Update the input fields with the temporary deck's name
                         deckNameInput.value = tempDeck.deckName;
                         deckNameInputLocal.value = tempDeck.deckName;
-                        updateDeckDisplay();
                     } else {
                         console.log("空の一時保存デッキのため、読み込みをスキップしました。");
                         sessionStorage.removeItem('xrossstars_temp_deck'); // 空のデータをクリーンアップ
@@ -2668,8 +2670,8 @@
                 }
             } else {
                 console.log("sessionStorageに一時保存されたデッキはありません。");
-                updateDeckDisplay(); // 一時保存がない場合もUIを更新して初期状態を表示
             }
+            updateDeckDisplay(); // 一時保存の有無にかかわらず、UIを更新して初期状態または読み込まれた状態を表示
         }
         
         // イベントリスナー
