@@ -512,6 +512,7 @@
             text-align: center;
             margin-top: 3rem;
             color: #6b7280; /* Tailwind gray-500 */
+            /* Removed padding and background from here, will be applied to .daily-spark-section */
         }
         .footer-content label {
             display: inline-flex; /* Use flex for checkbox and text alignment */
@@ -543,26 +544,13 @@
             text-align: center;
         }
 
-        /* Daily Spark Section */
-        .daily-spark-section {
-            background-color: #e0f2fe; /* Light blue background */
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 2rem; /* Adjusted margin-top to be consistent */
-            margin-bottom: 1.5rem; /* Added margin-bottom to separate from footer-content */
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        .daily-spark-section h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1e40af; /* Dark blue title */
-            margin-bottom: 0.75rem;
-        }
-        .daily-spark-section p {
+        /* Daily Spark Section - Updated to match footer styles */
+        /* Changed from a dedicated section to a div within footer-content */
+        .daily-spark-message { /* This is the new class for the daily spark text itself */
             font-size: 1.1rem;
             color: #3b82f6; /* Medium blue text */
             font-style: italic;
+            margin-bottom: 0.75rem; /* Space between message and signature */
         }
 
     </style>
@@ -820,18 +808,14 @@
         </div>
     </div>
 
-    <!-- Daily Spark Section -->
-    <div class="daily-spark-section">
-        <h3>なんとなく一言</h3>
-        <p id="dailySparkMessage">メッセージを読み込み中...</p>
-    </div>
-
-    <!-- Moved QR Code checkbox to the footer -->
+    <!-- Footer Content -->
     <div class="footer-content">
         <label for="hideQrCodeCheckbox">
             <input type="checkbox" id="hideQrCodeCheckbox" class="rounded-md">
             <span>QRコードを非表示</span>
         </label>
+        <!-- Daily Spark Message is now inside footer-content and styled as daily-spark-message -->
+        <p class="daily-spark-message">なんとなく一言：<span id="dailySparkMessage">メッセージを読み込み中...</span></p>
         <p>Thanks for visiting! – PineAme@tcepseredutitta</p>
     </div>
 
