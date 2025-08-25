@@ -58,47 +58,55 @@
             box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18); /* Slightly stronger default button shadow */
         }
         .btn-primary {
-            background-color: #2563eb; /* Deeper blue */
+            background-color: #3b82f6; /* Updated primary blue from reference */
             color: white;
         }
         .btn-primary:hover {
-            background-color: #1e40af; /* Even deeper blue on hover */
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* More pronounced hover shadow */
+            background-color: #2563eb; /* Updated primary blue on hover from reference */
+            transform: translateY(-2px); /* Slightly lift on hover from reference */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Emphasized shadow on hover from reference */
         }
         .btn-danger {
-            background-color: #dc2626; /* Deeper red */
+            background-color: #ef4444; /* Deeper red */
             color: white;
         }
         .btn-danger:hover {
-            background-color: #b91c1c; /* Even deeper red on hover */
+            background-color: #dc2626; /* Even deeper red on hover */
             transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
         .btn-secondary {
-            background-color: #4b5563; /* Darker gray */
+            background-color: #6b7280; /* Darker gray */
             color: white;
         }
         .btn-secondary:hover {
-            background-color: #374151; /* Even darker gray on hover */
+            background-color: #4b5563; /* Even darker gray on hover */
             transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
-        /* New style for catalog tab buttons */
+        /* New style for catalog tab buttons - based on user's provided styling */
         .btn-catalog-tab {
-            background-color: #2563eb; /* Use primary blue for tabs */
-            color: white;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            background-color: #bfdbfe; /* Lighter blue from reference */
+            color: #1e40af; /* Darker blue text from reference */
+            border-radius: 10px; /* Consistent with other buttons */
+            padding: 0.85rem 1.65rem; /* Consistent with other buttons */
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Default shadow for tabs */
+            flex-shrink: 0; /* Prevents shrinking on smaller screens */
+            /* Removed explicit text-base and sm:text-sm, using default inherit or from global */
         }
         .btn-catalog-tab:hover {
-            background-color: #1e40af; /* Darker blue on hover */
-            transform: translateY(-1px);
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+            background-color: #93c5fd; /* Even lighter blue on hover from reference */
+            transform: translateY(-2px); /* Slightly lift on hover from reference */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Emphasized shadow on hover from reference */
         }
-        /* Add an active state for tabs if needed */
+        /* Active state for tabs - Retaining existing visual distinctiveness */
         .btn-catalog-tab.active {
-            border-bottom: 3px solid #bfdbfe; /* Light blue underline for active tab */
-            font-weight: 700;
+            background-color: #2563eb; /* Deeper blue for active tab */
+            color: white;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18);
         }
 
 
@@ -265,7 +273,7 @@
         .card-image-item {
             background-color: #fff;
             border-radius: 10px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Slightly stronger card item shadow */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); /* Slightly stronger card item shadow */
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -538,23 +546,20 @@
 
         <!-- Top Navigation and Deck Button -->
         <div class="flex flex-col gap-4 mb-8">
-            <!-- New Deck Button - Top Level -->
-            <div class="flex justify-center">
-                <button id="createNewDeckBtn" class="btn btn-danger px-6 py-3 w-full sm:w-auto">新規デッキ作成</button>
-            </div>
-
-            <!-- Primary actions: Deck View / Generate Image (横並びにするために flex flex-row を追加) -->
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <button id="showDeckBtn" class="btn btn-primary px-6 py-3 w-full sm:w-auto">デッキ</button>
-                <button id="generateDeckImageBtn" class="btn btn-primary px-6 py-3 w-full sm:w-auto">デッキ画像</button>
+            <!-- 【デッキ】【デッキ画像】【新規作成】ボタンを横1列に並べる -->
+            <div class="flex justify-center gap-4 flex-nowrap overflow-x-auto pb-2 px-2">
+                <button id="showDeckBtn" class="btn btn-primary px-6 py-3 flex-shrink-0">デッキ</button>
+                <button id="generateDeckImageBtn" class="btn btn-primary px-6 py-3 flex-shrink-0">デッキ画像</button>
+                <button id="createNewDeckBtn" class="btn btn-danger px-6 py-3 flex-shrink-0">新規作成</button>
             </div>
 
             <!-- Catalog Tabs -->
             <div class="text-center"> 
                 <div class="inline-flex gap-4 flex-nowrap overflow-x-auto pb-2 px-2">
-                    <button id="showLeaderCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0 active">リーダー</button>
-                    <button id="showMainCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">メイン</button>
-                    <button id="showTacticsCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">タクティクス</button>
+                    <!-- 【リーダー】【メイン】【タクティクス】ボタンのスタイルを統一 -->
+                    <button id="showLeaderCatalogBtn" class="btn btn-catalog-tab active">リーダー</button>
+                    <button id="showMainCatalogBtn" class="btn btn-catalog-tab">メイン</button>
+                    <button id="showTacticsCatalogBtn" class="btn btn-catalog-tab">タクティクス</button>
                 </div>
             </div>
         </div>
@@ -892,7 +897,7 @@
         // New elements for load confirmation modal
         const loadConfirmationModal = document.getElementById('loadConfirmationModal');
         const closeLoadConfirmationModalBtn = document.getElementById('closeLoadConfirmationModal');
-        const confirmLoadDeckName = document.getElementById('confirmLoadDeckName');
+        const confirmLoadDeckName = document = document.getElementById('confirmLoadDeckName');
         const loadConfirmationCanvas = document.getElementById('loadConfirmationCanvas');
         const confirmLoadBtn = document.getElementById('confirmLoadBtn');
         const cancelLoadBtn = document.getElementById('cancelLoadBtn');
