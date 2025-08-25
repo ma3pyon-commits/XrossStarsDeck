@@ -543,7 +543,7 @@
                 <button id="createNewDeckBtn" class="btn btn-danger px-6 py-3 w-full sm:w-auto">新規デッキ作成</button>
             </div>
 
-            <!-- Primary actions: Deck View / Generate Image -->
+            <!-- Primary actions: Deck View / Generate Image (横並びにするために flex flex-row を追加) -->
             <div class="flex flex-col sm:flex-row justify-center gap-4">
                 <button id="showDeckBtn" class="btn btn-primary px-6 py-3 w-full sm:w-auto">デッキ</button>
                 <button id="generateDeckImageBtn" class="btn btn-primary px-6 py-3 w-full sm:w-auto">デッキ画像</button>
@@ -1922,7 +1922,7 @@
                 modalMainCards.appendChild(createCardDisplayItemForModal(card.cardData, false)); // Pass false for not related
             });
             modalMainCount.textContent = mainDeck.reduce((sum, card) => sum + card.quantity, 0);
-            modalAceCount.textContent = mainDeck.filter(c => c.isAce).reduce((sum, c => sum + c.quantity, 0);
+            modalAceCount.textContent = mainDeck.filter(c => c.isAce).reduce((sum, c) => sum + c.quantity, 0);
 
 
             // タクティクスデッキ表示
