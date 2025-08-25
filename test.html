@@ -2061,23 +2061,25 @@
                     card['ビルドルール'] && card['ビルドルール'].includes(cardInfo['カード名'])
                 );
             } else if (cardType === 'アタックカード' || cardType === 'メモリアカード') {
-                // Only show related cards if the current main deck card has a build rule
-                if (cardInfo['ビルドルール']) { // Check if build rule exists
-                    // Find other Main Deck cards with the same Build Rule
-                    relatedCards = Object.values(allCardData).filter(card =>
-                        (card['カード種類'] === 'アタックカード' || card['カード種類'] === 'メモリアカード') &&
-                        card['カード名'] !== cardInfo['カード名'] && // Exclude itself
-                        card['ビルドルール'] === cardInfo['ビルDRULE'] // Corrected: Match build rule (using card['ビルDRULE'] from CSV, which is not good, fix to cardInfo['ビルドルール'])
-                    );
+                if (cardInfo['ビルドルール']) {
+                    const currentCardBuildRule = cardInfo['ビルドルール'];
 
-                    // Find the Leader Card mentioned in the Build Rule
-                    if (cardInfo['ビルドルール'].startsWith('リーダー：')) { 
-                        const leaderNameInRule = cardInfo['ビルドルール'].replace('リーダー：', '').trim();
+                    // 1. 同じビルドルールを持つメインデッキカードを検索
+                    const sameBuildRuleMainCards = Object.values(allCardData).filter(card =>
+                        (card['カード種類'] === 'アタックカード' || card['カード種類'] === 'メモリアカード') &&
+                        card['カード名'] !== cardInfo['カード名'] && // 自身を除く
+                        card['ビルドルール'] === currentCardBuildRule // 正しいプロパティ名を使用
+                    );
+                    relatedCards.push(...sameBuildRuleMainCards); // スプレッド構文で追加
+
+                    // 2. ビルドルールに記載されたリーダーカードを検索 (もしあれば)
+                    if (currentCardBuildRule.startsWith('リーダー：')) {
+                        const leaderNameInRule = currentCardBuildRule.replace('リーダー：', '').trim();
                         const leaderCard = Object.values(allCardData).find(card =>
                             card['カード種類'] === 'リーダーカード' && card['カード名'] === leaderNameInRule
                         );
                         if (leaderCard) {
-                            relatedCards.push(leaderCard); // Add the related leader card
+                            relatedCards.push(leaderCard);
                         }
                     }
                 }
