@@ -526,429 +526,6 @@
         </h1>
 
         <!-- Loading Indicator -->
-        <div id="loadingIndicator" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify            background-color: #f9fafb;
-            border-radius: 12px;
-            padding: 1.25rem;
-            min-height: 120px;
-            border: 1px dashed #d1d5db;
-        }
-        .card-item { /* This style block seems unused for current implementation, but kept for safety */
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding: 0.65rem 0;
-            border-bottom: 1px solid #e5e7eb;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-        }
-        .card-item:last-child { /* This style block seems unused for current implementation, but kept for safety */
-            border-bottom: none;
-        }
-        .card-info { /* This style block seems unused for current implementation, but kept for safety */
-            flex-grow: 1;
-            min-width: 0;
-        }
-        .card-detail-line { /* This style block seems unused for current implementation, but kept for safety */
-            display: block;
-            font-size: 0.9rem;
-            color: #4b5563;
-            margin-top: 0.35rem;
-        }
-        .card-detail-line:first-of-type { /* This style block seems unused for current implementation, but kept for safety */
-            margin-top: 0;
-        }
-        .card-controls { /* This style block seems unused for current implementation, but kept for safety */
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 0.75rem;
-            margin-left: 1.25rem;
-            flex-shrink: 0;
-        }
-        .quantity-btn { /* This style block seems unused for current implementation, but kept for safety */
-            padding: 0.3rem 0.7rem;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            background-color: #60a5fa;
-            color: white;
-            transition: background-color 0.2s, transform 0.1s;
-            width: 35px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .quantity-btn:hover { /* This style block seems unused for current implementation, but kept for safety */
-            background-color: #3b82f6;
-            transform: translateY(-1px);
-        }
-        .quantity-display { /* This style block seems unused for current implementation, but kept for safety */
-            font-weight: 600;
-            padding: 0.3rem 0.6rem;
-            min-width: 35px;
-            text-align: center;
-        }
-        .validation-message {
-            padding: 1rem 1.25rem;
-            border-radius: 10px;
-            margin-top: 1.25rem;
-            font-weight: 600;
-        }
-        .validation-success {
-            background-color: #d1fae5;
-            color: #065f46;
-            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2); /* Stronger shadow */
-        }
-        .validation-warning {
-            background-color: #fef3c7;
-            color: #92400e;
-            box-shadow: 0 2px 8px rgba(251, 191, 36, 0.2); /* Stronger shadow */
-        }
-        .validation-error {
-            background-color: #fee2e2;
-            color: #991b1b;
-            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2); /* Stronger shadow */
-        }
-        /* Autocomplete styles */
-        .autocomplete-suggestions {
-            border: 1px solid #d1d5db;
-            background: #fff;
-            overflow: auto;
-            max-height: 180px;
-            border-radius: 10px;
-            z-index: 10;
-            position: absolute;
-            width: calc(100% - 2rem);
-            margin-top: 6px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.2); /* Stronger shadow */
-        }
-        .autocomplete-suggestion {
-            padding: 0.85rem 1.15rem;
-            cursor: pointer;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .autocomplete-suggestion:last-child {
-            border-bottom: none;
-        }
-        .autocomplete-suggestion:hover {
-            background-color: #e0f2fe;
-        }
-        .autocomplete-selected {
-            background-color: #bfdbfe;
-        }
-        .input-container {
-            position: relative;
-            flex-grow: 1;
-        }
-        /* Card Catalog Table Styles */
-        .card-catalog-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1.75rem;
-            font-size: 0.95rem;
-            table-layout: fixed;
-        }
-        .card-catalog-table th, .card-catalog-table td {
-            border: 1px solid #e5e7eb;
-            padding: 0.85rem;
-            text-align: left;
-            vertical-align: top;
-        }
-        .card-catalog-table th {
-            background-color: #e0f2fe;
-            font-weight: 600;
-            color: #2c3e50;
-            position: sticky;
-            top: 0;
-            z-index: 5;
-        }
-        .card-catalog-table tbody tr:nth-child(even) {
-            background-color: #f9fafb;
-        }
-        .card-catalog-table tbody tr:hover {
-            background-color: #e0f7fa;
-        }
-        .table-scroll-container {
-            max-height: 550px;
-            overflow-y: auto;
-            border-radius: 12px;
-            border: 1px solid #d1d5db;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12); /* Slightly stronger container shadow */
-        }
-        /* Card Image Grid Styles (Updated for responsiveness) */
-        .card-image-grid {
-            display: grid;
-            gap: 1.25rem;
-            padding: 1.25rem;
-            background-color: #f9fafb;
-            border-radius: 12px;
-            border: 1px dashed #d1d5db;
-            max-height: 75vh;
-            overflow-y: auto;
-        }
-        .card-image-item {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Slightly stronger card item shadow */
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-bottom: 0.6rem;
-            cursor: pointer;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s;
-        }
-        .card-image-item:hover {
-            transform: translateY(-7px); /* More pronounced hover lift */
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); /* More pronounced hover shadow */
-        }
-        .card-image-item img {
-            width: 100%;
-            height: auto;
-            border-bottom: 1px solid #e5e7eb;
-            object-fit: contain;
-            background-color: #e0e0e0;
-            min-height: 160px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            color: #666;
-            text-align: center;
-            padding: 0.6rem;
-        }
-
-        .card-image-controls {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            width: 100%;
-            padding: 0.6rem 0.35rem;
-        }
-        .card-image-controls button {
-            background: none;
-            border: none;
-            font-size: 1.3rem;
-            cursor: pointer;
-            color: #2563eb; /* Use primary blue for icons */
-            transition: color 0.2s;
-        }
-        .card-image-controls button:hover {
-            color: #1e40af; /* Darker blue on hover */
-        }
-        .card-image-controls .remove-card-btn.inactive {
-            color: #9ca3af; /* Light gray for inactive remove button */
-            cursor: default;
-        }
-        .card-image-quantity {
-            font-weight: 600;
-            color: #333;
-            font-size: 1rem;
-        }
-
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9); /* Darker overlay */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-        }
-        .modal-content {
-            background-color: #fff;
-            padding: 2.5rem; /* Increased padding */
-            border-radius: 24px; /* Larger border-radius */
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5); /* Stronger modal shadow */
-            max-width: 90%;
-            max-height: 90%;
-            overflow-y: auto;
-            position: relative;
-        }
-        .modal-close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 2.5rem; /* Larger close button */
-            cursor: pointer;
-            color: #4b5563; /* Darker gray for close button */
-            transition: color 0.2s;
-        }
-        .modal-close-btn:hover {
-            color: #1f2937; /* Even darker on hover */
-        }
-
-        /* Specific Column Widths for Catalog Tables (if table view is used) */
-        #leaderCardCatalogTableBody th:nth-child(1), #leaderCardCatalogTableBody td:nth-child(1) { width: 18%; }
-        #leaderCardCatalogTableBody th:nth-child(2), #leaderCardCatalogTableBody td:nth-child(2) { width: 8%; }
-        #leaderCardCatalogTableBody th:nth-child(3), #leaderCardCatalogTableBody td:nth-child(3) { width: 7%; }
-        #leaderCardCatalogTableBody th:nth-child(4), #leaderCardCatalogTableBody td:nth-child(4) { width: 7%; }
-        #leaderCardCatalogTableBody th:nth-child(5), #leaderCardCatalogTableBody td:nth-child(5) { width: 7%; }
-        #leaderCardCatalogTableBody th:nth-child(6), #leaderCardCatalogTableBody td:nth-child(6) { width: 33%; }
-        #leaderCardCatalogTableBody th:nth-child(7), #leaderCardCatalogTableBody td:nth-child(7) { width: 20%; }
-
-        #mainCardCatalogTableBody th:nth-child(1), #mainCardCatalogTableBody td:nth-child(1) { width: 15%; }
-        #mainCardCatalogTableBody th:nth-child(2), #mainCardCatalogTableBody td:nth-child(2) { width: 9%; }
-        #mainCardCatalogTableBody th:nth-child(3), #mainCardCatalogTableBody td:nth-child(3) { width: 7%; }
-        #mainCardCatalogTableBody th:nth-child(4), #mainCardCatalogTableBody td:nth-child(4) { width: 7%; }
-        #mainCardCatalogTableBody th:nth-child(5), #mainCardCatalogTableBody td:nth-child(5) { width: 13%; }
-        #mainCardCatalogTableBody th:nth-child(6), #mainCardCatalogTableBody td:nth-child(6) { width: 29%; }
-        #mainCardCatalogTableBody th:nth-child(7), #mainCardCatalogTableBody td:nth-child(7) { width: 20%; }
-
-        #tacticsCardCatalogTableBody th:nth-child(1), #tacticsCardCatalogTableBody td:nth-child(1) { width: 25%; }
-        #tacticsCardCatalogTableBody th:nth-child(2), #tacticsCardCatalogTableBody td:nth-child(2) { width: 15%; }
-        #tacticsCardCatalogTableBody th:nth-child(3), #tacticsCardCatalogTableBody td:nth-child(3) { width: 10%; }
-        #tacticsCardCatalogTableBody th:nth-child(4), #tacticsCardCatalogTableBody td:nth-child(4) { width: 30%; }
-        #tacticsCardCatalogTableBody th:nth-child(5), #tacticsCardCatalogTableBody td:nth-child(5) { width: 20%; }
-
-        /* Styles for generated deck image text */
-        .deck-image-card-name {
-            font-size: 10px;
-            text-align: center;
-            margin-top: 2px;
-            color: #333;
-            font-weight: 600;
-            width: 100%;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-
-        /* Canvas scaling for responsiveness within modal */
-        #deckCanvas {
-            display: block;
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* Specific styles for load confirmation modal */
-        #loadConfirmationCanvas {
-            max-width: 100%;
-            height: auto;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-        
-        /* Related Cards in Detail Modal */
-        #relatedCardsGrid {
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 1rem;
-        }
-        
-        #relatedCardsGrid .card-image-item {
-            width: 120px;
-            height: auto;
-        }
-
-        #relatedCardsGrid .card-image-item img {
-            height: 160px;
-            min-height: 120px;
-        }
-        
-        #relatedCardsGrid .card-image-controls {
-            padding: 0.35rem 0.25rem;
-        }
-
-        #relatedCardsGrid .card-image-controls button {
-            font-size: 1.1rem;
-        }
-        #relatedCardsGrid .card-image-quantity {
-            font-weight: 0.9rem;
-        }
-
-        /* NEW: Section background colors for consistent theme */
-        .section-panel-blue {
-            background-color: #e2e8f0; /* Light cool gray */
-            border-radius: 12px;
-            padding: 1.75rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        /* Adjusted dark panel to be less intense */
-        .section-panel-dark {
-            background-color: #374151; /* Medium dark gray (Tailwind gray-700) */
-            border-radius: 12px;
-            padding: 1.75rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18); /* Slightly stronger shadow for distinctness */
-            color: #f3f4f6; /* Very light gray text for contrast */
-        }
-        .section-panel-dark .section-title {
-            color: #f3f4f6; /* Title color for dark background */
-            border-bottom-color: #4b5563; /* Lighter border for contrast (Tailwind gray-600) */
-        }
-        .section-panel-dark .font-semibold, .section-panel-dark .text-gray-700 {
-            color: #d1d5db; /* Lighter text for labels (Tailwind gray-300) */
-        }
-        .section-panel-dark .input-field {
-            background-color: #4b5563; /* Darker input background (Tailwind gray-600) */
-            border-color: #6b7280; /* Tailwind gray-500 */
-            color: white;
-        }
-        .section-panel-dark .input-field::placeholder {
-            color: #9ca3af; /* Lighter placeholder (Tailwind gray-400) */
-        }
-        
-        /* Nested export/import boxes within section-panel-dark */
-        .section-panel-dark .bg-gray-800 { /* This targets the specific nested divs */
-            background-color: #4b5563; /* Tailwind gray-600 */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Slightly less prominent shadow than main panel */
-        }
-        .section-panel-dark .bg-gray-800 .border-gray-600 {
-            border-color: #6b7280; /* Tailwind gray-500 */
-        }
-        .section-panel-dark .bg-gray-800 .text-gray-200 {
-            color: #e5e7eb; /* Tailwind gray-200 */
-        }
-
-
-        /* Override validation messages for dark panels */
-        .section-panel-dark .validation-success {
-            background-color: rgba(6, 95, 70, 0.8); /* Darker green overlay */
-            color: #d1fae5;
-        }
-        .section-panel-dark .validation-warning {
-            background-color: rgba(146, 64, 14, 0.8); /* Darker orange overlay */
-            color: #fef3c7;
-        }
-        .section-panel-dark .validation-error {
-            background-color: rgba(153, 27, 27, 0.8); /* Darker red overlay */
-            color: #fee2e2;
-        }
-
-        /* NEW: Styles for footer content */
-        .footer-content {
-            text-align: center;
-            margin-top: 3rem;
-            color: #6b7280; /* Tailwind gray-500 */
-        }
-        .footer-content label {
-            display: inline-flex; /* Use flex for checkbox and text alignment */
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.95rem;
-            margin-bottom: 0.75rem;
-            cursor: pointer;
-        }
-        .footer-content input[type="checkbox"] {
-            transform: scale(1.2); /* Slightly larger checkbox */
-            cursor: pointer;
-        }
-
-    </style>
-</head>
-<body class="p-4">
-    <div class="container">
-        <h1 class="text-4xl font-extrabold text-center mb-8 text-blue-800">
-            XrossStars<br>Deck Builder
-        </h1>
-
-        <!-- Loading Indicator -->
         <div id="loadingIndicator" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
             <div class="bg-white p-6 rounded-lg shadow-xl flex items-center space-x-4">
                 <svg class="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -961,23 +538,24 @@
 
         <!-- Top Navigation and Deck Button -->
         <div class="flex flex-col gap-4 mb-8">
-            <!-- Primary navigation: Deck View / Catalog Tabs -->
-            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-                <button id="showDeckBtn" class="btn btn-primary px-6 py-3 w-full sm:w-auto">デッキ</button>
-                <!-- Horizontal scroll for tabs, takes full width on small screens, or grows on larger -->
-                <div class="flex-grow w-full sm:w-auto text-center">
-                    <div class="inline-flex gap-4 flex-nowrap overflow-x-auto pb-2 px-2">
-                        <button id="showLeaderCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0 active">リーダー</button>
-                        <button id="showMainCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">メイン</button>
-                        <button id="showTacticsCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">タクティクス</button>
-                    </div>
-                </div>
+            <!-- New Deck Button - Top Level -->
+            <div class="flex justify-center">
+                <button id="createNewDeckBtn" class="btn btn-danger px-6 py-3 w-full sm:w-auto">新規デッキ作成</button>
             </div>
 
-            <!-- Secondary actions: Generate Image / New Deck -->
+            <!-- Primary actions: Deck View / Generate Image -->
             <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button id="showDeckBtn" class="btn btn-primary px-6 py-3 w-full sm:w-auto">デッキ</button>
                 <button id="generateDeckImageBtn" class="btn btn-primary px-6 py-3 w-full sm:w-auto">デッキ画像</button>
-                <button id="createNewDeckBtn" class="btn btn-danger px-6 py-3 w-full sm:w-auto">新規デッキ作成</button>
+            </div>
+
+            <!-- Catalog Tabs -->
+            <div class="text-center"> 
+                <div class="inline-flex gap-4 flex-nowrap overflow-x-auto pb-2 px-2">
+                    <button id="showLeaderCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0 active">リーダー</button>
+                    <button id="showMainCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">メイン</button>
+                    <button id="showTacticsCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">タクティクス</button>
+                </div>
             </div>
         </div>
 
@@ -1130,7 +708,7 @@
             
             <!-- NEW: Quantity Controls for Card Detail Modal -->
             <div id="modalCardQuantityControls" class="flex justify-center items-center gap-4 mb-4">
-                <button id="modalCardAddBtn" class="btn btn-primary text-2xl px-5 py-3 rounded-full">+</button>
+                <button id="modalCardAddBtn" class="btn btn-primary text-3xl px-5 py-3 rounded-full">+</button>
                 <span id="modalCardCurrentQuantity" class="text-xl font-bold">0 / 4</span>
                 <button id="modalCardRemoveBtn" class="btn btn-danger text-2xl px-4 py-3 rounded-full">✕</button>
             </div>
@@ -1481,6 +1059,7 @@
                     localStorage.removeItem('qrCodeHiddenInModal'); // Clean up old key
                 } else {
                     // Default behavior: QR code is visible, so "hide QR code" checkbox is unchecked
+                    // This checkbox now lives in the footer.
                     hideQrCodeCheckbox.checked = false; 
                 }
                 
@@ -2343,7 +1922,7 @@
                 modalMainCards.appendChild(createCardDisplayItemForModal(card.cardData, false)); // Pass false for not related
             });
             modalMainCount.textContent = mainDeck.reduce((sum, card) => sum + card.quantity, 0);
-            modalAceCount.textContent = mainDeck.filter(c => c.isAce).reduce((sum, c) => sum + c.quantity, 0);
+            modalAceCount.textContent = mainDeck.filter(c => c.isAce).reduce((sum, c => sum + c.quantity, 0);
 
 
             // タクティクスデッキ表示
