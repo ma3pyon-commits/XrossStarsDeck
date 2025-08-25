@@ -2682,11 +2682,16 @@
                     const hasTacticsCards = Object.keys(tempDeck.deck.TACTICS).length > 0;
 
                     if (hasLeaderCards || hasMainCards || hasTacticsCards) {
-                        loadDeckFromParsedData(tempDeck);
-                        console.log("一時保存されたデッキを自動で読み込みました。");
-                        // Update the input fields with the temporary deck's name
-                        deckNameInput.value = tempDeck.deckName;
-                        deckNameInputLocal.value = tempDeck.deckName;
+                        const loadSuccessful = loadDeckFromParsedData(tempDeck, true); // Silent load for temporary deck
+                        if (loadSuccessful) {
+                            console.log("一時保存されたデッキを自動で読み込みました。");
+                            // Update the input fields with the temporary deck's name
+                            deckNameInput.value = tempDeck.deckName;
+                            deckNameInputLocal.value = tempDeck.deckName;
+                        } else {
+                            console.error("一時保存されたデッキのデータが無効なため、読み込みをスキップしました。一時保存データをクリアします。");
+                            sessionStorage.removeItem('xrossstars_temp_deck'); // Clear invalid temp data
+                        }
                     } else {
                         console.log("空の一時保存デッキのため、読み込みをスキップしました。");
                         sessionStorage.removeItem('xrossstars_temp_deck'); // 空のデータをクリーンアップ
@@ -2744,7 +2749,8 @@
         closeLoadConfirmationModalBtn.addEventListener('click', () => loadConfirmationModal.classList.add('hidden'));
         confirmLoadBtn.addEventListener('click', () => {
             if (deckToLoad) {
-                loadDeckFromParsedData(deckToLoad);
+                // This is an explicit user action to load, so alerts are acceptable.
+                loadDeckFromParsedData(deckToLoad, false); 
                 loadConfirmationModal.classList.add('hidden');
                 localStorageMessage.classList.remove('hidden');
                 localStorageMessage.className = 'validation-message validation-success';
@@ -2951,7 +2957,8 @@
             reader.onload = (e) => {
                 try {
                     const importedStructure = JSON.parse(e.target.result);
-                    loadDeckFromParsedData(importedStructure);
+                    // This is an explicit user action to import, so alerts are acceptable.
+                    loadDeckFromParsedData(importedStructure, false);
                     saveTemporaryDeckState(); // NEW: インポートしたデッキを一時保存状態として設定
                 } catch (error) {
                     console.error('ファイルからのデッキインポート中にエラーが発生しました:', error);
@@ -2973,15 +2980,21 @@
         /**
          * パースされたデッキデータ（JSON）をデッキにロードする共通関数
          * @param {Object} importedStructure - インポートされたデッキデータ構造
+         * @param {boolean} isSilentLoad - trueの場合、エラー時にアラートを表示せずコンソールにログを出力する
+         * @returns {boolean} ロードが成功した場合はtrue、失敗した場合はfalse
          */
-        function loadDeckFromParsedData(importedStructure) {
-            console.log('loadDeckFromParsedDataが呼ばれました。'); // Debug log
+        function loadDeckFromParsedData(importedStructure, isSilentLoad = false) {
+            console.log('loadDeckFromParsedDataが呼ばれました。isSilentLoad:', isSilentLoad); // Debug log
             const importedData = importedStructure.deck;
 
             // データの妥当性チェック
             if (!importedData || !importedData.LEADER || !importedData.MAIN || !importedData.TACTICS) {
-                alert('無効なデッキデータ形式です。必要なセクション（LEADER, MAIN, TACTICS）が見つかりません。');
-                return; // Exit if invalid structure
+                if (!isSilentLoad) {
+                    alert('無効なデッキデータ形式です。必要なセクション（LEADER, MAIN, TACTICS）が見つかりません。');
+                } else {
+                    console.error('一時保存デッキの形式が無効です: 必要なセクションが見つかりません。');
+                }
+                return false; // Indicate failure
             }
 
             const newLeaderDeck = [];
@@ -2995,23 +3008,39 @@
             const leaderCardEntries = Object.entries(parsedLeaderData);
             
             if (leaderCardEntries.length > 4) {
-                alert('インポートするリーダーカードが多すぎます（最大4枚）。');
+                if (!isSilentLoad) {
+                    alert('インポートするリーダーカードが多すぎます（最大4枚）。');
+                } else {
+                    console.error('一時保存デッキのリーダーカードが多すぎます（最大4枚）。');
+                }
                 importError = true;
             } else {
                 for (const [cardNumPrefix, quantity] of leaderCardEntries) {
                     const cardInfo = allCardDataByNumberPrefix[cardNumPrefix];
                     if (!cardInfo || cardInfo['カード種類'] !== 'リーダーカード') {
-                        alert(`カード番号 "${cardNumPrefix}" は有効なリーダーカードではありません。`);
+                        if (!isSilentLoad) {
+                            alert(`カード番号 "${cardNumPrefix}" は有効なリーダーカードではありません。`);
+                        } else {
+                            console.error(`一時保存デッキのカード番号 "${cardNumPrefix}" は有効なリーダーカードではありません。`);
+                        }
                         importError = true;
                         break;
                     }
                     if (newLeaderDeck.some(lc => lc.name === cardInfo['カード名'])) {
-                        alert(`リーダーカード "${cardInfo['カード名']}" はすでにデッキに重複しています（カード番号: ${cardNumPrefix}）。`);
+                        if (!isSilentLoad) {
+                            alert(`リーダーカード "${cardInfo['カード名']}" はすでにデッキに重複しています（カード番号: ${cardNumPrefix}）。`);
+                        } else {
+                            console.error(`一時保存デッキのリーダーカード "${cardInfo['カード名']}" はすでにデッキに重複しています（カード番号: ${cardNumPrefix}）。`);
+                        }
                         importError = true;
                         break;
                     }
                     if (quantity !== 1) {
-                        alert(`リーダーカード "${cardInfo['カード名']}" の枚数が不正です（カード番号: ${cardNumPrefix}）。リーダーカードは1枚のみ追加できます。`);
+                        if (!isSilentLoad) {
+                            alert(`リーダーカード "${cardInfo['カード名']}" の枚数が不正です（カード番号: ${cardNumPrefix}）。リーダーカードは1枚のみ追加できます。`);
+                        } else {
+                            console.error(`一時保存デッキのリーダーカード "${cardInfo['カード名']}" の枚数が不正です（カード番号: ${cardNumPrefix}）。リーダーカードは1枚のみ追加できます。`);
+                        }
                     }
                     newLeaderDeck.push({ name: cardInfo['カード名'], cardData: cardInfo });
                 }
@@ -3025,18 +3054,30 @@
                 for (const [cardNumPrefix, quantity] of Object.entries(parsedMainData)) {
                     const cardInfo = allCardDataByNumberPrefix[cardNumPrefix];
                     if (!cardInfo || (cardInfo['カード種類'] === 'リーダーカード' || cardInfo['カード種類'] === 'タクティクスカード')) {
-                        alert(`カード番号 "${cardNumPrefix}" は有効なメインデッキカードではありません。`);
+                        if (!isSilentLoad) {
+                            alert(`カード番号 "${cardNumPrefix}" は有効なメインデッキカードではありません。`);
+                        } else {
+                            console.error(`一時保存デッキのカード番号 "${cardNumPrefix}" は有効なメインデッキカードではありません。`);
+                        }
                         importError = true;
                         break;
                     }
                     if (quantity < 1 || quantity > 4) {
-                        alert(`カード番号 "${cardNumPrefix}" の枚数が不正です（1〜4枚）。`);
+                        if (!isSilentLoad) {
+                            alert(`カード番号 "${cardNumPrefix}" の枚数が不正です（1〜4枚）。`);
+                        } else {
+                            console.error(`一時保存デッキのカード番号 "${cardNumPrefix}" の枚数が不正です（1〜4枚）。`);
+                        }
                         importError = true;
                         break;
                     }
                     importedMainCardCounts[cardInfo['カード名']] = (importedMainCardCounts[cardInfo['カード名']] || 0) + quantity;
                     if (importedMainCardCounts[cardInfo['カード名']] > 4) {
-                        alert(`同名カード "${cardInfo['カード名']}" が4枚を超えています（カード番号: ${cardNumPrefix}）。`);
+                        if (!isSilentLoad) {
+                            alert(`同名カード "${cardInfo['カード名']}" が4枚を超えています（カード番号: ${cardNumPrefix}）。`);
+                        } else {
+                            console.error(`一時保存デッキの同名カード "${cardInfo['カード名']}" が4枚を超えています（カード番号: ${cardNumPrefix}）。`);
+                        }
                         importError = true;
                         break;
                     }
@@ -3044,12 +3085,20 @@
                     newMainDeck.push({ name: cardInfo['カード名'], quantity: quantity, isAce: cardInfo['ACE'] === 'ACE' || cardInfo['ACE'] === 'エース', cardData: cardInfo });
                 }
                 if (!importError && totalImportedMainCards !== 50) {
-                    alert(`メインデッキの合計枚数が50枚ではありません（現在 ${totalImportedMainCards}枚）。`);
+                    if (!isSilentLoad) {
+                        alert(`メインデッキの合計枚数が50枚ではありません（現在 ${totalImportedMainCards}枚）。`);
+                    } else {
+                        console.warn(`一時保存デッキのメインデッキの合計枚数が50枚ではありません（現在 ${totalImportedMainCards}枚）。`);
+                    }
                 }
                 if (!importError) {
                     let totalImportedAceCards = newMainDeck.filter(c => c.isAce).reduce((sum, c) => sum + c.quantity, 0);
                     if (totalImportedAceCards > 8) {
-                        alert(`メインデッキのエースカードが8枚を超えています（現在 ${totalImportedAceCards}枚）。`);
+                        if (!isSilentLoad) {
+                            alert(`メインデッキのエースカードが8枚を超えています（現在 ${totalImportedAceCards}枚）。`);
+                        } else {
+                            console.warn(`一時保存デッキのメインデッキのエースカードが8枚を超えています（現在 ${totalImportedAceCards}枚）。`);
+                        }
                     }
                 }
             }
@@ -3059,23 +3108,39 @@
                 let parsedTacticsData = typeof importedData.TACTICS === 'string' ? JSON.parse(importedData.TACTICS) : importedData.TACTICS;
                 const tacticsCardEntries = Object.entries(parsedTacticsData);
                 if (tacticsCardEntries.length > 5) {
-                    alert('インポートするタクティクスカードが多すぎます（最大5枚）。');
+                    if (!isSilentLoad) {
+                        alert('インポートするタクティクスカードが多すぎます（最大5枚）。');
+                    } else {
+                        console.error('一時保存デッキのタクティクスカードが多すぎます（最大5枚）。');
+                    }
                     importError = true;
                 } else {
                     for (const [cardNumPrefix, quantity] of tacticsCardEntries) {
                         const cardInfo = allCardDataByNumberPrefix[cardNumPrefix];
                         if (!cardInfo || cardInfo['カード種類'] !== 'タクティクスカード') {
-                            alert(`カード番号 "${cardNumPrefix}" は有効なタクティクスカードではありません。`);
+                            if (!isSilentLoad) {
+                                alert(`カード番号 "${cardNumPrefix}" は有効なタクティクスカードではありません。`);
+                            } else {
+                                console.error(`一時保存デッキのカード番号 "${cardNumPrefix}" は有効なタクティクスカードではありません。`);
+                            }
                             importError = true;
                             break;
                         }
                         if (newTacticsDeck.some(tc => tc.name === cardInfo['カード名'])) {
-                            alert(`タクティクスカード "${cardInfo['カード名']}" はすでにデッキに存在します（カード番号: ${cardNumPrefix}）。`);
+                            if (!isSilentLoad) {
+                                alert(`タクティクスカード "${cardInfo['カード名']}" はすでにデッキに存在します（カード番号: ${cardNumPrefix}）。`);
+                            } else {
+                                console.error(`一時保存デッキのタクティクスカード "${cardInfo['カード名']}" はすでにデッキに存在します（カード番号: ${cardNumPrefix}）。`);
+                            }
                             importError = true;
                             break;
                         }
                         if (quantity !== 1) {
-                            alert(`タクティクスカード "${cardInfo['カード名']}" の枚数が不正です（カード番号: ${cardNumPrefix}）。タクティクスカードは1枚のみ追加できます。`);
+                            if (!isSilentLoad) {
+                                alert(`タクティクスカード "${cardInfo['カード名']}" の枚数が不正です（カード番号: ${cardNumPrefix}）。タクティクスカードは1枚のみ追加できます。`);
+                            } else {
+                                console.error(`一時保存デッキのタクティクスカード "${cardInfo['カード名']}" の枚数が不正です（カード番号: ${cardNumPrefix}）。タクティクスカードは1枚のみ追加できます。`);
+                            }
                         }
                         newTacticsDeck.push({ name: cardInfo['カード名'], cardData: cardInfo });
                     }
@@ -3090,12 +3155,18 @@
                 // Also update the local storage deck name input field if it's for current deck name
                 deckNameInputLocal.value = importedStructure.deckName || ''; 
                 updateDeckDisplay();
-                importExportMessage.className = 'validation-message validation-success';
-                importExportMessage.textContent = 'デッキデータが正常にインポートされました！';
-                copyExportedDataBtn.classList.add('hidden');
+                if (!isSilentLoad) {
+                    importExportMessage.className = 'validation-message validation-success';
+                    importExportMessage.textContent = 'デッキデータが正常にインポートされました！';
+                    copyExportedDataBtn.classList.add('hidden');
+                }
+                return true; // Success
             } else {
-                importExportMessage.className = 'validation-message validation-error';
-                importExportMessage.textContent = 'デッキデータのインポートに失敗しました。詳細については上記のエラーメッセージを確認してください。';
+                if (!isSilentLoad) {
+                    importExportMessage.className = 'validation-message validation-error';
+                    importExportMessage.textContent = 'デッキデータのインポートに失敗しました。詳細については上記のエラーメッセージを確認してください。';
+                }
+                return false; // Failure
             }
         }
 
@@ -3113,7 +3184,8 @@
 
             try {
                 const importedStructure = JSON.parse(importText);
-                loadDeckFromParsedData(importedStructure);
+                // This is an explicit user action to import, so alerts are acceptable.
+                loadDeckFromParsedData(importedStructure, false);
                 saveTemporaryDeckState(); // NEW: インポートしたデッキを一時保存状態として設定
             } catch (error) {
                 console.error('デッキデータのパースまたはインポート中にエラーが発生しました:', error);
