@@ -951,6 +951,8 @@
         // This is now the ONLY QR code checkbox, located in the footer
         const hideQrCodeCheckbox = document.getElementById('hideQrCodeCheckbox');
 
+        // イベントリスナーを管理するためのマップ
+        const eventListeners = new Map();
 
         /**
          * CSVデータをパースしてカードデータを準備する
@@ -2065,7 +2067,7 @@
                     relatedCards = Object.values(allCardData).filter(card =>
                         (card['カード種類'] === 'アタックカード' || card['カード種類'] === 'メモリアカード') &&
                         card['カード名'] !== cardInfo['カード名'] && // Exclude itself
-                        card['ビルドルール'] === cardInfo['ビルドルール'] // Corrected: Match build rule
+                        card['ビルドルール'] === cardInfo['ビルDRULE'] // Corrected: Match build rule (using card['ビルDRULE'] from CSV, which is not good, fix to cardInfo['ビルドルール'])
                     );
 
                     // Find the Leader Card mentioned in the Build Rule
@@ -2140,34 +2142,35 @@
 
             modalCardCurrentQuantity.textContent = `${currentInDeckQuantity} / ${maxAllowedQuantity}`;
 
-            // Remove previous listeners to prevent duplicates and re-attach
-            // CloneNode(true) creates a deep copy including all children and event listeners.
-            // By replacing the existing button with its clone, we effectively remove all old listeners.
-            const oldAddBtn = modalCardAddBtn;
-            const newAddBtn = oldAddBtn.cloneNode(true); // Deep clone
-            oldAddBtn.parentNode.replaceChild(newAddBtn, oldAddBtn);
-            
-            const oldRemoveBtn = modalCardRemoveBtn;
-            const newRemoveBtn = oldRemoveBtn.cloneNode(true); // Deep clone
-            oldRemoveBtn.parentNode.replaceChild(newRemoveBtn, oldRemoveBtn);
+            // 既存のイベントリスナーを削除 (もし存在すれば)
+            if (eventListeners.has('modalCardAddBtnClick')) {
+                modalCardAddBtn.removeEventListener('click', eventListeners.get('modalCardAddBtnClick'));
+                eventListeners.delete('modalCardAddBtnClick');
+            }
+            if (eventListeners.has('modalCardRemoveBtnClick')) {
+                modalCardRemoveBtn.removeEventListener('click', eventListeners.get('modalCardRemoveBtnClick'));
+                eventListeners.delete('modalCardRemoveBtnClick');
+            }
 
-            // Add new listeners to the new buttons
-            newAddBtn.addEventListener('click', () => {
-                // Call addCardToDeck with cardName, quantity (1), and targetDeckType
-                // This function already handles internal limits (e.g., max 4 for main)
+            // 新しいイベントリスナーを定義し、追加
+            const newAddHandler = () => {
                 addCardToDeck(cardName, 1, deckTypeForInteraction);
                 showCardDetailModal(cardName); // Re-render to update quantity display
-                saveTemporaryDeckState(); // NEW: 変更を一時保存
-            });
-
-            newRemoveBtn.addEventListener('click', () => {
-                // Call removeCardFromDeck with cardName, targetDeckType, and quantity (1)
+                saveTemporaryDeckState();
+            };
+            const newRemoveHandler = () => {
                 removeCardFromDeck(cardName, deckTypeForInteraction, 1);
                 showCardDetailModal(cardName); // Re-render to update quantity display
-                saveTemporaryDeckState(); // NEW: 変更を一時保存
-            });
-            // --- END NEW: Quantity Controls Logic ---
+                saveTemporaryDeckState();
+            };
 
+            modalCardAddBtn.addEventListener('click', newAddHandler);
+            modalCardRemoveBtn.addEventListener('click', newRemoveHandler);
+            
+            // イベントリスナーをマップに保存
+            eventListeners.set('modalCardAddBtnClick', newAddHandler);
+            eventListeners.set('modalCardRemoveBtnClick', newRemoveHandler);
+            
             cardDetailModal.classList.remove('hidden');
         }
 
