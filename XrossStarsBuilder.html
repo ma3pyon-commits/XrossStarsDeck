@@ -50,55 +50,64 @@
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.45);
         }
         .btn {
-            padding: 0.85rem 1.65rem;
+            padding: 0.6rem 1.1rem; /* Further adjusted button padding to make them smaller */
             border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18); /* Slightly stronger default button shadow */
+            font-size: 0.9rem; /* Further adjusted font size for smaller buttons */
         }
         .btn-primary {
-            background-color: #2563eb; /* Deeper blue */
+            background-color: #3b82f6; /* Updated primary blue from reference */
             color: white;
         }
         .btn-primary:hover {
-            background-color: #1e40af; /* Even deeper blue on hover */
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* More pronounced hover shadow */
+            background-color: #2563eb; /* Updated primary blue on hover from reference */
+            transform: translateY(-2px); /* Slightly lift on hover from reference */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Emphasized shadow on hover from reference */
         }
         .btn-danger {
-            background-color: #dc2626; /* Deeper red */
+            background-color: #ef4444; /* Deeper red */
             color: white;
         }
         .btn-danger:hover {
-            background-color: #b91c1c; /* Even deeper red on hover */
+            background-color: #dc2626; /* Even deeper red on hover */
             transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
         .btn-secondary {
-            background-color: #4b5563; /* Darker gray */
+            background-color: #6b7280; /* Darker gray */
             color: white;
         }
         .btn-secondary:hover {
-            background-color: #374151; /* Even darker gray on hover */
+            background-color: #4b5563; /* Even darker gray on hover */
             transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
-        /* New style for catalog tab buttons */
+        /* New style for catalog tab buttons - based on user's provided styling */
         .btn-catalog-tab {
-            background-color: #2563eb; /* Use primary blue for tabs */
-            color: white;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            background-color: #bfdbfe; /* Lighter blue from reference */
+            color: #1e40af; /* Darker blue text from reference */
+            border-radius: 10px; /* Consistent with other buttons */
+            padding: 0.6rem 1.1rem; /* Adjusted to match other buttons */
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Default shadow for tabs */
+            flex-shrink: 0; /* Prevents shrinking on smaller screens */
+            font-size: 0.9rem; /* Adjusted to match other buttons */
         }
         .btn-catalog-tab:hover {
-            background-color: #1e40af; /* Darker blue on hover */
-            transform: translateY(-1px);
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+            background-color: #93c5fd; /* Even lighter blue on hover from reference */
+            transform: translateY(-2px); /* Slightly lift on hover from reference */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Emphasized shadow on hover from reference */
         }
-        /* Add an active state for tabs if needed */
+        /* Active state for tabs - Retaining existing visual distinctiveness */
         .btn-catalog-tab.active {
-            border-bottom: 3px solid #bfdbfe; /* Light blue underline for active tab */
-            font-weight: 700;
+            background-color: #2563eb; /* Deeper blue for active tab */
+            color: white;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18);
         }
 
 
@@ -265,7 +274,7 @@
         .card-image-item {
             background-color: #fff;
             border-radius: 10px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Slightly stronger card item shadow */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); /* Slightly stronger card item shadow */
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -436,7 +445,7 @@
             font-size: 1.1rem;
         }
         #relatedCardsGrid .card-image-quantity {
-            font-size: 0.9rem;
+            font-weight: 0.9rem;
         }
 
         /* NEW: Section background colors for consistent theme */
@@ -503,6 +512,7 @@
             text-align: center;
             margin-top: 3rem;
             color: #6b7280; /* Tailwind gray-500 */
+            /* Removed padding and background from here, will be applied to .daily-spark-section */
         }
         .footer-content label {
             display: inline-flex; /* Use flex for checkbox and text alignment */
@@ -515,6 +525,44 @@
         .footer-content input[type="checkbox"] {
             transform: scale(1.2); /* Slightly larger checkbox */
             cursor: pointer;
+        }
+        /* Style for the new wishlist link */
+        .footer-content .wishlist-link {
+            display: block; /* Make it a block element to be on its own line */
+            margin-top: 1rem; /* Add some space above the link */
+            font-size: 0.9rem;
+            color: #3b82f6; /* A distinct color for the link */
+            text-decoration: underline;
+            transition: color 0.2s ease-in-out;
+        }
+        .footer-content .wishlist-link:hover {
+            color: #2563eb; /* Darker blue on hover */
+        }
+
+        /* Card Detail Modal Quantity Controls */
+        #modalCardQuantityControls button {
+            width: 40px; /* Adjusted fixed width for consistent size */
+            height: 40px; /* Adjusted fixed height for consistent size */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 9999px; /* Make them perfectly round */
+            font-size: 1.6rem; /* Adjusted font size for icons */
+            font-weight: 700;
+            line-height: 1; /* Ensure text is vertically centered */
+        }
+        #modalCardQuantityControls #modalCardCurrentQuantity {
+            min-width: 55px; /* Ensure enough space for quantity text */
+            text-align: center;
+        }
+
+        /* Daily Spark Section - Updated to match footer styles */
+        /* Changed from a dedicated section to a div within footer-content */
+        .daily-spark-message { /* This is the new class for the daily spark text itself */
+            font-size: 1.1rem;
+            color: #3b82f6; /* Medium blue text */
+            font-style: italic;
+            margin-bottom: 0.75rem; /* Space between message and signature */
         }
 
     </style>
@@ -536,19 +584,24 @@
             </div>
         </div>
 
-        <!-- Top Navigation and Deck Button (Flex wrap added) -->
+        <!-- Top Navigation and Deck Button -->
         <div class="flex flex-col gap-4 mb-8">
-            <div class="flex justify-center gap-4 flex-wrap">
-                <button id="showDeckBtn" class="btn btn-primary px-6 py-3">デッキ</button>
-                <button id="generateDeckImageBtn" class="btn btn-primary px-6 py-3">デッキ画像</button>
+            <!-- 【デッキ】【デッキ画像】【新規】ボタンを横1列に並べ、リーダーボタンと同様の表示方法に修正 -->
+            <div class="text-center"> <!-- text-centerで子要素のinline-flexを中央寄せ -->
+                <div class="inline-flex justify-center gap-4 flex-nowrap overflow-x-auto pb-2 px-2">
+                    <button id="showDeckBtn" class="btn btn-primary flex-shrink-0">デッキ</button>
+                    <button id="generateDeckImageBtn" class="btn btn-primary flex-shrink-0">デッキ画像</button>
+                    <button id="createNewDeckBtn" class="btn btn-danger flex-shrink-0">新規</button>
+                </div>
             </div>
-            <!-- Centering for tabs: use text-center on parent and inline-flex on the scrollable container -->
+
+            <!-- Catalog Tabs -->
             <div class="text-center"> 
                 <div class="inline-flex gap-4 flex-nowrap overflow-x-auto pb-2 px-2">
-                    <!-- Added 'active' class example for the default tab -->
-                    <button id="showLeaderCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0 active">リーダー</button>
-                    <button id="showMainCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">メイン</button>
-                    <button id="showTacticsCatalogBtn" class="btn btn-catalog-tab px-4 py-2 text-base sm:text-sm flex-shrink-0">タクティクス</button>
+                    <!-- 【リーダー】【メイン】【タクティクス】ボタンのスタイルを統一 -->
+                    <button id="showLeaderCatalogBtn" class="btn btn-catalog-tab active">リーダー</button>
+                    <button id="showMainCatalogBtn" class="btn btn-catalog-tab">メイン</button>
+                    <button id="showTacticsCatalogBtn" class="btn btn-catalog-tab">タクティクス</button>
                 </div>
             </div>
         </div>
@@ -570,7 +623,7 @@
             <select id="cardTypeFilterSelect" class="p-3 border border-gray-300 rounded-md">
                 <option value="全て">種類</option>
                 <option value="アタックカード">アタックカード</option>
-                <option value="メモリアカード">メモリアカード</option>
+                <option value="メモリアカード">メモリアカード</メモリアカード>
             </select>
 
             <select id="costFilterSelect" class="p-3 border border-gray-300 rounded-md">
@@ -699,6 +752,15 @@
             <button class="modal-close-btn" id="closeCardDetailModal">&times;</button>
             <img id="modalCardImage" src="" alt="Card Image" class="w-full h-auto rounded-lg mb-4 shadow-lg">
             <h3 id="modalCardName" class="text-2xl font-bold mb-2 text-center"></h3>
+            
+            <!-- NEW: Quantity Controls for Card Detail Modal -->
+            <div id="modalCardQuantityControls" class="flex justify-center items-center gap-4 mb-4">
+                <button id="modalCardAddBtn" class="btn btn-primary">＋</button> <!-- Changed text to '＋' -->
+                <span id="modalCardCurrentQuantity" class="text-xl font-bold">0 / 4</span>
+                <button id="modalCardRemoveBtn" class="btn btn-danger">✕</button>
+            </div>
+            <!-- END NEW -->
+
             <!-- Removed text card info as per user request -->
             
             <!-- New section for related cards -->
@@ -758,12 +820,17 @@
         </div>
     </div>
 
-    <!-- Moved QR Code checkbox to the footer -->
+    <!-- Footer Content -->
     <div class="footer-content">
         <label for="hideQrCodeCheckbox">
             <input type="checkbox" id="hideQrCodeCheckbox" class="rounded-md">
-            <span>二次元バーコードを非表示</span>
+            <span>QRコードを非表示</span>
         </label>
+        <!-- Daily Spark Message is now inside footer-content and styled as daily-spark-message -->
+        <p class="daily-spark-message">なんとなく一言：<span id="dailySparkMessage">メッセージを読み込み中...</span></p>
+        <a href="https://www.amazon.jp/hz/wishlist/ls/2EGSP6CPA5XIP?ref_=wl_share" target="_blank" class="wishlist-link">
+            欲しいものリスト(本サイトはクロスタのゲーム環境発展のために作成しました。私の開発モチベーションアップにご支援お願いします。)
+        </a>
         <p>Thanks for visiting! – PineAme@tcepseredutitta</p>
     </div>
 
@@ -777,6 +844,9 @@
         // 全てのカードデータを格納するオブジェクト
         let allCardData = {}; // Key: カード名, Value: カードオブジェクト
         let allCardDataByNumberPrefix = {}; // Key: カードナンバーの"/"以前, Value: カードオブジェクト
+
+        // 日替わりメッセージデータ
+        let dailySparkMessages = {}; // Key: YYYYMMDD, Value: Message
 
         // UI表示に関する状態
         let currentTab = 'leader'; // 'leader', 'main', 'tactics' - デフォルトをリーダーに変更
@@ -801,6 +871,7 @@
         const showTacticsCatalogBtn = document.getElementById('showTacticsCatalogBtn');
         const showDeckBtn = document.getElementById('showDeckBtn');
         const generateDeckImageBtn = document.getElementById('generateDeckImageBtn'); // New button
+        const createNewDeckBtn = document.getElementById('createNewDeckBtn'); // NEW: 新規デッキ作成ボタン
 
         const searchCatalogInput = document.getElementById('searchCatalogInput');
         const colorFilterSelect = document.getElementById('colorFilterSelect');
@@ -856,6 +927,12 @@
         const closeCardDetailModalBtn = document.getElementById('closeCardDetailModal');
         const modalCardImage = document.getElementById('modalCardImage');
         const modalCardName = document.getElementById('modalCardName');
+        // NEW: References for detail modal quantity controls
+        const modalCardQuantityControls = document.getElementById('modalCardQuantityControls');
+        const modalCardAddBtn = document.getElementById('modalCardAddBtn');
+        const modalCardCurrentQuantity = document.getElementById('modalCardCurrentQuantity');
+        const modalCardRemoveBtn = document.getElementById('modalCardRemoveBtn');
+
         const relatedCardsGrid = document.getElementById('relatedCardsGrid'); // New: Reference to related cards grid
 
         const deckImageModal = document.getElementById('deckImageModal'); // New modal for deck image
@@ -875,6 +952,10 @@
         const confirmLoadBtn = document.getElementById('confirmLoadBtn');
         const cancelLoadBtn = document.getElementById('cancelLoadBtn');
 
+        // Daily Spark elements
+        const dailySparkMessageElement = document.getElementById('dailySparkMessage');
+
+
         let deckToLoad = null; // Store deck data temporarily for confirmation
 
         // QR Code related variables
@@ -885,10 +966,13 @@
         // This is now the ONLY QR code checkbox, located in the footer
         const hideQrCodeCheckbox = document.getElementById('hideQrCodeCheckbox');
 
+        // イベントリスナーを管理するためのマップ
+        const eventListeners = new Map();
 
         /**
          * CSVデータをパースしてカードデータを準備する
          * @param {string} csvText - CSV形式の文字列
+         * @returns {Array<Object>} パースされたカードデータの配列
          */
         function parseCSV(csvText) {
             const rawLines = csvText.split(/\r?\n/);
@@ -899,21 +983,27 @@
             for (let i = 0; i < rawLines.length; i++) {
                 const line = rawLines[i];
                 let tempInQuote = inQuote;
-
+                let lineBuffer = ''; // Buffer to build line safely before checking quotes
+                
                 for (let j = 0; j < line.length; j++) {
-                    if (line[j] === '"') {
-                        if (j + 1 < line.length && line[j+1] === '"') { // Handle "" escape sequence
-                            j++;
+                    const char = line[j]; // Define char here
+                    if (char === '"') {
+                        if (tempInQuote && j + 1 < line.length && line[j+1] === '"') { // Handle "" escape sequence
+                            lineBuffer += '"'; // Add one quote character
+                            j++; // Skip the next quote
                         } else {
                             tempInQuote = !tempInQuote;
                         }
+                    } else {
+                        lineBuffer += char; // Append character
                     }
                 }
-
+                
+                // After processing the line segment
                 if (currentAccumulatedLine === '') {
-                    currentAccumulatedLine = line;
+                    currentAccumulatedLine = lineBuffer;
                 } else {
-                    currentAccumulatedLine += '\n' + line;
+                    currentAccumulatedLine += '\n' + lineBuffer;
                 }
 
                 if (!tempInQuote) {
@@ -931,12 +1021,11 @@
             
             if (lines.length === 0) {
                 console.error("No content lines found in CSV after processing.");
-                return;
+                return [];
             }
             const headers = lines[0].split(',').map(header => header.trim());
 
-            allCardData = {};
-            allCardDataByNumberPrefix = {};
+            const parsedData = [];
             lines.slice(1).forEach((line, index) => {
                 const values = parseCsvLine(line);
                 let obj = {};
@@ -957,19 +1046,20 @@
                 }
 
 
-                if (obj['カード名']) {
-                    allCardData[obj['カード名']] = obj;
-                    if (obj['カードナンバー']) {
-                        const cardNumPrefix = obj['カードナンバー'].split('/')[0];
-                        allCardDataByNumberPrefix[cardNumPrefix] = obj;
-                    }
+                if (obj['カード名'] || obj['Date']) { // Allow either CardName or Date for validity check
+                    parsedData.push(obj);
                 } else {
-                    console.warn(`Skipping logical line ${index + 2} with empty card name: "${line.substring(0, 100)}..."`);
+                    console.warn(`Skipping logical line ${index + 2} with empty primary key: "${line.substring(0, 100)}..."`);
                 }
             });
-            console.log('カードデータがロードされました:', Object.keys(allCardData).length, '枚');
+            return parsedData;
         }
 
+        /**
+         * CSVの1行を正しくパースする
+         * @param {string} line - CSVの1行文字列
+         * @returns {Array<string>} パースされたフィールドの配列
+         */
         function parseCsvLine(line) {
             const result = [];
             let inQuote = false;
@@ -979,7 +1069,7 @@
                 if (char === '"') {
                     if (inQuote && i + 1 < line.length && line[i+1] === '"') {
                         currentField += '"';
-                        i++;
+                        i++; // Skip the next quote
                     } else {
                         inQuote = !inQuote;
                     }
@@ -994,19 +1084,56 @@
             return result;
         }
 
+        /**
+         * 全てのカードデータと日替わりメッセージデータを読み込む
+         */
         async function loadCardData() {
             loadingIndicator.classList.remove('hidden');
             const csvUrl = 'https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/cardlist.csv';
             const qrImageUrl = 'https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/QR.png';
+            const dailySparkCsvUrl = 'https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/DailySpark.csv';
             
             try {
-                // Load CSV data
-                const response = await fetch(csvUrl);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch CSV: ${response.statusText}`);
+                // Load Card CSV data
+                const cardResponse = await fetch(csvUrl);
+                if (!cardResponse.ok) {
+                    throw new Error(`Failed to fetch card CSV: ${cardResponse.statusText}`);
                 }
-                const csvText = await response.text();
-                parseCSV(csvText);
+                const cardCsvText = await cardResponse.text();
+                const parsedCardData = parseCSV(cardCsvText);
+                allCardData = {};
+                allCardDataByNumberPrefix = {};
+                parsedCardData.forEach(card => {
+                    if (card['カード名']) {
+                        allCardData[card['カード名']] = card;
+                        if (card['カードナンバー']) {
+                            const cardNumPrefix = card['カードナンバー'].split('/')[0];
+                            allCardDataByNumberPrefix[cardNumPrefix] = card;
+                        }
+                    }
+                });
+                console.log('カードデータがロードされました:', Object.keys(allCardData).length, '枚');
+
+
+                // Load Daily Spark CSV data
+                const sparkResponse = await fetch(dailySparkCsvUrl);
+                if (!sparkResponse.ok) {
+                    console.warn(`Failed to fetch Daily Spark CSV: ${sparkResponse.statusText}. Daily Spark messages will not be displayed.`);
+                    dailySparkMessages = {};
+                } else {
+                    const sparkCsvText = await sparkResponse.text();
+                    const parsedSparkData = parseCSV(sparkCsvText);
+                    dailySparkMessages = {};
+                    parsedSparkData.forEach(item => {
+                        if (item['Date'] && item['Message']) {
+                            dailySparkMessages[item['Date']] = item['Message'];
+                        }
+                    });
+                    console.log('日替わりメッセージがロードされました:', Object.keys(dailySparkMessages).length, '件');
+                }
+                // Display daily spark message after loading
+                displayDailySparkMessage();
+
 
                 // Load QR code image
                 const qrResponse = await fetch(qrImageUrl);
@@ -1030,15 +1157,8 @@
                 // Initialize high quality checkbox from local storage
                 highQualityCheckbox.checked = localStorage.getItem('highQualityImage') === 'true';
                 // Initialize "hide QR code" checkbox from local storage
-                // If 'qrCodeHiddenInModal' was previously used, transfer its value
-                const oldQrHiddenState = localStorage.getItem('qrCodeHiddenInModal');
-                if (oldQrHiddenState !== null) {
-                    hideQrCodeCheckbox.checked = oldQrHiddenState === 'true';
-                    localStorage.removeItem('qrCodeHiddenInModal'); // Clean up old key
-                } else {
-                    // Default behavior: QR code is visible, so "hide QR code" checkbox is unchecked
-                    hideQrCodeCheckbox.checked = false; 
-                }
+                const qrHiddenState = localStorage.getItem('qrCodeHiddenInModal');
+                hideQrCodeCheckbox.checked = qrHiddenState === 'true'; 
                 
             } catch (error) {
                 console.error("Error loading initial data:", error);
@@ -1046,14 +1166,30 @@
             } finally {
                 loadingIndicator.classList.add('hidden');
                 updateFilterAndSortUI();
-                updateDeckDisplay(); // Call updateDeckDisplay here to refresh catalog and validations
+                // updateDeckDisplay() will be called after temporary deck is loaded (or not)
             }
+        }
+
+        /**
+         * 現在の日付に基づいて日替わりメッセージを表示する
+         */
+        function displayDailySparkMessage() {
+            if (!dailySparkMessageElement) return;
+
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = (today.getMonth() + 1).toString().padStart(2, '0');
+            const day = today.getDate().toString().padStart(2, '0');
+            const todayFormatted = `${year}${month}${day}`;
+
+            const message = dailySparkMessages[todayFormatted] || "今日はどんなデッキが組めるかな？";
+            dailySparkMessageElement.textContent = message;
         }
 
         /**
          * カード画像URLを生成するヘルパー関数
          * @param {Object} cardInfo - カードの全情報を持つオブジェクト
-         * @returns {string} 画像URLまたはプレースホルダーURL
+        * @returns {string} 画像URLまたはプレースホルダーURL
          */
         function getCardImageUrl(cardInfo) {
             if (!cardInfo || !cardInfo['カードナンバー']) {
@@ -1068,6 +1204,9 @@
 
         /**
          * デッキの表示を更新し、バリデーションを実行する
+         * @returns {void}
+         * @description この関数は、デッキの内容が変更されたときや、UIの更新が必要なときに呼び出されます。
+         * カードカタログ、デッキバリデーション、および開いているモーダルの内容を更新します。
          */
         function updateDeckDisplay() {
             // バリデーションの更新
@@ -1085,6 +1224,7 @@
                     showCardDetailModal(currentCardNameInDetail); // Re-render detail modal to update related card quantities
                 }
             }
+            console.log("UI表示が更新されました。"); // デバッグログ
         }
 
         /**
@@ -1126,7 +1266,7 @@
             const controlsJustifyClass = 'justify-around'; // Always space out detail and remove
 
             itemDiv.innerHTML = `
-                <img src="${imageUrl}" alt="${cardInfo['カード名']}" class="w-full h-full object-cover cursor-pointer">
+                <img src="${imageUrl}" alt="${cardInfo['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/300x420/cccccc/333333?text=Load+Error';">
                 <div class="card-image-controls absolute bottom-0 bg-white bg-opacity-90 w-full py-2 px-1 ${controlsJustifyClass}">
                     <button class="view-detail-btn text-blue-500 hover:text-blue-700 text-lg">🔎</button>
                     ${quantityDisplayHtml}
@@ -1471,7 +1611,7 @@
                     card => card['カードテキスト'] || ''
                 ];
                 colspan = headers.length;
-            } else if (currentDisplayTab === 'tactics') {
+            } else if (currentTab === 'tactics') { // Changed from currentDisplayTab to currentTab for consistency, assuming it's a global state
                 headers = ['カード名', '種類', 'コスト', 'カードテキスト', ''];
                 columnRenderers = [
                     card => card['カード名'],
@@ -1500,7 +1640,7 @@
                     <td>
                         <div class="catalog-add-controls">
                             <input type="number" value="1" min="1" max="4" class="card-quantity-input">
-                            <button class="add-card-from-catalog btn btn-primary text-sm" data-card-name="${card['カード名']}" data-card-type="${currentDisplayTab}">追加</button>
+                            <button class="add-card-from-catalog btn btn-primary text-sm" data-card-name="${card['カード名']}" data-card-type="${currentTab}">追加</button>
                         </div>
                     </td>
                 `;
@@ -1844,7 +1984,7 @@
                 cardTypeFilterSelect.innerHTML = `
                     <option value="全て">種類</option>
                     <option value="アタックカード">アタックカード</option>
-                    <option value="メモリアカード">メモリアカード</option>
+                    <option value="メモリアカード">メモリアカード</メモリアカード>
                 `;
             } else if (currentTab === 'tactics') {
                 costFilterSelect.style.display = 'inline-block';
@@ -1936,23 +2076,25 @@
                     card['ビルドルール'] && card['ビルドルール'].includes(cardInfo['カード名'])
                 );
             } else if (cardType === 'アタックカード' || cardType === 'メモリアカード') {
-                // Only show related cards if the current main deck card has a build rule
-                if (cardInfo['ビルドルール']) { // Check if build rule exists
-                    // Find other Main Deck cards with the same Build Rule
-                    relatedCards = Object.values(allCardData).filter(card =>
-                        (card['カード種類'] === 'アタックカード' || card['カード種類'] === 'メモリアカード') &&
-                        card['カード名'] !== cardInfo['カード名'] && // Exclude itself
-                        card['ビルドルール'] === cardInfo['ビルドルール'] // Corrected: Match build rule
-                    );
+                if (cardInfo['ビルドルール']) {
+                    const currentCardBuildRule = cardInfo['ビルドルール'];
 
-                    // Find the Leader Card mentioned in the Build Rule
-                    if (cardInfo['ビルドルール'].startsWith('リーダー：')) { 
-                        const leaderNameInRule = cardInfo['ビルドルール'].replace('リーダー：', '').trim();
+                    // 1. 同じビルドルールを持つメインデッキカードを検索
+                    const sameBuildRuleMainCards = Object.values(allCardData).filter(card =>
+                        (card['カード種類'] === 'アタックカード' || card['カード種類'] === 'メモリアカード') &&
+                        card['カード名'] !== cardInfo['カード名'] && // 自身を除く
+                        card['ビルドルール'] === currentCardBuildRule 
+                    );
+                    relatedCards.push(...sameBuildRuleMainCards); // スプレッド構文で追加
+
+                    // 2. ビルドルールに記載されたリーダーカードを検索 (もしあれば)
+                    if (currentCardBuildRule.startsWith('リーダー：')) {
+                        const leaderNameInRule = currentCardBuildRule.replace('リーダー：', '').trim();
                         const leaderCard = Object.values(allCardData).find(card =>
                             card['カード種類'] === 'リーダーカード' && card['カード名'] === leaderNameInRule
                         );
                         if (leaderCard) {
-                            relatedCards.push(leaderCard); // Add the related leader card
+                            relatedCards.push(leaderCard);
                         }
                     }
                 }
@@ -1989,6 +2131,63 @@
                 relatedCardsGrid.innerHTML = '<p class="text-gray-500 italic col-span-full">関連カードがありません。</p>';
             }
 
+            // --- NEW: Quantity Controls Logic for Card Detail Modal ---
+            let currentInDeckQuantity = 0;
+            let maxAllowedQuantity = 0;
+            let deckTypeForInteraction = '';
+
+            if (cardType === 'リーダーカード') {
+                deckTypeForInteraction = 'leader';
+                currentInDeckQuantity = leaderDeck.some(c => c.name === cardName) ? 1 : 0;
+                maxAllowedQuantity = 1;
+                modalCardQuantityControls.classList.remove('hidden'); // Ensure visible
+            } else if (cardType === 'アタックカード' || cardType === 'メモリアカード') {
+                deckTypeForInteraction = 'main';
+                const mainDeckCard = mainDeck.find(c => c.name === cardName);
+                currentInDeckQuantity = mainDeckCard ? mainDeckCard.quantity : 0;
+                maxAllowedQuantity = 4;
+                modalCardQuantityControls.classList.remove('hidden'); // Ensure visible
+            } else if (cardType === 'タクティクスカード') {
+                deckTypeForInteraction = 'tactics';
+                currentInDeckQuantity = tacticsDeck.some(c => c.name === cardName) ? 1 : 0;
+                maxAllowedQuantity = 1;
+                modalCardQuantityControls.classList.remove('hidden'); // Ensure visible
+            } else {
+                // Hide controls if card type is not recognized for deck building
+                modalCardQuantityControls.classList.add('hidden');
+            }
+
+            modalCardCurrentQuantity.textContent = `${currentInDeckQuantity} / ${maxAllowedQuantity}`;
+
+            // 既存のイベントリスナーを削除 (もし存在すれば)
+            if (eventListeners.has('modalCardAddBtnClick')) {
+                modalCardAddBtn.removeEventListener('click', eventListeners.get('modalCardAddBtnClick'));
+                eventListeners.delete('modalCardAddBtnClick');
+            }
+            if (eventListeners.has('modalCardRemoveBtnClick')) {
+                modalCardRemoveBtn.removeEventListener('click', eventListeners.get('modalCardRemoveBtnClick'));
+                eventListeners.delete('modalCardRemoveBtnClick');
+            }
+
+            // 新しいイベントリスナーを定義し、追加
+            const newAddHandler = () => {
+                addCardToDeck(cardName, 1, deckTypeForInteraction);
+                showCardDetailModal(cardName); // Re-render to update quantity display
+                saveTemporaryDeckState();
+            };
+            const newRemoveHandler = () => {
+                removeCardFromDeck(cardName, deckTypeForInteraction, 1);
+                showCardDetailModal(cardName); // Re-render to update quantity display
+                saveTemporaryDeckState();
+            };
+
+            modalCardAddBtn.addEventListener('click', newAddHandler);
+            modalCardRemoveBtn.addEventListener('click', newRemoveHandler);
+            
+            // イベントリスナーをマップに保存
+            eventListeners.set('modalCardAddBtnClick', newAddHandler);
+            eventListeners.set('modalCardRemoveBtnClick', newRemoveHandler);
+            
             cardDetailModal.classList.remove('hidden');
         }
 
@@ -2178,32 +2377,44 @@
             // Draw QR code if required and available
             if (includeQr && qrImg) {
                 const qrPadding = PADDING_BASE * scaleFactor; // Padding from canvas edges
-                const qrX = canvas.width - QR_SIZE - qrPadding;
-                const qrY = canvas.height - QR_SIZE - qrPadding; // Position at bottom-right
+                const qrBoxInternalPadding = 15 * scaleFactor; // Padding inside the rounded box for the QR image itself
+                
+                // Calculate position and size for the *outer rounded box*
+                const boxWidth = QR_SIZE + (qrBoxInternalPadding * 2);
+                const boxHeight = QR_SIZE + (qrBoxInternalPadding * 2);
+                const boxX = canvas.width - boxWidth - qrPadding;
+                const boxY = canvas.height - boxHeight - qrPadding; // Position at bottom-right
 
-                // Draw rounded rectangle around QR code
+                // Ensure the box doesn't go below the canvas or off to the left
+                const finalBoxX = Math.max(qrPadding, Math.min(boxX, canvas.width - boxWidth - qrPadding));
+                const finalBoxY = Math.max(DECK_NAME_HEIGHT + qrPadding, Math.min(boxY, canvas.height - boxHeight - qrPadding));
+
+                // Calculate QR image position *inside* the box
+                const qrImgX = finalBoxX + qrBoxInternalPadding;
+                const qrImgY = finalBoxY + qrBoxInternalPadding;
+
                 const cornerRadius = 10 * scaleFactor; // Adjust corner radius as needed
                 ctx.fillStyle = 'white'; // Background for the QR code box
                 ctx.strokeStyle = '#333'; // Border color
                 ctx.lineWidth = 2 * scaleFactor; // Border width
 
-                // Draw rounded rectangle path
+                // Draw rounded rectangle path for the box
                 ctx.beginPath();
-                ctx.moveTo(qrX + cornerRadius, qrY);
-                ctx.lineTo(qrX + QR_SIZE - cornerRadius, qrY);
-                ctx.arcTo(qrX + QR_SIZE, qrY, qrX + QR_SIZE, qrY + cornerRadius, cornerRadius);
-                ctx.lineTo(qrX + QR_SIZE, qrY + QR_SIZE - cornerRadius);
-                ctx.arcTo(qrX + QR_SIZE, qrY + QR_SIZE, qrX + QR_SIZE - cornerRadius, qrY + QR_SIZE, cornerRadius);
-                ctx.lineTo(qrX + cornerRadius, qrY + QR_SIZE);
-                ctx.arcTo(qrX, qrY + QR_SIZE, qrX, qrY + QR_SIZE - cornerRadius, cornerRadius);
-                ctx.lineTo(qrX, qrY + cornerRadius);
-                ctx.arcTo(qrX, qrY, qrX + cornerRadius, qrY, cornerRadius);
+                ctx.moveTo(finalBoxX + cornerRadius, finalBoxY);
+                ctx.lineTo(finalBoxX + boxWidth - cornerRadius, finalBoxY);
+                ctx.arcTo(finalBoxX + boxWidth, finalBoxY, finalBoxX + boxWidth, finalBoxY + boxHeight - cornerRadius, cornerRadius);
+                ctx.lineTo(finalBoxX + boxWidth, finalBoxY + boxHeight - cornerRadius);
+                ctx.arcTo(finalBoxX + boxWidth, finalBoxY + boxHeight, finalBoxX + boxWidth - cornerRadius, finalBoxY + boxHeight, cornerRadius);
+                ctx.lineTo(finalBoxX + cornerRadius, finalBoxY + boxHeight);
+                ctx.arcTo(finalBoxX, finalBoxY + boxHeight, finalBoxX, finalBoxY + boxHeight - cornerRadius, cornerRadius);
+                ctx.lineTo(finalBoxX, finalBoxY + cornerRadius);
+                ctx.arcTo(finalBoxX, finalBoxY, finalBoxX + cornerRadius, finalBoxY, cornerRadius);
                 ctx.closePath();
                 ctx.fill();
                 ctx.stroke();
 
                 // Draw QR image inside the rounded rectangle
-                ctx.drawImage(qrImg, qrX, qrY, QR_SIZE, QR_SIZE);
+                ctx.drawImage(qrImg, qrImgX, qrImgY, QR_SIZE, QR_SIZE);
             }
         }
 
@@ -2510,28 +2721,117 @@
             return;
         }
 
+        /**
+         * 現在のデッキの状態をsessionStorageに一時保存する
+         */
+        function saveTemporaryDeckState() {
+            const tempDeckName = deckNameInputLocal.value.trim() || deckNameInput.value.trim() || '一時保存中のデッキ';
+            
+            const exportedLeader = {};
+            leaderDeck.forEach(card => {
+                const cardNumPrefix = card.cardData['カードナンバー'] ? card.cardData['カードナンバー'].split('/')[0] : card.name;
+                exportedLeader[cardNumPrefix] = 1;
+            });
 
+            const exportedMain = {};
+            mainDeck.forEach(card => {
+                const cardNumPrefix = card.cardData['カードナンバー'] ? card.cardData['カードナンバー'].split('/')[0] : card.name;
+                exportedMain[cardNumPrefix] = card.quantity;
+            });
+
+            const exportedTactics = {};
+            tacticsDeck.forEach(card => {
+                const cardNumPrefix = card.cardData['カードナンバー'] ? card.cardData['カードナンバー'].split('/')[0] : card.name;
+                exportedTactics[cardNumPrefix] = 1;
+            });
+
+            const tempDeckState = {
+                deckName: tempDeckName,
+                deck: {
+                    LEADER: exportedLeader,
+                    MAIN: exportedMain,
+                    TACTICS: exportedTactics
+                }
+            };
+            sessionStorage.setItem('xrossstars_temp_deck', JSON.stringify(tempDeckState));
+            console.log("デッキの状態が一時保存されました。");
+        }
+
+        /**
+         * sessionStorageから一時保存されたデッキを読み込む
+         */
+        function loadTemporaryDeckState() {
+            const tempDeckJson = sessionStorage.getItem('xrossstars_temp_deck');
+            console.log('loadTemporaryDeckState - sessionStorage raw content:', tempDeckJson); // Debug log
+
+            if (tempDeckJson) {
+                try {
+                    const tempDeck = JSON.parse(tempDeckJson);
+                    // Check if the parsed object contains actual deck data
+                    const hasLeaderCards = Object.keys(tempDeck.deck.LEADER).length > 0;
+                    const hasMainCards = Object.keys(tempDeck.deck.MAIN).length > 0;
+                    const hasTacticsCards = Object.keys(tempDeck.deck.TACTICS).length > 0;
+
+                    if (hasLeaderCards || hasMainCards || hasTacticsCards) {
+                        const loadSuccessful = loadDeckFromParsedData(tempDeck, true); // Silent load for temporary deck
+                        if (loadSuccessful) {
+                            console.log("一時保存されたデッキを自動で読み込みました。");
+                            // Update the input fields with the temporary deck's name
+                            deckNameInput.value = tempDeck.deckName;
+                            deckNameInputLocal.value = tempDeck.deckName;
+                        } else {
+                            console.error("一時保存されたデッキのデータが無効なため、読み込みをスキップしました。一時保存データをクリアします。");
+                            sessionStorage.removeItem('xrossstars_temp_deck'); // Clear invalid temp data
+                        }
+                    } else {
+                        console.log("空の一時保存デッキのため、読み込みをスキップしました。");
+                        sessionStorage.removeItem('xrossstars_temp_deck'); // 空のデータをクリーンアップ
+                    }
+                } catch (e) {
+                    console.error("一時保存されたデッキのパースに失敗しました。データを破棄します。", e);
+                    sessionStorage.removeItem('xrossstars_temp_deck'); // 無効なデータを削除
+                }
+            } else {
+                console.log("sessionStorageに一時保存されたデッキはありません。");
+            }
+            updateDeckDisplay(); // 一時保存の有無にかかわらず、UIを更新して初期状態または読み込まれた状態を表示
+        }
+        
         // イベントリスナー
         showLeaderCatalogBtn.addEventListener('click', () => { 
+            console.log('リーダーボタンがクリックされました。'); // Debug log
+            saveTemporaryDeckState(); // NEW: 一時保存
             currentTab = 'leader'; 
             resetFilters(); // Reset filters on tab change
             updateFilterAndSortUI(); 
             renderCatalog(); 
         });
         showMainCatalogBtn.addEventListener('click', () => { 
+            console.log('メインボタンがクリックされました。'); // Debug log
+            saveTemporaryDeckState(); // NEW: 一時保存
             currentTab = 'main'; 
             resetFilters(); // Reset filters on tab change
             updateFilterAndSortUI(); 
             renderCatalog(); 
         });
         showTacticsCatalogBtn.addEventListener('click', () => { 
+            console.log('タクティクスボタンがクリックされました。'); // Debug log
+            saveTemporaryDeckState(); // NEW: 一時保存
             currentTab = 'tactics'; 
             resetFilters(); // Reset filters on tab change
             updateFilterAndSortUI(); 
             renderCatalog(); 
         });
-        showDeckBtn.addEventListener('click', showDeckViewModal);
-        generateDeckImageBtn.addEventListener('click', generateDeckImage);
+        showDeckBtn.addEventListener('click', () => {
+            console.log('デッキボタンがクリックされました。'); // Debug log
+            saveTemporaryDeckState(); // NEW: 一時保存
+            showDeckViewModal();
+        });
+        generateDeckImageBtn.addEventListener('click', () => {
+            console.log('デッキ画像ボタンがクリックされました。'); // Debug log
+            saveTemporaryDeckState(); // NEW: 一時保存
+            generateDeckImage();
+        });
         closeDeckViewModalBtn.addEventListener('click', () => deckViewModal.classList.add('hidden'));
         closeCardDetailModalBtn.addEventListener('click', () => cardDetailModal.classList.add('hidden'));
         closeDeckImageModalBtn.addEventListener('click', () => deckImageModal.classList.add('hidden'));
@@ -2540,12 +2840,14 @@
         closeLoadConfirmationModalBtn.addEventListener('click', () => loadConfirmationModal.classList.add('hidden'));
         confirmLoadBtn.addEventListener('click', () => {
             if (deckToLoad) {
-                loadDeckFromParsedData(deckToLoad);
+                // This is an explicit user action to load, so alerts are acceptable.
+                loadDeckFromParsedData(deckToLoad, false); 
                 loadConfirmationModal.classList.add('hidden');
                 localStorageMessage.classList.remove('hidden');
                 localStorageMessage.className = 'validation-message validation-success';
                 localStorageMessage.textContent = `デッキ「${deckToLoad.deckName}」を読み込みました！`;
                 deckNameInputLocal.value = deckToLoad.deckName;
+                saveTemporaryDeckState(); // NEW: 読み込んだデッキを一時保存状態として設定
             }
             deckToLoad = null; // Clear temporary storage
         });
@@ -2746,7 +3048,9 @@
             reader.onload = (e) => {
                 try {
                     const importedStructure = JSON.parse(e.target.result);
-                    loadDeckFromParsedData(importedStructure);
+                    // This is an explicit user action to import, so alerts are acceptable.
+                    loadDeckFromParsedData(importedStructure, false);
+                    saveTemporaryDeckState(); // NEW: インポートしたデッキを一時保存状態として設定
                 } catch (error) {
                     console.error('ファイルからのデッキインポート中にエラーが発生しました:', error);
                     importExportMessage.className = 'validation-message validation-error';
@@ -2767,14 +3071,21 @@
         /**
          * パースされたデッキデータ（JSON）をデッキにロードする共通関数
          * @param {Object} importedStructure - インポートされたデッキデータ構造
+         * @param {boolean} isSilentLoad - trueの場合、エラー時にアラートを表示せずコンソールにログを出力する
+         * @returns {boolean} ロードが成功した場合はtrue、失敗した場合はfalse
          */
-        function loadDeckFromParsedData(importedStructure) {
+        function loadDeckFromParsedData(importedStructure, isSilentLoad = false) {
+            console.log('loadDeckFromParsedDataが呼ばれました。isSilentLoad:', isSilentLoad); // Debug log
             const importedData = importedStructure.deck;
 
             // データの妥当性チェック
             if (!importedData || !importedData.LEADER || !importedData.MAIN || !importedData.TACTICS) {
-                alert('無効なデッキデータ形式です。必要なセクション（LEADER, MAIN, TACTICS）が見つかりません。');
-                return; // Exit if invalid structure
+                if (!isSilentLoad) {
+                    alert('無効なデッキデータ形式です。必要なセクション（LEADER, MAIN, TACTICS）が見つかりません。');
+                } else {
+                    console.error('一時保存デッキの形式が無効です: 必要なセクションが見つかりません。');
+                }
+                return false; // Indicate failure
             }
 
             const newLeaderDeck = [];
@@ -2788,23 +3099,39 @@
             const leaderCardEntries = Object.entries(parsedLeaderData);
             
             if (leaderCardEntries.length > 4) {
-                alert('インポートするリーダーカードが多すぎます（最大4枚）。');
+                if (!isSilentLoad) {
+                    alert('インポートするリーダーカードが多すぎます（最大4枚）。');
+                } else {
+                    console.error('一時保存デッキのリーダーカードが多すぎます（最大4枚）。');
+                }
                 importError = true;
             } else {
                 for (const [cardNumPrefix, quantity] of leaderCardEntries) {
                     const cardInfo = allCardDataByNumberPrefix[cardNumPrefix];
                     if (!cardInfo || cardInfo['カード種類'] !== 'リーダーカード') {
-                        alert(`カード番号 "${cardNumPrefix}" は有効なリーダーカードではありません。`);
+                        if (!isSilentLoad) {
+                            alert(`カード番号 "${cardNumPrefix}" は有効なリーダーカードではありません。`);
+                        } else {
+                            console.error(`一時保存デッキのカード番号 "${cardNumPrefix}" は有効なリーダーカードではありません。`);
+                        }
                         importError = true;
                         break;
                     }
                     if (newLeaderDeck.some(lc => lc.name === cardInfo['カード名'])) {
-                        alert(`リーダーカード "${cardInfo['カード名']}" はすでにデッキに重複しています（カード番号: ${cardNumPrefix}）。`);
+                        if (!isSilentLoad) {
+                            alert(`リーダーカード "${cardInfo['カード名']}" はすでにデッキに重複しています（カード番号: ${cardNumPrefix}）。`);
+                        } else {
+                            console.error(`一時保存デッキのリーダーカード "${cardInfo['カード名']}" はすでにデッキに重複しています（カード番号: ${cardNumPrefix}）。`);
+                        }
                         importError = true;
                         break;
                     }
                     if (quantity !== 1) {
-                        alert(`リーダーカード "${cardInfo['カード名']}" の枚数が不正です（カード番号: ${cardNumPrefix}）。リーダーカードは1枚のみ追加できます。`);
+                        if (!isSilentLoad) {
+                            alert(`リーダーカード "${cardInfo['カード名']}" の枚数が不正です（カード番号: ${cardNumPrefix}）。リーダーカードは1枚のみ追加できます。`);
+                        } else {
+                            console.error(`一時保存デッキのリーダーカード "${cardInfo['カード名']}" の枚数が不正です（カード番号: ${cardNumPrefix}）。リーダーカードは1枚のみ追加できます。`);
+                        }
                     }
                     newLeaderDeck.push({ name: cardInfo['カード名'], cardData: cardInfo });
                 }
@@ -2818,18 +3145,30 @@
                 for (const [cardNumPrefix, quantity] of Object.entries(parsedMainData)) {
                     const cardInfo = allCardDataByNumberPrefix[cardNumPrefix];
                     if (!cardInfo || (cardInfo['カード種類'] === 'リーダーカード' || cardInfo['カード種類'] === 'タクティクスカード')) {
-                        alert(`カード番号 "${cardNumPrefix}" は有効なメインデッキカードではありません。`);
+                        if (!isSilentLoad) {
+                            alert(`カード番号 "${cardNumPrefix}" は有効なメインデッキカードではありません。`);
+                        } else {
+                            console.error(`一時保存デッキのカード番号 "${cardNumPrefix}" は有効なメインデッキカードではありません。`);
+                        }
                         importError = true;
                         break;
                     }
                     if (quantity < 1 || quantity > 4) {
-                        alert(`カード番号 "${cardNumPrefix}" の枚数が不正です（1〜4枚）。`);
+                        if (!isSilentLoad) {
+                            alert(`カード番号 "${cardNumPrefix}" の枚数が不正です（1〜4枚）。`);
+                        } else {
+                            console.error(`一時保存デッキのカード番号 "${cardNumPrefix}" の枚数が不正です（1〜4枚）。`);
+                        }
                         importError = true;
                         break;
                     }
                     importedMainCardCounts[cardInfo['カード名']] = (importedMainCardCounts[cardInfo['カード名']] || 0) + quantity;
                     if (importedMainCardCounts[cardInfo['カード名']] > 4) {
-                        alert(`同名カード "${cardInfo['カード名']}" が4枚を超えています（カード番号: ${cardNumPrefix}）。`);
+                        if (!isSilentLoad) {
+                            alert(`同名カード "${cardInfo['カード名']}" が4枚を超えています（カード番号: ${cardNumPrefix}）。`);
+                        } else {
+                            console.error(`一時保存デッキの同名カード "${cardInfo['カード名']}" が4枚を超えています（カード番号: ${cardNumPrefix}）。`);
+                        }
                         importError = true;
                         break;
                     }
@@ -2837,12 +3176,20 @@
                     newMainDeck.push({ name: cardInfo['カード名'], quantity: quantity, isAce: cardInfo['ACE'] === 'ACE' || cardInfo['ACE'] === 'エース', cardData: cardInfo });
                 }
                 if (!importError && totalImportedMainCards !== 50) {
-                    alert(`メインデッキの合計枚数が50枚ではありません（現在 ${totalImportedMainCards}枚）。`);
+                    if (!isSilentLoad) {
+                        alert(`メインデッキの合計枚数が50枚ではありません（現在 ${totalImportedMainCards}枚）。`);
+                    } else {
+                        console.warn(`一時保存デッキのメインデッキの合計枚数が50枚ではありません（現在 ${totalImportedMainCards}枚）。`);
+                    }
                 }
                 if (!importError) {
                     let totalImportedAceCards = newMainDeck.filter(c => c.isAce).reduce((sum, c) => sum + c.quantity, 0);
                     if (totalImportedAceCards > 8) {
-                        alert(`メインデッキのエースカードが8枚を超えています（現在 ${totalImportedAceCards}枚）。`);
+                        if (!isSilentLoad) {
+                            alert(`メインデッキのエースカードが8枚を超えています（現在 ${totalImportedAceCards}枚）。`);
+                        } else {
+                            console.warn(`一時保存デッキのメインデッキのエースカードが8枚を超えています（現在 ${totalImportedAceCards}枚）。`);
+                        }
                     }
                 }
             }
@@ -2852,23 +3199,39 @@
                 let parsedTacticsData = typeof importedData.TACTICS === 'string' ? JSON.parse(importedData.TACTICS) : importedData.TACTICS;
                 const tacticsCardEntries = Object.entries(parsedTacticsData);
                 if (tacticsCardEntries.length > 5) {
-                    alert('インポートするタクティクスカードが多すぎます（最大5枚）。');
+                    if (!isSilentLoad) {
+                        alert('インポートするタクティクスカードが多すぎます（最大5枚）。');
+                    } else {
+                        console.error('一時保存デッキのタクティクスカードが多すぎます（最大5枚）。');
+                    }
                     importError = true;
                 } else {
                     for (const [cardNumPrefix, quantity] of tacticsCardEntries) {
                         const cardInfo = allCardDataByNumberPrefix[cardNumPrefix];
                         if (!cardInfo || cardInfo['カード種類'] !== 'タクティクスカード') {
-                            alert(`カード番号 "${cardNumPrefix}" は有効なタクティクスカードではありません。`);
+                            if (!isSilentLoad) {
+                                alert(`カード番号 "${cardNumPrefix}" は有効なタクティクスカードではありません。`);
+                            } else {
+                                console.error(`一時保存デッキのカード番号 "${cardNumPrefix}" は有効なタクティクスカードではありません。`);
+                            }
                             importError = true;
                             break;
                         }
                         if (newTacticsDeck.some(tc => tc.name === cardInfo['カード名'])) {
-                            alert(`タクティクスカード "${cardInfo['カード名']}" はすでにデッキに存在します（カード番号: ${cardNumPrefix}）。`);
+                            if (!isSilentLoad) {
+                                alert(`タクティクスカード "${cardInfo['カード名']}" はすでにデッキに存在します（カード番号: ${cardNumPrefix}）。`);
+                            } else {
+                                console.error(`一時保存デッキのタクティクスカード "${cardInfo['カード名']}" はすでにデッキに存在します（カード番号: ${cardNumPrefix}）。`);
+                            }
                             importError = true;
                             break;
                         }
                         if (quantity !== 1) {
-                            alert(`タクティクスカード "${cardInfo['カード名']}" の枚数が不正です（カード番号: ${cardNumPrefix}）。タクティクスカードは1枚のみ追加できます。`);
+                            if (!isSilentLoad) {
+                                alert(`タクティクスカード "${cardInfo['カード名']}" の枚数が不正です（カード番号: ${cardNumPrefix}）。タクティクスカードは1枚のみ追加できます。`);
+                            } else {
+                                console.error(`一時保存デッキのタクティクスカード "${cardInfo['カード名']}" の枚数が不正です（カード番号: ${cardNumPrefix}）。タクティクスカードは1枚のみ追加できます。`);
+                            }
                         }
                         newTacticsDeck.push({ name: cardInfo['カード名'], cardData: cardInfo });
                     }
@@ -2883,12 +3246,18 @@
                 // Also update the local storage deck name input field if it's for current deck name
                 deckNameInputLocal.value = importedStructure.deckName || ''; 
                 updateDeckDisplay();
-                importExportMessage.className = 'validation-message validation-success';
-                importExportMessage.textContent = 'デッキデータが正常にインポートされました！';
-                copyExportedDataBtn.classList.add('hidden');
+                if (!isSilentLoad) {
+                    importExportMessage.className = 'validation-message validation-success';
+                    importExportMessage.textContent = 'デッキデータが正常にインポートされました！';
+                    copyExportedDataBtn.classList.add('hidden');
+                }
+                return true; // Success
             } else {
-                importExportMessage.className = 'validation-message validation-error';
-                importExportMessage.textContent = 'デッキデータのインポートに失敗しました。詳細については上記のエラーメッセージを確認してください。';
+                if (!isSilentLoad) {
+                    importExportMessage.className = 'validation-message validation-error';
+                    importExportMessage.textContent = 'デッキデータのインポートに失敗しました。詳細については上記のエラーメッセージを確認してください。';
+                }
+                return false; // Failure
             }
         }
 
@@ -2906,7 +3275,9 @@
 
             try {
                 const importedStructure = JSON.parse(importText);
-                loadDeckFromParsedData(importedStructure);
+                // This is an explicit user action to import, so alerts are acceptable.
+                loadDeckFromParsedData(importedStructure, false);
+                saveTemporaryDeckState(); // NEW: インポートしたデッキを一時保存状態として設定
             } catch (error) {
                 console.error('デッキデータのパースまたはインポート中にエラーが発生しました:', error);
                 importExportMessage.className = 'validation-message validation-error';
@@ -2937,10 +3308,27 @@
             updateDeckImagePreview(); // Update preview to reflect the change
         });
 
+        // NEW: 新規デッキ作成ボタンのイベントリスナー
+        createNewDeckBtn.addEventListener('click', () => {
+            if (confirm('現在のデッキは破棄され、新しいデッキが作成されます。よろしいですか？')) {
+                leaderDeck = [];
+                mainDeck = [];
+                tacticsDeck = [];
+                deckNameInput.value = '';
+                deckNameInputLocal.value = '';
+                sessionStorage.removeItem('xrossstars_temp_deck'); // 一時保存されたデッキもクリア
+                updateDeckDisplay();
+                alert('新しいデッキが作成されました。');
+                console.log("新しいデッキが作成されました。一時保存データはクリアされました。");
+            }
+        });
+
 
         // 初期ロード時にカードデータを読み込み、オートコンプリートを設定
         window.onload = async () => {
             await loadCardData(); // This now also loads QR image and sets footer and modal checkbox states
+            // カードデータのロード後、一時保存されたデッキを自動的に読み込む
+            loadTemporaryDeckState();
             // currentSort is already initialized to { criterion: '色', direction: 'asc' }
             // updateFilterAndSortUI will correctly set the dropdown and then renderCatalog will apply the sort.
         };
