@@ -548,7 +548,8 @@
             background-color: #e0f2fe; /* Light blue background */
             border-radius: 12px;
             padding: 1.5rem;
-            margin-top: 2rem;
+            margin-top: 2rem; /* Adjusted margin-top to be consistent */
+            margin-bottom: 1.5rem; /* Added margin-bottom to separate from footer-content */
             text-align: center;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
@@ -981,24 +982,27 @@
             for (let i = 0; i < rawLines.length; i++) {
                 const line = rawLines[i];
                 let tempInQuote = inQuote;
-
+                let lineBuffer = ''; // Buffer to build line safely before checking quotes
+                
                 for (let j = 0; j < line.length; j++) {
-                    if (line[j] === '"') {
-                        if (j + 1 < line.length && line[j+1] === '"') { // Handle "" escape sequence
-                            currentAccumulatedLine += '"'; // Add one quote character
+                    const char = line[j]; // Define char here
+                    if (char === '"') {
+                        if (tempInQuote && j + 1 < line.length && line[j+1] === '"') { // Handle "" escape sequence
+                            lineBuffer += '"'; // Add one quote character
                             j++; // Skip the next quote
                         } else {
                             tempInQuote = !tempInQuote;
                         }
                     } else {
-                        currentAccumulatedLine += char; // Append character
+                        lineBuffer += char; // Append character
                     }
                 }
-
+                
+                // After processing the line segment
                 if (currentAccumulatedLine === '') {
-                    currentAccumulatedLine = line;
+                    currentAccumulatedLine = lineBuffer;
                 } else {
-                    currentAccumulatedLine += '\n' + line;
+                    currentAccumulatedLine += '\n' + lineBuffer;
                 }
 
                 if (!tempInQuote) {
