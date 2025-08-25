@@ -526,6 +526,18 @@
             transform: scale(1.2); /* Slightly larger checkbox */
             cursor: pointer;
         }
+        /* Style for the new wishlist link */
+        .footer-content .wishlist-link {
+            display: block; /* Make it a block element to be on its own line */
+            margin-top: 1rem; /* Add some space above the link */
+            font-size: 0.9rem;
+            color: #3b82f6; /* A distinct color for the link */
+            text-decoration: underline;
+            transition: color 0.2s ease-in-out;
+        }
+        .footer-content .wishlist-link:hover {
+            color: #2563eb; /* Darker blue on hover */
+        }
 
         /* Card Detail Modal Quantity Controls */
         #modalCardQuantityControls button {
@@ -816,6 +828,9 @@
         </label>
         <!-- Daily Spark Message is now inside footer-content and styled as daily-spark-message -->
         <p class="daily-spark-message">なんとなく一言：<span id="dailySparkMessage">メッセージを読み込み中...</span></p>
+        <a href="https://www.amazon.jp/hz/wishlist/ls/2EGSP6CPA5XIP?ref_=wl_share" target="_blank" class="wishlist-link">
+            欲しいものリスト(本サイトはクロスタのゲーム環境発展のために作成しました。私の開発モチベーションアップにご支援お願いします。)
+        </a>
         <p>Thanks for visiting! – PineAme@tcepseredutitta</p>
     </div>
 
@@ -2068,7 +2083,7 @@
                     const sameBuildRuleMainCards = Object.values(allCardData).filter(card =>
                         (card['カード種類'] === 'アタックカード' || card['カード種類'] === 'メモリアカード') &&
                         card['カード名'] !== cardInfo['カード名'] && // 自身を除く
-                        card['ビルドルール'] === currentCardBuildRule // 正しいプロパティ名を使用
+                        card['ビルドルール'] === currentCardBuildRule 
                     );
                     relatedCards.push(...sameBuildRuleMainCards); // スプレッド構文で追加
 
