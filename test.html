@@ -543,6 +543,27 @@
             text-align: center;
         }
 
+        /* Daily Spark Section */
+        .daily-spark-section {
+            background-color: #e0f2fe; /* Light blue background */
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .daily-spark-section h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e40af; /* Dark blue title */
+            margin-bottom: 0.75rem;
+        }
+        .daily-spark-section p {
+            font-size: 1.1rem;
+            color: #3b82f6; /* Medium blue text */
+            font-style: italic;
+        }
+
     </style>
 </head>
 <body class="p-4">
@@ -798,6 +819,12 @@
         </div>
     </div>
 
+    <!-- Daily Spark Section -->
+    <div class="daily-spark-section">
+        <h3>なんとなく一言</h3>
+        <p id="dailySparkMessage">メッセージを読み込み中...</p>
+    </div>
+
     <!-- Moved QR Code checkbox to the footer -->
     <div class="footer-content">
         <label for="hideQrCodeCheckbox">
@@ -817,6 +844,9 @@
         // 全てのカードデータを格納するオブジェクト
         let allCardData = {}; // Key: カード名, Value: カードオブジェクト
         let allCardDataByNumberPrefix = {}; // Key: カードナンバーの"/"以前, Value: カードオブジェクト
+
+        // 日替わりメッセージデータ
+        let dailySparkMessages = {}; // Key: YYYYMMDD, Value: Message
 
         // UI表示に関する状態
         let currentTab = 'leader'; // 'leader', 'main', 'tactics' - デフォルトをリーダーに変更
@@ -877,7 +907,7 @@
 
         // Local Storage specific elements
         const deckNameInputLocal = document.getElementById('deckNameInputLocal');
-        const saveLocalDeckBtn = document = document.getElementById('saveLocalDeckBtn');
+        const saveLocalDeckBtn = document.getElementById('saveLocalDeckBtn');
         const loadLocalDecksBtn = document.getElementById('loadLocalDecksBtn');
         const localStorageMessage = document.getElementById('localStorageMessage');
 
@@ -922,6 +952,10 @@
         const confirmLoadBtn = document.getElementById('confirmLoadBtn');
         const cancelLoadBtn = document.getElementById('cancelLoadBtn');
 
+        // Daily Spark elements
+        const dailySparkMessageElement = document.getElementById('dailySparkMessage');
+
+
         let deckToLoad = null; // Store deck data temporarily for confirmation
 
         // QR Code related variables
@@ -936,6 +970,7 @@
         /**
          * CSVデータをパースしてカードデータを準備する
          * @param {string} csvText - CSV形式の文字列
+         * @returns {Array<Object>} パースされたカードデータの配列
          */
         function parseCSV(csvText) {
             const rawLines = csvText.split(/\r?\n/);
@@ -950,10 +985,13 @@
                 for (let j = 0; j < line.length; j++) {
                     if (line[j] === '"') {
                         if (j + 1 < line.length && line[j+1] === '"') { // Handle "" escape sequence
-                            j++;
+                            currentAccumulatedLine += '"'; // Add one quote character
+                            j++; // Skip the next quote
                         } else {
                             tempInQuote = !tempInQuote;
                         }
+                    } else {
+                        currentAccumulatedLine += char; // Append character
                     }
                 }
 
@@ -978,12 +1016,11 @@
             
             if (lines.length === 0) {
                 console.error("No content lines found in CSV after processing.");
-                return;
+                return [];
             }
             const headers = lines[0].split(',').map(header => header.trim());
 
-            allCardData = {};
-            allCardDataByNumberPrefix = {};
+            const parsedData = [];
             lines.slice(1).forEach((line, index) => {
                 const values = parseCsvLine(line);
                 let obj = {};
@@ -1004,19 +1041,20 @@
                 }
 
 
-                if (obj['カード名']) {
-                    allCardData[obj['カード名']] = obj;
-                    if (obj['カードナンバー']) {
-                        const cardNumPrefix = obj['カードナンバー'].split('/')[0];
-                        allCardDataByNumberPrefix[cardNumPrefix] = obj;
-                    }
+                if (obj['カード名'] || obj['Date']) { // Allow either CardName or Date for validity check
+                    parsedData.push(obj);
                 } else {
-                    console.warn(`Skipping logical line ${index + 2} with empty card name: "${line.substring(0, 100)}..."`);
+                    console.warn(`Skipping logical line ${index + 2} with empty primary key: "${line.substring(0, 100)}..."`);
                 }
             });
-            console.log('カードデータがロードされました:', Object.keys(allCardData).length, '枚');
+            return parsedData;
         }
 
+        /**
+         * CSVの1行を正しくパースする
+         * @param {string} line - CSVの1行文字列
+         * @returns {Array<string>} パースされたフィールドの配列
+         */
         function parseCsvLine(line) {
             const result = [];
             let inQuote = false;
@@ -1026,7 +1064,7 @@
                 if (char === '"') {
                     if (inQuote && i + 1 < line.length && line[i+1] === '"') {
                         currentField += '"';
-                        i++;
+                        i++; // Skip the next quote
                     } else {
                         inQuote = !inQuote;
                     }
@@ -1041,19 +1079,56 @@
             return result;
         }
 
+        /**
+         * 全てのカードデータと日替わりメッセージデータを読み込む
+         */
         async function loadCardData() {
             loadingIndicator.classList.remove('hidden');
             const csvUrl = 'https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/cardlist.csv';
             const qrImageUrl = 'https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/QR.png';
+            const dailySparkCsvUrl = 'https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/DailySpark.csv';
             
             try {
-                // Load CSV data
-                const response = await fetch(csvUrl);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch CSV: ${response.statusText}`);
+                // Load Card CSV data
+                const cardResponse = await fetch(csvUrl);
+                if (!cardResponse.ok) {
+                    throw new Error(`Failed to fetch card CSV: ${cardResponse.statusText}`);
                 }
-                const csvText = await response.text();
-                parseCSV(csvText);
+                const cardCsvText = await cardResponse.text();
+                const parsedCardData = parseCSV(cardCsvText);
+                allCardData = {};
+                allCardDataByNumberPrefix = {};
+                parsedCardData.forEach(card => {
+                    if (card['カード名']) {
+                        allCardData[card['カード名']] = card;
+                        if (card['カードナンバー']) {
+                            const cardNumPrefix = card['カードナンバー'].split('/')[0];
+                            allCardDataByNumberPrefix[cardNumPrefix] = card;
+                        }
+                    }
+                });
+                console.log('カードデータがロードされました:', Object.keys(allCardData).length, '枚');
+
+
+                // Load Daily Spark CSV data
+                const sparkResponse = await fetch(dailySparkCsvUrl);
+                if (!sparkResponse.ok) {
+                    console.warn(`Failed to fetch Daily Spark CSV: ${sparkResponse.statusText}. Daily Spark messages will not be displayed.`);
+                    dailySparkMessages = {};
+                } else {
+                    const sparkCsvText = await sparkResponse.text();
+                    const parsedSparkData = parseCSV(sparkCsvText);
+                    dailySparkMessages = {};
+                    parsedSparkData.forEach(item => {
+                        if (item['Date'] && item['Message']) {
+                            dailySparkMessages[item['Date']] = item['Message'];
+                        }
+                    });
+                    console.log('日替わりメッセージがロードされました:', Object.keys(dailySparkMessages).length, '件');
+                }
+                // Display daily spark message after loading
+                displayDailySparkMessage();
+
 
                 // Load QR code image
                 const qrResponse = await fetch(qrImageUrl);
@@ -1077,16 +1152,8 @@
                 // Initialize high quality checkbox from local storage
                 highQualityCheckbox.checked = localStorage.getItem('highQualityImage') === 'true';
                 // Initialize "hide QR code" checkbox from local storage
-                // If 'qrCodeHiddenInModal' was previously used, transfer its value
-                const oldQrHiddenState = localStorage.getItem('qrCodeHiddenInModal');
-                if (oldQrHiddenState !== null) {
-                    hideQrCodeCheckbox.checked = oldQrHiddenState === 'true';
-                    localStorage.removeItem('qrCodeHiddenInModal'); // Clean up old key
-                } else {
-                    // Default behavior: QR code is visible, so "hide QR code" checkbox is unchecked
-                    // This checkbox now lives in the footer.
-                    hideQrCodeCheckbox.checked = false; 
-                }
+                const qrHiddenState = localStorage.getItem('qrCodeHiddenInModal');
+                hideQrCodeCheckbox.checked = qrHiddenState === 'true'; 
                 
             } catch (error) {
                 console.error("Error loading initial data:", error);
@@ -1096,6 +1163,22 @@
                 updateFilterAndSortUI();
                 // updateDeckDisplay() will be called after temporary deck is loaded (or not)
             }
+        }
+
+        /**
+         * 現在の日付に基づいて日替わりメッセージを表示する
+         */
+        function displayDailySparkMessage() {
+            if (!dailySparkMessageElement) return;
+
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = (today.getMonth() + 1).toString().padStart(2, '0');
+            const day = today.getDate().toString().padStart(2, '0');
+            const todayFormatted = `${year}${month}${day}`;
+
+            const message = dailySparkMessages[todayFormatted] || "今日はどんなデッキが組めるかな？";
+            dailySparkMessageElement.textContent = message;
         }
 
         /**
