@@ -50,12 +50,13 @@
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.45);
         }
         .btn {
-            padding: 0.85rem 1.65rem;
+            padding: 0.75rem 1.4rem; /* Adjusted button padding to make them smaller */
             border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18); /* Slightly stronger default button shadow */
+            font-size: 0.95rem; /* Adjusted font size for smaller buttons */
         }
         .btn-primary {
             background-color: #3b82f6; /* Updated primary blue from reference */
@@ -89,13 +90,13 @@
             background-color: #bfdbfe; /* Lighter blue from reference */
             color: #1e40af; /* Darker blue text from reference */
             border-radius: 10px; /* Consistent with other buttons */
-            padding: 0.85rem 1.65rem; /* Consistent with other buttons */
+            padding: 0.75rem 1.4rem; /* Adjusted to match other buttons */
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Default shadow for tabs */
             flex-shrink: 0; /* Prevents shrinking on smaller screens */
-            /* Removed explicit text-base and sm:text-sm, using default inherit or from global */
+            font-size: 0.95rem; /* Adjusted to match other buttons */
         }
         .btn-catalog-tab:hover {
             background-color: #93c5fd; /* Even lighter blue on hover from reference */
@@ -525,6 +526,23 @@
             cursor: pointer;
         }
 
+        /* Card Detail Modal Quantity Controls */
+        #modalCardQuantityControls button {
+            width: 44px; /* Fixed width for consistent size */
+            height: 44px; /* Fixed height for consistent size */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 9999px; /* Make them perfectly round */
+            font-size: 1.8rem; /* Adjusted font size for icons */
+            font-weight: 700;
+            line-height: 1; /* Ensure text is vertically centered */
+        }
+        #modalCardQuantityControls #modalCardCurrentQuantity {
+            min-width: 60px; /* Ensure enough space for quantity text */
+            text-align: center;
+        }
+
     </style>
 </head>
 <body class="p-4">
@@ -547,10 +565,11 @@
         <!-- Top Navigation and Deck Button -->
         <div class="flex flex-col gap-4 mb-8">
             <!-- 【デッキ】【デッキ画像】【新規作成】ボタンを横1列に並べる -->
+            <!-- 画面が狭い場合でも見切れないように overflow-x-auto を追加 -->
             <div class="flex justify-center gap-4 flex-nowrap overflow-x-auto pb-2 px-2">
-                <button id="showDeckBtn" class="btn btn-primary px-6 py-3 flex-shrink-0">デッキ</button>
-                <button id="generateDeckImageBtn" class="btn btn-primary px-6 py-3 flex-shrink-0">デッキ画像</button>
-                <button id="createNewDeckBtn" class="btn btn-danger px-6 py-3 flex-shrink-0">新規作成</button>
+                <button id="showDeckBtn" class="btn btn-primary flex-shrink-0">デッキ</button>
+                <button id="generateDeckImageBtn" class="btn btn-primary flex-shrink-0">デッキ画像</button>
+                <button id="createNewDeckBtn" class="btn btn-danger flex-shrink-0">新規</button>
             </div>
 
             <!-- Catalog Tabs -->
@@ -713,9 +732,9 @@
             
             <!-- NEW: Quantity Controls for Card Detail Modal -->
             <div id="modalCardQuantityControls" class="flex justify-center items-center gap-4 mb-4">
-                <button id="modalCardAddBtn" class="btn btn-primary text-3xl px-5 py-3 rounded-full">+</button>
+                <button id="modalCardAddBtn" class="btn btn-primary">+</button> <!-- Changed text to '＋' -->
                 <span id="modalCardCurrentQuantity" class="text-xl font-bold">0 / 4</span>
-                <button id="modalCardRemoveBtn" class="btn btn-danger text-2xl px-4 py-3 rounded-full">✕</button>
+                <button id="modalCardRemoveBtn" class="btn btn-danger">✕</button>
             </div>
             <!-- END NEW -->
 
@@ -897,7 +916,7 @@
         // New elements for load confirmation modal
         const loadConfirmationModal = document.getElementById('loadConfirmationModal');
         const closeLoadConfirmationModalBtn = document.getElementById('closeLoadConfirmationModal');
-        const confirmLoadDeckName = document = document.getElementById('confirmLoadDeckName');
+        const confirmLoadDeckName = document.getElementById('confirmLoadDeckName');
         const loadConfirmationCanvas = document.getElementById('loadConfirmationCanvas');
         const confirmLoadBtn = document.getElementById('confirmLoadBtn');
         const cancelLoadBtn = document.getElementById('cancelLoadBtn');
