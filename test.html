@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+    <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XrossStars Deck Builder</title>
@@ -749,7 +750,7 @@
     <div id="cardDetailModal" class="modal-overlay hidden">
         <div class="modal-content w-11/12 md:w-1/2 lg:w-1/3">
             <button class="modal-close-btn" id="closeCardDetailModal">&times;</button>
-            <img id="modalCardImage" src="" alt="Card Image" class="w-full h-auto rounded-lg mb-4 shadow-lg">
+            <img id="modalCardImage" loading="eager" decoding="async" fetchpriority="high" src="" alt="Card Image" class="w-full h-auto rounded-lg mb-4 shadow-lg">
             <h3 id="modalCardName" class="text-2xl font-bold mb-2 text-center"></h3>
             
             <!-- NEW: Quantity Controls for Card Detail Modal -->
@@ -1196,6 +1197,48 @@
                 return `https://placehold.co/300x420/cccccc/333333?text=No+Image`; // Updated placeholder size
             }
 
+        // ================= Performance helpers: bitmap loader with concurrency =================
+        const __bitmapCache = new Map();
+        const __queue = [];
+        let __inflight = 0;
+        const __MAX = 4; // limit concurrency for slow networks
+
+        async function __fetchBitmap(url) {
+            const res = await fetch(url, { mode: 'cors' });
+            if (!res.ok) throw new Error('Image fetch failed: '+res.status);
+            const blob = await res.blob();
+            return await createImageBitmap(blob, { resizeQuality: 'high' });
+        }
+        function __pump() {
+            if (__inflight >= __MAX || __queue.length === 0) return;
+            const { url, resolve } = __queue.shift();
+            __inflight++;
+            (async () => {
+                try {
+                    let p = __bitmapCache.get(url);
+                    if (!p) { p = __fetchBitmap(url); __bitmapCache.set(url, p); }
+                    const bmp = await p;
+                    resolve(bmp);
+                } catch(e) {
+                    console.warn('Bitmap load failed', url, e);
+                    resolve(null);
+                } finally { __inflight--; __pump(); }
+            })();
+        }
+        function __enqueueBitmap(url) {
+            return new Promise(resolve => { __queue.push({ url, resolve }); __pump(); });
+        }
+        async function __loadDeckBitmaps(cardsToDraw) {
+            const promises = cardsToDraw.map(item => {
+                if (!item.cardData) return Promise.resolve(null);
+                const url = getCardImageUrl(item.cardData);
+                return __enqueueBitmap(url);
+            });
+            return await Promise.all(promises);
+        }
+        // =============================================================================
+
+
             const cardNumPrefix = cardInfo['カードナンバー'].split('/')[0];
             return `https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/${cardNumPrefix}.png`;
         }
@@ -1265,7 +1308,7 @@
             const controlsJustifyClass = 'justify-around'; // Always space out detail and remove
 
             itemDiv.innerHTML = `
-                <img src="${imageUrl}" alt="${cardInfo['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/300x420/cccccc/333333?text=Load+Error';">
+                <img loading="lazy" decoding="async" fetchpriority="low" src="${imageUrl}" alt="${cardInfo['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/300x420/cccccc/333333?text=Load+Error';">
                 <div class="card-image-controls absolute bottom-0 bg-white bg-opacity-90 w-full py-2 px-1 ${controlsJustifyClass}">
                     <button class="view-detail-btn text-blue-500 hover:text-blue-700 text-lg">🔎</button>
                     ${quantityDisplayHtml}
@@ -1538,7 +1581,7 @@
                 cardItem.setAttribute('data-card-type', currentDisplayTab); // For add/remove logic
 
                 cardItem.innerHTML = `
-                    <img src="${imageUrl}" alt="${card['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/300x420/cccccc/333333?text=Load+Error';">
+                    <img loading="lazy" decoding="async" fetchpriority="low" src="${imageUrl}" alt="${card['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/300x420/cccccc/333333?text=Load+Error';">
                     <div class="card-image-controls">
                         <button class="view-detail-btn" data-card-name="${card['カード名']}">🔎</button>
                         <span class="card-image-quantity">${quantityInDeck} / ${maxQuantity}</span>
@@ -1832,7 +1875,7 @@
                         cardItem.setAttribute('data-card-type', currentTab); // For add/remove logic
 
                         cardItem.innerHTML = `
-                            <img src="${imageUrl}" alt="${card['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/300x420/cccccc/333333?text=Load+Error';">
+                            <img loading="lazy" decoding="async" fetchpriority="low" src="${imageUrl}" alt="${card['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/300x420/cccccc/333333?text=Load+Error';">
                             <div class="card-image-controls">
                                 <button class="view-detail-btn" data-card-name="${card['カード名']}">🔎</button>
                                 <span class="card-image-quantity">${quantityInDeck} / ${maxQuantity}</span>
@@ -2308,26 +2351,22 @@
                 ctx.fillText(deckNameForDisplay, canvas.width / 2, DECK_NAME_HEIGHT / 2);
             }
 
-            const imagePromises = cardsToDraw.map(item => {
-                if (!item.cardData) return Promise.resolve(null);
-                const img = new Image();
-                img.crossOrigin = 'Anonymous';
-                img.src = getCardImageUrl(item.cardData);
-                return new Promise(resolve => {
-                    img.onload = () => resolve(img);
-                    img.onerror = () => {
-                        console.error("Failed to load image for card (preview):", item.cardData['カード名']);
-                        const placeholder = new Image();
-                        placeholder.src = `https://placehold.co/${CARD_BASE_WIDTH}x${CARD_BASE_HEIGHT}/cccccc/333333?text=Load+Error\\n${item.cardData['カード名']}`;
-                        placeholder.onload = () => resolve(placeholder);
-                        placeholder.onerror = () => resolve(null);
-                    };
-                });
-            });
-
-            const loadedImages = await Promise.all(imagePromises);
+            const loadedImages = await __loadDeckBitmaps(cardsToDraw);
 
             loadedImages.forEach((img, index) => {
+                // If image failed, draw a neutral placeholder box
+                if (!img) {
+                    const col = index % NUM_COLUMNS;
+                    const row = Math.floor(index / NUM_COLUMNS);
+                    const x = PADDING + col * (CARD_WIDTH + PADDING);
+                    const y = DECK_NAME_HEIGHT + PADDING + row * (CARD_HEIGHT + TEXT_HEIGHT + PADDING);
+                    ctx.fillStyle = '#e5e7eb';
+                    ctx.fillRect(x, y, CARD_WIDTH, CARD_HEIGHT);
+                    ctx.fillStyle = '#6b7280';
+                    ctx.font = `${Math.max(14, QUANTITY_FONT_SIZE/2)}px Inter`;
+                    ctx.fillText('Loading...', x + CARD_WIDTH/2, y + CARD_HEIGHT/2);
+                    return;
+                }
                 const item = cardsToDraw[index];
                 const col = index % NUM_COLUMNS;
                 const row = Math.floor(index / NUM_COLUMNS);
@@ -3332,7 +3371,15 @@
             // updateFilterAndSortUI will correctly set the dropdown and then renderCatalog will apply the sort.
         };
     </script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(console.warn);
+  });
+}
+</script>
+
 </body>
 </html>
-
 
