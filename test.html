@@ -1672,7 +1672,7 @@
                 return `https://placehold.co/300x420/cccccc/333333?text=No+Image`;
             }
             const cardNumPrefix = cardInfo['カードナンバー'].split('/')[0];
-            return `https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/image/s_${cardNumPrefix}.png`;
+            return `https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/image/${cardNumPrefix}.png`;
         }
         function getPreferredCatalogImageUrl(cardInfo) {
             return useHighQualityImages ? getCardImageUrl(cardInfo) : getCardImageUrlSmall(cardInfo);
