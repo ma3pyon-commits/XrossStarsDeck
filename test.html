@@ -648,6 +648,7 @@
                 <option value="コスト">コストでソート</option>
                 <option value="カード名">カード名でソート</option>
                 <option value="レアリティ">レアリティでソート</option>
+                <option value="エキスパンション">エキスパンションでソート</option>
             </select>
             <button id="sortDirectionBtn" class="btn btn-primary px-5 py-2.5">昇順</button>
             <button id="toggleDisplayBtn" class="btn btn-secondary px-5 py-2.5">表示切替: 画像一覧</button>
@@ -1750,6 +1751,9 @@
                             primaryCompareResult = (a['タグ'] || '').localeCompare(b['タグ'] || '');
                         }
                         break;
+                    case 'エキスパンション':
+                        primaryCompareResult = (a['エキスパンション'] || '').localeCompare(b['エキスパンション'] || '');
+                        break;
                     default:
                         // Fallback to '色' as default if currentSort.criterion is not recognized or available for the tab
                         primaryCompareResult = (colorOrder[a['色']] || 99) - (colorOrder[b['色']] || 99);
@@ -1968,6 +1972,7 @@
                 <option value="コスト">コストでソート</option>
                 <option value="カード名">カード名でソート</option>
                 <option value="レアリティ">レアリティでソート</option>
+                <option value="エキスパンション">エキスパンションでソート</option>
             `;
 
             if (currentTab === 'leader') {
@@ -3334,6 +3339,5 @@
     </script>
 </body>
 </html>
-
 
 
