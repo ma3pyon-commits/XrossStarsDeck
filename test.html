@@ -573,15 +573,6 @@
             XrossStars<br>Deck Builder
         </h1>
 
-        <!-- Display Options (sticky, above controls) -->
-        <div id="displayOptionsBar" class="z-30 bg-white border-b border-gray-200 py-2 px-3 flex justify-end">
-  <label class="inline-flex items-center gap-2 text-sm text-gray-700 select-none">
-    <input id="dataSaverCheckbox" type="checkbox" class="h-4 w-4" aria-label="データ節約モード" checked>
-    データ節約モード
-  </label>
-</div>
-    
-
         <!-- Loading Indicator -->
         <div id="loadingIndicator" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
             <div class="bg-white p-6 rounded-lg shadow-xl flex items-center space-x-4">
@@ -1039,7 +1030,7 @@
                 let obj = {};
                 
                 if (values.length !== headers.length) {
-                    if(line.trim()!=='' && !/^#/.test(line.trim())) console.warn(`Skipping logical line ${index + 2} due to column mismatch: "${line.substring(0, 100)}..." (Expected ${headers.length} columns, got ${values.length})`);
+                    console.warn(`Skipping logical line ${index + 2} due to column mismatch: "${line.substring(0, 100)}..." (Expected ${headers.length} columns, got ${values.length})`);
                     return;
                 }
 
@@ -1242,7 +1233,7 @@
          * @returns {HTMLElement} 生成されたカード表示要素
          */
         function createCardDisplayItemForModal(cardInfo, isRelatedCard = false) {
-            const imageUrl = getPreferredCatalogImageUrl(cardInfo);
+            const imageUrl = getCardImageUrl(cardInfo);
             const itemDiv = document.createElement('div');
             // Adjust base size here. For related cards, we use CSS in <style> block.
             itemDiv.className = `relative group overflow-hidden rounded-md shadow-md flex flex-col items-center 
@@ -1274,7 +1265,7 @@
             const controlsJustifyClass = 'justify-around'; // Always space out detail and remove
 
             itemDiv.innerHTML = `
-                <img  loading="lazy" decoding="async" fetchpriority="low" src="${imageUrl}" alt="${cardInfo['カード名']}"  onerror="handleCatalogImgError(this,'${imageUrlHD}');">
+                <img src="${imageUrl}" alt="${cardInfo['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/300x420/cccccc/333333?text=Load+Error';">
                 <div class="card-image-controls absolute bottom-0 bg-white bg-opacity-90 w-full py-2 px-1 ${controlsJustifyClass}">
                     <button class="view-detail-btn text-blue-500 hover:text-blue-700 text-lg">🔎</button>
                     ${quantityDisplayHtml}
@@ -1521,8 +1512,7 @@
             }
 
             cardsToDisplay.forEach(card => {
-                const imageUrl = getPreferredCatalogImageUrl(card);
-                const imageUrlHD = getCardImageUrl(card); // Pass full card object
+                const imageUrl = getCardImageUrl(card); // Pass full card object
                 let quantityInDeck = 0;
                 let maxQuantity = 1; // Default max for individual leader/tactics cards
                 let removeBtnClass = 'text-red-500 hover:text-red-700';
@@ -1548,7 +1538,7 @@
                 cardItem.setAttribute('data-card-type', currentDisplayTab); // For add/remove logic
 
                 cardItem.innerHTML = `
-                    <img  loading="lazy" decoding="async" fetchpriority="low" src="${imageUrl}" alt="${card['カード名']}"  onerror="handleCatalogImgError(this,'${imageUrlHD}');">
+                    <img src="${imageUrl}" alt="${card['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/300x420/cccccc/333333?text=Load+Error';">
                     <div class="card-image-controls">
                         <button class="view-detail-btn" data-card-name="${card['カード名']}">🔎</button>
                         <span class="card-image-quantity">${quantityInDeck} / ${maxQuantity}</span>
@@ -1662,28 +1652,7 @@
         /**
          * 現在のタブと表示モードに基づいてカタログをレンダリングする
          */
-        
-        
-        // === Small/High quality image switching helpers (catalog/thumbnail) ===
-        // 既定は低画質（パフォーマンス優先）
-        let useHighQualityImages = false;
-        function getCardImageUrlSmall(cardInfo) {
-            if (!cardInfo || !cardInfo['カードナンバー']) {
-                return `https://placehold.co/300x420/cccccc/333333?text=No+Image`;
-            }
-            const cardNumPrefix = cardInfo['カードナンバー'].split('/')[0];
-            return `https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/image/${cardNumPrefix}.png`;
-        }
-        function getPreferredCatalogImageUrl(cardInfo) {
-            return useHighQualityImages ? getCardImageUrl(cardInfo) : getCardImageUrlSmall(cardInfo);
-        }
-        // 低画質がない場合は高画質にフォールバック→それも失敗ならプレースホルダ
-        function handleCatalogImgError(imgEl, hdUrl) {
-            if (!imgEl.dataset.hd) { imgEl.dataset.hd = '1'; imgEl.src = hdUrl; }
-            else { imgEl.onerror = null; imgEl.src = 'https://placehold.co/300x420/cccccc/333333?text=Load+Error'; }
-        }
-        
-function renderCatalog() {
+        function renderCatalog() {
             let filteredCards = [];
             let allCardsOfType = [];
 
@@ -1837,8 +1806,7 @@ function renderCatalog() {
                     grid.innerHTML = '<p class="text-center text-gray-500 italic col-span-full">該当するカードがありません。</p>';
                 } else {
                     sortedCards.forEach(card => {
-                        const imageUrl = getPreferredCatalogImageUrl(card);
-                const imageUrlHD = getCardImageUrl(card);
+                        const imageUrl = getCardImageUrl(card);
                         let quantityInDeck = 0;
                         let maxQuantity = 1;
                         let removeBtnClass = 'text-red-500 hover:text-red-700';
@@ -1864,7 +1832,7 @@ function renderCatalog() {
                         cardItem.setAttribute('data-card-type', currentTab); // For add/remove logic
 
                         cardItem.innerHTML = `
-                            <img  loading="lazy" decoding="async" fetchpriority="low" src="${imageUrl}" alt="${card['カード名']}"  onerror="handleCatalogImgError(this,'${imageUrlHD}');">
+                            <img src="${imageUrl}" alt="${card['カード名']}" onerror="this.onerror=null;this.src='https://placehold.co/300x420/cccccc/333333?text=Load+Error';">
                             <div class="card-image-controls">
                                 <button class="view-detail-btn" data-card-name="${card['カード名']}">🔎</button>
                                 <span class="card-image-quantity">${quantityInDeck} / ${maxQuantity}</span>
@@ -3364,39 +3332,8 @@ function renderCatalog() {
             // updateFilterAndSortUI will correctly set the dropdown and then renderCatalog will apply the sort.
         };
     </script>
-
-<script>
-(function () {
-  const QUALITY_LS_KEY = 'xrossstars_useHighQuality';
-const DATA_SAVER_LS_KEY = 'xrossstars_dataSaver';
-  function safeSetItem(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
-  function safeGetItem(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
-  function applyQuality(isHigh){
-    window.useHighQualityImages = !!isHigh;
-    if (typeof renderCatalog === 'function') renderCatalog();
-    if (typeof cardDetailModal !== 'undefined' && !cardDetailModal.classList.contains('hidden')){
-      const name = (typeof modalCardName !== 'undefined') ? modalCardName.textContent : '';
-      if (name && typeof showCardDetailModal === 'function') showCardDetailModal(name);
-    }
-  }
-  function bindQualityToggle(){
-  const cb = document.getElementById('dataSaverCheckbox');
-  if (!cb) return;
-  const stored = safeGetItem(DATA_SAVER_LS_KEY);
-  const isDataSaver = stored === null ? true : stored === '1';
-  cb.checked = isDataSaver;
-  applyQuality(!isDataSaver);
-  cb.addEventListener('change', () => {
-    const enabled = cb.checked;
-    safeSetItem(DATA_SAVER_LS_KEY, enabled ? '1' : '0');
-    applyQuality(!enabled);
-  });
-}
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bindQualityToggle);
-  else bindQualityToggle();
-})();
-</script>
-
 </body>
 </html>
+
+
 
