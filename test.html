@@ -864,9 +864,16 @@
         let selectedFilterCardType = '全て';
         let selectedFilterCost = '全て';
         let selectedBuildRuleFilter = 'すべて'; // New state for the dropdown
-        let selectedExpansionFilter = '全て'; // New: Expansion filter state
+        let selectedExpansionFilter = '全て';
 
         let lastGeneratedDeckData = null; // Stores the processed deck data for redraws
+
+        // Hardcoded mapping for expansion code -> display label (editable)
+        const EXPANSION_LABELS = {
+            '01': 'ブースターパック1弾',
+            '02': 'ブースターパック2弾',
+            '03': 'プロモパック1弾'
+        };
 
         // HTML要素への参照
         const loadingIndicator = document.getElementById('loadingIndicator');
@@ -883,7 +890,7 @@
         const cardTypeFilterSelect = document.getElementById('cardTypeFilterSelect');
         const costFilterSelect = document.getElementById('costFilterSelect');
         const buildRuleFilterSelect = document.getElementById('buildRuleFilterSelect'); // New dropdown reference
-        const expansionFilterSelect = document.getElementById('expansionFilterSelect');
+        let expansionFilterSelect = document.getElementById('expansionFilterSelect');
         const sortCriterionSelect = document.getElementById('sortCriterion');
         const sortDirectionBtn = document.getElementById('sortDirectionBtn');
         const toggleDisplayBtn = document.getElementById('toggleDisplayBtn');
@@ -1095,7 +1102,7 @@
          */
         async function loadCardData() {
             loadingIndicator.classList.remove('hidden');
-            const csvUrl = 'https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/test/cardlist.csv';
+            const csvUrl = 'https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/cardlist.csv';
             const qrImageUrl = 'https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/QR.png';
             const dailySparkCsvUrl = 'https://raw.githubusercontent.com/ma3pyon-commits/XrossStarsDeck/refs/heads/main/DailySpark.csv';
             
@@ -1726,12 +1733,10 @@
                     }
                 }
 
-                // Expansion filter (applies across tabs)
+                // Expansion filter (value = 2-digit code like '01')
                 if (selectedExpansionFilter !== '全て') {
-                    const exp = (card['エキスパンション'] || '').trim();
-                    if (exp !== selectedExpansionFilter) {
-                        return false;
-                    }
+                    const code = normalizeExpansionCode(card['エキスパンション']);
+                    if (code !== selectedExpansionFilter) { return false; }
                 }
 
                 return true;
@@ -1962,52 +1967,62 @@
          * フィルターとソートUIの表示/非表示、オプションの更新を行う
          */
         
-        /**
-         * エキスパンションのユニークリストを取得
-         */
+        function ensureExpansionFilterExists() {
+            let sel = document.getElementById('expansionFilterSelect');
+            if (!sel) {
+                const colorSel = document.getElementById('colorFilterSelect');
+                if (colorSel && colorSel.parentElement) {
+                    sel = document.createElement('select');
+                    sel.id = 'expansionFilterSelect';
+                    sel.className = 'p-3 border border-gray-300 rounded-md';
+                    sel.innerHTML = '<option value="全て">エキスパンション</option>';
+                    if (colorSel.nextSibling) colorSel.parentElement.insertBefore(sel, colorSel.nextSibling); else colorSel.parentElement.appendChild(sel);
+                }
+            }
+            return sel;
+        }
+    function normalizeExpansionCode(raw) {
+            if (raw === undefined || raw === null) return '';
+            const m = String(raw).match(/(\d{1,2})/);
+            if (!m) return '';
+            const n = parseInt(m[1], 10);
+            if (Number.isNaN(n)) return '';
+            return String(n).padStart(2, '0');
+        }
+
         function getUniqueExpansions() {
             const set = new Set();
             if (allCardData) {
                 Object.values(allCardData).forEach(card => {
-                    const v = (card['エキスパンション'] || '').trim();
-                    if (v) set.add(v);
+                    const code = normalizeExpansionCode(card['エキスパンション']);
+                    if (code) set.add(code);
                 });
             }
             return Array.from(set).sort((a,b)=> a.localeCompare(b));
-        
-            // Always show Expansion filter and populate options
-            expansionFilterSelect.style.display = 'inline-block';
-            populateExpansionFilterOptions();
-}
-
-        /**
-         * エキスパンションフィルターを動的に埋める
-         */
-        function populateExpansionFilterOptions() {
-            if (!expansionFilterSelect) return;
-            const items = getUniqueExpansions();
-            const options = ['<option value="全て">エキスパンション</option>']
-                .concat(items.map(v => `<option value="${v}">${v}</option>`))
-                .join('');
-            expansionFilterSelect.innerHTML = options;
-            // 保持している選択状態を反映（なければ全て）
-            const toSet = selectedExpansionFilter || '全て';
-            if ([...expansionFilterSelect.options].some(o => o.value === toSet)) {
-                expansionFilterSelect.value = toSet;
-            } else {
-                expansionFilterSelect.value = '全て';
-                selectedExpansionFilter = '全て';
-            }
         }
 
-function updateFilterAndSortUI() {
+        function populateExpansionFilterOptions() {
+            if (!expansionFilterSelect) return;
+            const codes = getUniqueExpansions();
+            const opts = ['<option value="全て">エキスパンション</option>']
+                .concat(codes.map(code => {
+                    const label = EXPANSION_LABELS[code] || `${parseInt(code, 10)}弾`;
+                    return `<option value="${code}">${label}</option>`;
+                }))
+                .join('');
+            expansionFilterSelect.innerHTML = opts;
+            const toSet = selectedExpansionFilter || '全て';
+            if ([...expansionFilterSelect.options].some(o => o.value === toSet)) expansionFilterSelect.value = toSet; else { expansionFilterSelect.value = '全て'; selectedExpansionFilter = '全て'; }
+        }
+
+        function updateFilterAndSortUI() {
+            expansionFilterSelect = ensureExpansionFilterExists();
+
             // Reset all filters/checkboxes to hidden initially
             colorFilterSelect.style.display = 'none';
             cardTypeFilterSelect.style.display = 'none';
             costFilterSelect.style.display = 'none';
             buildRuleFilterSelect.style.display = 'none'; // Hide new dropdown by default
-            expansionFilterSelect.style.display = 'none';
-
 
             // Reset sort options to a default set and re-add based on tab
             sortCriterionSelect.innerHTML = ``; // Clear all options first
@@ -2941,10 +2956,13 @@ function updateFilterAndSortUI() {
 
         
         // エキスパンション変更時の処理
-        expansionFilterSelect.addEventListener('change', (event) => {
-            selectedExpansionFilter = event.target.value;
-            renderCatalog();
-        });
+        if (expansionFilterSelect && !expansionFilterSelect.dataset.bound) {
+            expansionFilterSelect.addEventListener('change', (event) => {
+                selectedExpansionFilter = event.target.value;
+                renderCatalog();
+            });
+            expansionFilterSelect.dataset.bound = '1';
+        }
 
 // ソート基準変更時の処理
         sortCriterionSelect.addEventListener('change', (event) => {
@@ -2995,8 +3013,6 @@ function updateFilterAndSortUI() {
             cardTypeFilterSelect.value = '全て';
             costFilterSelect.value = '全て';
             buildRuleFilterSelect.value = 'すべて';
-            selectedExpansionFilter = '全て';
-            if (expansionFilterSelect) expansionFilterSelect.value = '全て';
         }
 
 
