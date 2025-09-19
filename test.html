@@ -620,6 +620,11 @@
                 <option value="緑">緑</option>
             </select>
 
+            <select id="expansionFilterSelect" class="p-3 border border-gray-300 rounded-md">
+                <option value="全て">エキスパンション</option>
+            </select>
+
+
             <select id="cardTypeFilterSelect" class="p-3 border border-gray-300 rounded-md">
                 <option value="全て">種類</option>
                 <option value="アタックカード">アタックカード</option>
@@ -648,7 +653,6 @@
                 <option value="コスト">コストでソート</option>
                 <option value="カード名">カード名でソート</option>
                 <option value="レアリティ">レアリティでソート</option>
-                <option value="エキスパンション">エキスパンションでソート</option>
             </select>
             <button id="sortDirectionBtn" class="btn btn-primary px-5 py-2.5">昇順</button>
             <button id="toggleDisplayBtn" class="btn btn-secondary px-5 py-2.5">表示切替: 画像一覧</button>
@@ -860,6 +864,7 @@
         let selectedFilterCardType = '全て';
         let selectedFilterCost = '全て';
         let selectedBuildRuleFilter = 'すべて'; // New state for the dropdown
+        let selectedExpansionFilter = '全て'; // New: Expansion filter state
 
         let lastGeneratedDeckData = null; // Stores the processed deck data for redraws
 
@@ -878,6 +883,7 @@
         const cardTypeFilterSelect = document.getElementById('cardTypeFilterSelect');
         const costFilterSelect = document.getElementById('costFilterSelect');
         const buildRuleFilterSelect = document.getElementById('buildRuleFilterSelect'); // New dropdown reference
+        const expansionFilterSelect = document.getElementById('expansionFilterSelect');
         const sortCriterionSelect = document.getElementById('sortCriterion');
         const sortDirectionBtn = document.getElementById('sortDirectionBtn');
         const toggleDisplayBtn = document.getElementById('toggleDisplayBtn');
@@ -1720,6 +1726,14 @@
                     }
                 }
 
+                // Expansion filter (applies across tabs)
+                if (selectedExpansionFilter !== '全て') {
+                    const exp = (card['エキスパンション'] || '').trim();
+                    if (exp !== selectedExpansionFilter) {
+                        return false;
+                    }
+                }
+
                 return true;
             });
 
@@ -1750,9 +1764,6 @@
                         if (currentTab === 'leader') { // Only applies to leader cards
                             primaryCompareResult = (a['タグ'] || '').localeCompare(b['タグ'] || '');
                         }
-                        break;
-                    case 'エキスパンション':
-                        primaryCompareResult = (a['エキスパンション'] || '').localeCompare(b['エキスパンション'] || '');
                         break;
                     default:
                         // Fallback to '色' as default if currentSort.criterion is not recognized or available for the tab
@@ -1950,12 +1961,53 @@
         /**
          * フィルターとソートUIの表示/非表示、オプションの更新を行う
          */
-        function updateFilterAndSortUI() {
+        
+        /**
+         * エキスパンションのユニークリストを取得
+         */
+        function getUniqueExpansions() {
+            const set = new Set();
+            if (allCardData) {
+                Object.values(allCardData).forEach(card => {
+                    const v = (card['エキスパンション'] || '').trim();
+                    if (v) set.add(v);
+                });
+            }
+            return Array.from(set).sort((a,b)=> a.localeCompare(b));
+        
+            // Always show Expansion filter and populate options
+            expansionFilterSelect.style.display = 'inline-block';
+            populateExpansionFilterOptions();
+}
+
+        /**
+         * エキスパンションフィルターを動的に埋める
+         */
+        function populateExpansionFilterOptions() {
+            if (!expansionFilterSelect) return;
+            const items = getUniqueExpansions();
+            const options = ['<option value="全て">エキスパンション</option>']
+                .concat(items.map(v => `<option value="${v}">${v}</option>`))
+                .join('');
+            expansionFilterSelect.innerHTML = options;
+            // 保持している選択状態を反映（なければ全て）
+            const toSet = selectedExpansionFilter || '全て';
+            if ([...expansionFilterSelect.options].some(o => o.value === toSet)) {
+                expansionFilterSelect.value = toSet;
+            } else {
+                expansionFilterSelect.value = '全て';
+                selectedExpansionFilter = '全て';
+            }
+        }
+
+function updateFilterAndSortUI() {
             // Reset all filters/checkboxes to hidden initially
             colorFilterSelect.style.display = 'none';
             cardTypeFilterSelect.style.display = 'none';
             costFilterSelect.style.display = 'none';
             buildRuleFilterSelect.style.display = 'none'; // Hide new dropdown by default
+            expansionFilterSelect.style.display = 'none';
+
 
             // Reset sort options to a default set and re-add based on tab
             sortCriterionSelect.innerHTML = ``; // Clear all options first
@@ -1972,7 +2024,6 @@
                 <option value="コスト">コストでソート</option>
                 <option value="カード名">カード名でソート</option>
                 <option value="レアリティ">レアリティでソート</option>
-                <option value="エキスパンション">エキスパンションでソート</option>
             `;
 
             if (currentTab === 'leader') {
@@ -2888,7 +2939,14 @@
             renderCatalog();
         });
 
-        // ソート基準変更時の処理
+        
+        // エキスパンション変更時の処理
+        expansionFilterSelect.addEventListener('change', (event) => {
+            selectedExpansionFilter = event.target.value;
+            renderCatalog();
+        });
+
+// ソート基準変更時の処理
         sortCriterionSelect.addEventListener('change', (event) => {
             currentSort.criterion = event.target.value;
             renderCatalog();
@@ -2937,6 +2995,8 @@
             cardTypeFilterSelect.value = '全て';
             costFilterSelect.value = '全て';
             buildRuleFilterSelect.value = 'すべて';
+            selectedExpansionFilter = '全て';
+            if (expansionFilterSelect) expansionFilterSelect.value = '全て';
         }
 
 
