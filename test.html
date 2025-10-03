@@ -622,13 +622,15 @@
 
             <select id="expansionFilterSelect" class="p-3 border border-gray-300 rounded-md">
                 <option value="全て">エキスパンション</option>
+                <option value="01">BP01/ST01/ST02</option>
+                <option value="02">BP02</option>
             </select>
 
 
             <select id="cardTypeFilterSelect" class="p-3 border border-gray-300 rounded-md">
                 <option value="全て">種類</option>
                 <option value="アタックカード">アタックカード</option>
-                <option value="メモリアカード">メモリアカード</メモリアカード>
+                <option value="メモリアカード">メモリアカード</option>
             </select>
 
             <select id="costFilterSelect" class="p-3 border border-gray-300 rounded-md">
@@ -870,9 +872,9 @@
 
         // Hardcoded mapping for expansion code -> display label (editable)
         const EXPANSION_LABELS = {
-            '01': 'ブースターパック1弾',
-            '02': 'ブースターパック2弾',
-            '03': 'プロモパック1弾'
+            '01': 'BP01/ST01/ST02',
+            '02': 'BP02',
+            '03': 'BP03'
         };
 
         // HTML要素への参照
